@@ -4,11 +4,13 @@
 
 package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
-import com.revrobotics.SparkMaxPIDController;
-import com.revrobotics.CANSparkMax.ControlType;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
+
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -23,7 +25,7 @@ import edu.wpi.first.wpilibj.util.Color;
 public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
-  private final CANSparkMax testMotorL = new CANSparkMax(11, MotorType.kBrushless);
+  private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
   private final CANSparkMax testMotorR = new CANSparkMax(12, MotorType.kBrushless);
 
   //Sets up the PigeonIMU
@@ -44,7 +46,7 @@ public class MotorSubsystem extends SubsystemBase {
   
 
   //get the pid controller from the motor
-  //private  SparkMaxPIDController pid = testMotorL.getPIDController();
+  private  SparkPIDController pid = testMotorL.getPIDController();
 
   /** Creates a new MotorSubsystem. */
   public MotorSubsystem() {
@@ -86,7 +88,7 @@ public class MotorSubsystem extends SubsystemBase {
 
   public CommandBase shoot(){
     double shootSpeed = SmartDashboard.getNumber("Shooting Speed", 0);
-    return runOnce(() -> {testMotorL.set(shootSpeed); testMotorR.set(shootSpeed);});
+    return runOnce(() -> {testMotorL.set(shootSpeed); testMotorR.set(-shootSpeed);});
   }
 
   */
