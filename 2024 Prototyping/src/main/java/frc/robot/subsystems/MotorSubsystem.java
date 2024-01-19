@@ -8,7 +8,6 @@ import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
 import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -25,14 +24,14 @@ import edu.wpi.first.wpilibj.util.Color;
 public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
-  private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
-  private final CANSparkMax testMotorR = new CANSparkMax(12, MotorType.kBrushless);
+  //private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
+  //private final CANSparkMax testMotorR = new CANSparkMax(12, MotorType.kBrushless);
 
   //Sets up the PigeonIMU
   public WPI_Pigeon2 testPigeon = new WPI_Pigeon2(17);
 
   private final CANdle leds = new CANdle(18);
-  private final Port colorSensorPort = Port.kOnboard;
+  
   private final ColorSensorV3 colorSensor = new ColorSensorV3(Port.kOnboard);
   
   private double led_percent = 0;
@@ -46,7 +45,7 @@ public class MotorSubsystem extends SubsystemBase {
   
 
   //get the pid controller from the motor
-  private  SparkPIDController pid = testMotorL.getPIDController();
+  //private  SparkPIDController pid = testMotorL.getPIDController();
 
   /** Creates a new MotorSubsystem. */
   public MotorSubsystem() {
@@ -56,7 +55,7 @@ public class MotorSubsystem extends SubsystemBase {
     //pid.setD(0);
     
     //inverts right motor
-    testMotorR.setInverted(true);
+    //testMotorR.setInverted(true);
 
 
     SmartDashboard.putNumber("Shooting Speed", shootSpeed);
@@ -71,8 +70,8 @@ public class MotorSubsystem extends SubsystemBase {
   }
   void runMotors(double speed){
     double inputSpeed = applyDeadband(speed, 0.1);
-    testMotorL.set(inputSpeed); 
-    testMotorR.set(inputSpeed);
+    //testMotorL.set(inputSpeed); 
+    //testMotorR.set(inputSpeed);
   }
   //A command that sets the motor to a given speed
   public CommandBase setMotor(DoubleSupplier speed){
@@ -99,7 +98,13 @@ public class MotorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Roll", testPigeon.getRoll());
 
     Color detectedColor = colorSensor.getColor();
-    leds.setLEDs((int)(255* detectedColor.red), (int)(255*detectedColor.green), (int)(255*detectedColor.blue));
+    SmartDashboard.putNumber("red",detectedColor.red);
+    SmartDashboard.putNumber("red",detectedColor.green);
+    SmartDashboard.putNumber("red",detectedColor.blue);
+    SmartDashboard.putNumber("distance",colorSensor.getProximity());
+    int num = (2047-colorSensor.getProximity()) * (60 / 2047);
+    
+    leds.setLEDs((int)(255*detectedColor.red), (int)(127*detectedColor.green), (int)(127*detectedColor.blue),0,8,num);
     
     
    
