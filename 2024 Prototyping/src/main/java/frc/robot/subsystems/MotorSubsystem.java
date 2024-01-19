@@ -7,7 +7,9 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.ColorSensorV3;
+
 import com.revrobotics.SparkPIDController;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -25,12 +27,10 @@ public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
   //private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
-  //private final CANSparkMax testMotorR = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkMax testMotor = new CANSparkMax(12, MotorType.kBrushless);
 
-  //Sets up the PigeonIMU
-  public WPI_Pigeon2 testPigeon = new WPI_Pigeon2(17);
 
-  private final CANdle leds = new CANdle(18);
+
   
   private final ColorSensorV3 colorSensor = new ColorSensorV3(Port.kOnboard);
   
@@ -45,14 +45,14 @@ public class MotorSubsystem extends SubsystemBase {
   
 
   //get the pid controller from the motor
-  //private  SparkPIDController pid = testMotorL.getPIDController();
+  private SparkPIDController pid = testMotor.getPIDController();
 
   /** Creates a new MotorSubsystem. */
   public MotorSubsystem() {
     //set PID values
-    //pid.setP(1);
-    //pid.setI(0);
-    //pid.setD(0);
+    pid.setP(0.3);
+    pid.setI(0);
+    pid.setD(0);
     
     //inverts right motor
     //testMotorR.setInverted(true);
@@ -77,25 +77,20 @@ public class MotorSubsystem extends SubsystemBase {
   public CommandBase setMotor(DoubleSupplier speed){
     return runOnce(() -> {runMotors(speed.getAsDouble());});
   }
+  
 
 
-/* 
   //A command that sets the motor's setpoint to a specified angle and uses PID position control to get the motor to the target direction
   public CommandBase setPositionPID(DoubleSupplier position){
     return runOnce(() -> pid.setReference(position.getAsDouble(),ControlType.kPosition));
   }
 
-  public CommandBase shoot(){
-    double shootSpeed = SmartDashboard.getNumber("Shooting Speed", 0);
-    return runOnce(() -> {testMotorL.set(shootSpeed); testMotorR.set(-shootSpeed);});
-  }
-
-  */
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     int bar_length = 5;
-    SmartDashboard.putNumber("Pigeon Roll", testPigeon.getRoll());
+    
 
     Color detectedColor = colorSensor.getColor();
     SmartDashboard.putNumber("red",detectedColor.red);
@@ -104,7 +99,7 @@ public class MotorSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("distance",colorSensor.getProximity());
     int num = (2047-colorSensor.getProximity()) * (60 / 2047);
     
-    leds.setLEDs((int)(255*detectedColor.red), (int)(127*detectedColor.green), (int)(127*detectedColor.blue),0,8,num);
+    
     
     
    
