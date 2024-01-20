@@ -33,7 +33,7 @@ public class RobotContainer {
   private void configureBindings() {
     //control the motor with the left joystick
     //m_MotorSubsystem.setDefaultCommand(m_MotorSubsystem.setPositionPID(() -> xbox.getLeftY()));
-    m_MotorSubsystem.setDefaultCommand(m_MotorSubsystem.setPositionPID(() -> xbox.getLeftY()));
+    m_MotorSubsystem.setDefaultCommand(m_MotorSubsystem.setMotor(() -> xbox.getLeftY()));
    // xbox.button(Button.kA.value).whileTrue(m_MotorSubsystem.shoot());
     
   }

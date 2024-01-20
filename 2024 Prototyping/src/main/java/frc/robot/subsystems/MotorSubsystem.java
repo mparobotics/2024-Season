@@ -70,12 +70,20 @@ public class MotorSubsystem extends SubsystemBase {
   }
   void runMotors(double speed){
     double inputSpeed = applyDeadband(speed, 0.1);
-    //testMotorL.set(inputSpeed); 
+    testMotor.set(inputSpeed); 
     //testMotorR.set(inputSpeed);
   }
   //A command that sets the motor to a given speed
   public CommandBase setMotor(DoubleSupplier speed){
-    return runOnce(() -> {runMotors(speed.getAsDouble());});
+    return runOnce(() -> {
+      
+      if (colorSensor.getProximity() > 300){
+        runMotors(0);
+      } else {
+        runMotors(speed.getAsDouble());
+      }
+    
+    });
   }
   
 
