@@ -41,18 +41,6 @@ public final class Constants {
     //L1 is 8.14:1, L2 is 6.75:1, L3 is 6.12:1, L4 is 5.14:1
     public static final double angleGearRatio = (12.8 / 1.0); // 12.8:1 MK4 SDS Modules
 
-<<<<<<< Updated upstream
-    public static final SwerveDriveKinematics swerveKinematics =
-    new SwerveDriveKinematics(
-        new Translation2d(wheelBase / 2.0, trackWidth / 2.0), //translation 2d locates the swerve module in cords
-        new Translation2d(wheelBase / 2.0, -trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, trackWidth / 2.0),
-        new Translation2d(-wheelBase / 2.0, -trackWidth / 2.0));
-    //https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html
-    //SwerveDrive Kinematics converts between a ChassisSpeeds object and several SwerveModuleState objects, 
-    //which contains velocities and angles for each swerve module of a swerve drive robot.
-        
-=======
     //give location of each module to a swerveDriveKinematics relative to robot center in meters
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
       new Translation2d(halfWheelBase, halfTrackWidth), 
@@ -69,7 +57,6 @@ public final class Constants {
       new ReplanningConfig() // Default path replanning config. See the API for the options here
     );
 
->>>>>>> Stashed changes
     /* Swerve Voltage Compensation */
     public static final double voltageComp = 12.0;
        

@@ -4,11 +4,9 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
-<<<<<<< Updated upstream
-=======
 import com.pathplanner.lib.auto.AutoBuilder;
->>>>>>> Stashed changes
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -18,15 +16,15 @@ import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-<<<<<<< Updated upstream
-=======
 
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
->>>>>>> Stashed changes
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final WPI_Pigeon2 pigeon;
@@ -35,10 +33,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private SwerveModule[] swerveModules;
 
   private Field2d field;
-<<<<<<< Updated upstream
-
-=======
-  
+  private CANdle leds = new CANdle(18);
   public static enum LedMode{
     TELEOP,
     TEST,
@@ -52,7 +47,6 @@ public class SwerveSubsystem extends SubsystemBase {
   double getTx(){
     return getLimelight().getEntry("tx").getDouble(0);
   }
->>>>>>> Stashed changes
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
     //instantiates new pigeon gyro, wipes it, and zeros it
@@ -75,8 +69,6 @@ public class SwerveSubsystem extends SubsystemBase {
     //display a (outdated) field on SmartDashboard
     field = new Field2d();
     SmartDashboard.putData("Field", field);
-<<<<<<< Updated upstream
-=======
 
     AutoBuilder.configureHolonomic(
       this::getPose,
@@ -87,7 +79,6 @@ public class SwerveSubsystem extends SubsystemBase {
       () -> false,
       this
     );
->>>>>>> Stashed changes
   }
 
 
@@ -99,34 +90,6 @@ public class SwerveSubsystem extends SubsystemBase {
   //fieldRelative: whether or not the controls are field or robot oriented, 
   public void drive(Translation2d translation, double rotation, boolean isFieldRelative)
   {
-<<<<<<< Updated upstream
-    SwerveModuleState[] swerveModuleStates =
-      Constants.SwerveConstants.swerveKinematics.toSwerveModuleStates(
-          //fancy way to do an if else statement 
-          //if field relative == true, use field relative stuff, otherwise use robot centric
-          fieldRelative
-              ? ChassisSpeeds.fromFieldRelativeSpeeds(
-                  translation.getX(), translation.getY(), rotation, getYaw())
-              : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
-  //sets to top speed if above top speed
-  SwerveDriveKinematics.desaturateWheelSpeeds(swerveModuleStates, Constants.SwerveConstants.maxSpeed);
-
-  //set states for all 4 modules
-  for (SwerveModule mod : mSwerveMods) {
-    mod.setDesiredState(swerveModuleStates[mod.moduleNumber], isOpenLoop);
-  }
-}
-
-  /* Used by SwerveControllerCommand in Auto */
-  public void setModuleStates(SwerveModuleState[] desiredStates) {
-    SwerveDriveKinematics.desaturateWheelSpeeds(desiredStates, Constants.SwerveConstants.maxSpeed);
-
-    for (SwerveModule mod : mSwerveMods) {
-      mod.setDesiredState(desiredStates[mod.moduleNumber], false);
-    }
-  }
-
-=======
     //convert the inputs to a ChassisSpeeds
     driveFromChassisSpeeds(
           isFieldRelative
@@ -151,49 +114,13 @@ public class SwerveSubsystem extends SubsystemBase {
 
   
   
->>>>>>> Stashed changes
 
   
   //reset the pose to a given pose
   public void resetOdometry(Pose2d pose) {
     swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
   }
-<<<<<<< Updated upstream
-
-  public void setWheelsToX() {
-    setModuleStates(new SwerveModuleState[] {
-      // front left
-      new SwerveModuleState(0.0, Rotation2d.fromDegrees(45.0)),
-      // front right
-      new SwerveModuleState(0.0, Rotation2d.fromDegrees(-45.0)),
-      // back left
-      new SwerveModuleState(0.0, Rotation2d.fromDegrees(135.0)),
-      // back right
-      new SwerveModuleState(0.0, Rotation2d.fromDegrees(-135.0))
-    });
-  }
-
-
-  public SwerveModuleState[] getStates() {
-    SwerveModuleState[] states = new SwerveModuleState[4];
-    for (SwerveModule mod : mSwerveMods) {
-      states[mod.moduleNumber] = mod.getState();
-    }
-    return states;
-  }
-
-  public SwerveModulePosition[] getPositions(){
-    SwerveModulePosition[] positions = new SwerveModulePosition[4];
-    for(SwerveModule mod : mSwerveMods){
-        positions[mod.moduleNumber] = mod.getPosition();
-    }
-    return positions;
-}
-
-
-=======
   //set the current heading to be zero degrees
->>>>>>> Stashed changes
   public void zeroGyro() {
     pigeon.setYaw(0);
   }
@@ -202,23 +129,6 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d getPose() {
     return swerveOdometry.getPoseMeters();
   }
-<<<<<<< Updated upstream
-
-  public boolean AutoBalance(){
-    double roll_error = pigeon.getPitch();//the angle of the robot
-    double balance_kp = -.005;//Variable muliplied by roll_error
-    double position_adjust = 0.0;
-    double min_command = 0.0;//adds a minimum input to the motors to overcome friction if the position adjust isn't enough
-    if (roll_error > 6.0)
-    {
-      position_adjust = balance_kp * roll_error + min_command;//equation that figures out how fast it should go to adjust
-      //position_adjust = Math.max(Math.min(position_adjust,.15), -.15);  this gets the same thing done in one line
-      if (position_adjust > .1){position_adjust = .1;}
-      if (position_adjust < -.1){position_adjust = -.1;}
-      drive(new Translation2d(position_adjust, 0), 0.0, true, false);
-      
-      return false;
-=======
   //get the distance traveled and direction of each module as a list of SwerveModulePositions
   public SwerveModulePosition[] getPositions(){
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
@@ -277,34 +187,14 @@ public class SwerveSubsystem extends SubsystemBase {
         else{
           leds.setLEDs(255,0,0);
         }
->>>>>>> Stashed changes
+      }
     }
-    else if (roll_error < -6.0)
-    {
-      position_adjust = balance_kp * roll_error - min_command;
-      drive(new Translation2d(position_adjust, 0), 0.0, true, false);
-      if (position_adjust > .3){position_adjust = .3;}
-      if (position_adjust < -.3){position_adjust = -.3;}
-      return false;
-    }
-    else{
-      drive(new Translation2d(0, 0), 0.0, true, false);
-      return true;}
-    
-  }
+  
 
 
 
   @Override
   public void periodic() {
-<<<<<<< Updated upstream
-        swerveOdometry.update(getYaw(), getPositions());
-    field.setRobotPose(getPose());
-
-    SmartDashboard.putNumber("Pigeon Roll",  pigeon.getPitch());
-
-    for (SwerveModule mod : mSwerveMods) {
-=======
     //keep the odometry updated
     swerveOdometry.update(getYaw(), getPositions());
 
@@ -313,18 +203,13 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  pigeon.getYaw());
     
     for (SwerveModule module : swerveModules) {
->>>>>>> Stashed changes
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Integrated", module.getState().angle.getDegrees());
       SmartDashboard.putNumber(
-<<<<<<< Updated upstream
-          "Mod " + mod.moduleNumber + " Velocity", mod.getState().speedMetersPerSecond);
-=======
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
     setLeds(LedMode.TELEOP);
->>>>>>> Stashed changes
   }
 }
 
