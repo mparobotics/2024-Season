@@ -28,12 +28,15 @@ import frc.robot.Constants.SwerveConstants;
 
 public class SwerveSubsystem extends SubsystemBase {
   private final WPI_Pigeon2 pigeon;
+  
 
   private SwerveDriveOdometry swerveOdometry;
   private SwerveModule[] swerveModules;
 
   private Field2d field;
   private CANdle leds = new CANdle(18);
+
+  private double targetDirection = 0;
   public static enum LedMode{
     TELEOP,
     TEST,
@@ -161,10 +164,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
   
   public void spinInPlace(double speed){
-    drive(new Translation2d(0,0),speed * Constants.SwerveConstants.maxAngularVelocity,false);
+    drive(0,0,speed);
   }
   public void spinToTarget(){
-    spinInPlace((pigeon.getYaw()-180)/180);
+    spinInPlace(Math.min((targetDirection-pigeon.getYaw())/50, 0.8));
     
   }
   public RepeatCommand alignToTarget(){
@@ -175,7 +178,7 @@ public class SwerveSubsystem extends SubsystemBase {
       case TELEOP:
         double tx = Math.abs(getTx());
         if(canSeeTarget()){
-          if(tx < 10){
+          if(tx < 2){
             leds.setLEDs(0,255,0);
           }
           else{
@@ -197,10 +200,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     //keep the odometry updated
     swerveOdometry.update(getYaw(), getPositions());
-
+    if(canSeeTarget()){
+      targetDirection = getYaw().getDegrees() - getTx();
+    }
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  pigeon.getYaw());
+    
+    SmartDashboard.putNumber("Target Direction",  targetDirection);
     
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(

@@ -7,6 +7,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.exampleAuto;
@@ -75,7 +76,7 @@ public class RobotContainer {
   
   private void configureBindings() {
     m_XboxController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_SwerveSubsystem.zeroGyro()));
-   
+    m_XboxController.button(Button.kRightBumper.value).whileTrue(m_SwerveSubsystem.alignToTarget());
   }
 
   Pose2d waypoint(double x, double y, double r){
@@ -87,14 +88,17 @@ public class RobotContainer {
     
     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
       waypoint(0,0,0),
-      waypoint(3,0,0)
+      waypoint(1,-1,0),
+      waypoint(2,1,0),
+      waypoint(3,0, 0)
+      
     );
     PathPlannerPath testPath = new PathPlannerPath(
       bezierPoints,
       new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
-      new GoalEndState(0.0, Rotation2d.fromDegrees(0)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+      new GoalEndState(0.0, Rotation2d.fromDegrees(180)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
     );
     
-    return AutoBuilder.followPath(testPath);
+    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(0, 0, 0))) ,AutoBuilder.followPath(testPath));
   }
 }
