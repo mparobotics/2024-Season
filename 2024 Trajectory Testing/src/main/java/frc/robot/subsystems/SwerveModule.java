@@ -5,9 +5,10 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.CANSparkMax.ControlType;
+import com.revrobotics.ControlType;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkMaxPIDController;
+
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import com.ctre.phoenix.sensors.CANCoder;
@@ -61,7 +62,7 @@ public class SwerveModule {
         this.m_angleKD = moduleConstants.angleKD;
         this.m_angleKFF = moduleConstants.angleKFF;
         angleOffset = moduleConstants.angleOffset;
-        //this.?
+        
         /* Angle Encoder Config */
         angleEncoder = new CANCoder(moduleConstants.cancoderID);
         configAngleEncoder();
@@ -88,11 +89,34 @@ public class SwerveModule {
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
     }
+    //modified modulo function that actually works properly with negative numbers.  e.g.  -8 % 6 == -2  but fixedMod(-8,6) = 4
+    double fixedMod(double a, double b){
+        double bad = a % b;
+        return bad + (bad < 0? b: 0);
+    }
+    //for a given target angle, find the closest equivalent angle to the module's current direction
+    //custom optimize function because built-in doesn't work for some reason
+    //see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html for more info
+    SwerveModuleState smolOptimize(SwerveModuleState desiredState, Rotation2d currentAngle){
+        //the module's current direction
+        double current = currentAngle.getDegrees();
+        //the direction you want to drive in
+        double target = desiredState.angle.getDegrees();
+
+        //find the direction that points you in the target direction with the least angle change
+        double error = fixedMod(target - current + 90,180) - 90;
+        //sometimes we can reverse the drive motor to avoid turning 180 degress.
+        //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
+        //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster
+        int reverseSpeed = fixedMod(target - current - 90, 360) > 180? -1: 1;
+
+        double speed = desiredState.speedMetersPerSecond * reverseSpeed;
+        return new SwerveModuleState(speed,Rotation2d.fromDegrees(current + error));
+    }
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
-        // Custom optimize command, since default WPILib optimize assumes continuous controller which
-        // REV supports this now so dont have to worry with rev, but need some funky configs i dont want to do
-        //have to be sad with falcons but thats what you get for giving money to Tony
+
+        //3512's optimize function. might use more ...optimized... version if it works (needs testing)
         desiredState = OnboardModuleState.optimize(desiredState, getState().angle);
         
         setAngle(desiredState);
@@ -101,11 +125,12 @@ public class SwerveModule {
 
     private void setSpeed(SwerveModuleState desiredState, boolean isOpenLoop){
         if(isOpenLoop){
-            //when not taking feedback
+            //control the motor through direct open loop control
             double percentOutput = desiredState.speedMetersPerSecond / Constants.SwerveConstants.maxSpeed;
             driveMotor.set(percentOutput);
         }
         else {
+            //control the motor through PID velocity controller with feedforward
             driveController.setReference(
                 desiredState.speedMetersPerSecond,
                 ControlType.kVelocity,
@@ -116,14 +141,17 @@ public class SwerveModule {
 
 
     private void setAngle(SwerveModuleState desiredState){
-        //Prevent rotating module if speed is less then 1%. Prevents Jittering.
-        //the ? and : are a shorthand for an if-else loop
+        //If we are effectively stopped, then there is no point in rotating the modules.
+        // with zero speed, the target angle will be calculated as zero and the modules would point at zero every time you stop moving
+        //if the speed is less than 1%, don't bother updating the angle
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; 
         
         angleController.setReference(angle.getDegrees(), ControlType.kPosition);
         lastAngle = angle;
     }
-
+    private Rotation2d getAngle(){
+        return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
+    }
 
 
 
@@ -197,9 +225,7 @@ public class SwerveModule {
         driveEncoder.setPosition(0.0);
     }
 
-    private Rotation2d getAngle(){
-        return Rotation2d.fromDegrees(integratedAngleEncoder.getPosition());
-    }
+    
     
 
 

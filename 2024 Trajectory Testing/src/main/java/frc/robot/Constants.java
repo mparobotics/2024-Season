@@ -5,7 +5,12 @@
 package frc.robot;
 
 
-import com.revrobotics.CANSparkMax.IdleMode;
+
+
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
+import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -14,33 +19,29 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.SwerveModuleConstants;
 
-/**
- * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
- * constants. This class should not be used for any other purpose. All constants should be declared
- * globally (i.e. public static). Do not put anything functional in this class.
- *
- * <p>It is advised to statically import this class (or one of its inner classes) wherever the
- * constants are needed, to reduce verbosity.
- */
+
 public final class Constants {
   public static final class SwerveConstants{
     public static final double inputDeadband = .1;
-    public static final int PIGEON_ID = 17; //tochange
+    public static final int PIGEON_ID = 17; 
     public static final boolean invertPigeon = false;
 
     /* Drivetrain Constants */
-    public static final double trackWidth = Units.inchesToMeters(17.5);//to find
-    public static final double wheelBase = Units.inchesToMeters(20.5);//to find
+    public static final double halfTrackWidth = Units.inchesToMeters(17.5) / 2;
+    public static final double halfWheelBase = Units.inchesToMeters(20.5) / 2;
+    public static final double driveBaseRadius =  Math.sqrt(halfWheelBase * halfWheelBase + halfTrackWidth * halfTrackWidth);
+
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     public static final double openLoopRamp = 0.25;
     public static final double closedLoopRamp = 0.0;
 
-    public static final double driveGearRatio = (6.75 / 1.0); // 6.75:1 L2 Mk4 Modules
+    public static final double driveGearRatio = (8.14 / 1.0); // 6.75:1 L2 Mk4 Modules
     //L1 is 8.14:1, L2 is 6.75:1, L3 is 6.12:1, L4 is 5.14:1
     public static final double angleGearRatio = (12.8 / 1.0); // 12.8:1 MK4 SDS Modules
 
+<<<<<<< Updated upstream
     public static final SwerveDriveKinematics swerveKinematics =
     new SwerveDriveKinematics(
         new Translation2d(wheelBase / 2.0, trackWidth / 2.0), //translation 2d locates the swerve module in cords
@@ -51,12 +52,30 @@ public final class Constants {
     //SwerveDrive Kinematics converts between a ChassisSpeeds object and several SwerveModuleState objects, 
     //which contains velocities and angles for each swerve module of a swerve drive robot.
         
+=======
+    //give location of each module to a swerveDriveKinematics relative to robot center in meters
+    public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
+      new Translation2d(halfWheelBase, halfTrackWidth), 
+      new Translation2d(halfWheelBase, -halfTrackWidth),
+      new Translation2d(-halfWheelBase, halfTrackWidth),
+      new Translation2d(-halfWheelBase, -halfTrackWidth)
+    );
+    //Config for PathPlanner. contains trajectory PID constants and other drivebase data
+    public static final HolonomicPathFollowerConfig pathConfig = new HolonomicPathFollowerConfig( 
+      new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
+      new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+      4.5, // Max module speed, in m/s
+      driveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+      new ReplanningConfig() // Default path replanning config. See the API for the options here
+    );
+
+>>>>>>> Stashed changes
     /* Swerve Voltage Compensation */
     public static final double voltageComp = 12.0;
        
     //Swerve Current Limiting for neos
     public static final int angleContinuousCurrentLimit = 20; //limits current draw of turning motor
-    public static final int driveContinuousCurrentLimit = 80; //limits current draw of drive motor
+    public static final int driveContinuousCurrentLimit = 50; //limits current draw of drive motor
   
 
 
@@ -80,7 +99,7 @@ public final class Constants {
 
     /* Swerve Profiling Values */
     public static final double maxSpeed = 9; // meters per second
-    public static final double maxAngularVelocity = 11.5; //what are these units?
+    public static final double maxAngularVelocity = 11.5; //radians per second
 
     /* Neutral Modes */
     public static final IdleMode angleNeutralMode = IdleMode.kBrake;
