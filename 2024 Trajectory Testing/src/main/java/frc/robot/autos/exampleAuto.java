@@ -16,23 +16,44 @@ import frc.robot.Constants;
 import frc.robot.subsystems.SwerveSubsystem;
 import java.util.List;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 public class exampleAuto extends SequentialCommandGroup {
-  public exampleAuto(SwerveSubsystem m_SwerveSubsystem) {
+    Pose2d waypoint(double x, double y, double r){
+        return new Pose2d(x,y, Rotation2d.fromDegrees(r));
+    }
+    public exampleAuto(SwerveSubsystem m_SwerveSubsystem) {
+    List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
+        waypoint(0,0,0),
+        waypoint(3,0,0),
+        waypoint(0,0,0)
+);
+    PathPlannerPath testPath = new PathPlannerPath(
+        bezierPoints,
+        new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+        new GoalEndState(0.0, Rotation2d.fromDegrees(0)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
+);
     TrajectoryConfig config =
         new TrajectoryConfig(
                 Constants.AutoConstants.kMaxSpeedMetersPerSecond,
                 Constants.AutoConstants.kMaxAccelerationMetersPerSecondSquared)
             .setKinematics(Constants.SwerveConstants.swerveKinematics);
 
+    
     // An example trajectory to follow.  All units in meters.
     Trajectory exampleTrajectory =
         TrajectoryGenerator.generateTrajectory(
+            
             // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these  interior waypoints
-            List.of(new Translation2d(3, 0)), 
+            List.of(waypoint(0, 0, 0),
             // End 1.5 meters straight ahead of where we started, facing forward
-            new Pose2d(1.5, 0, new Rotation2d(0)),
+            waypoint(3,0,0),
+
+            waypoint(0,0,0)
+            ),
             config);
 
     var thetaController =
@@ -55,7 +76,6 @@ public class exampleAuto extends SequentialCommandGroup {
             m_SwerveSubsystem);
 
     addCommands(
-        new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(exampleTrajectory.getInitialPose())),
-        swerveControllerCommand);
+        AutoBuilder.followPath(testPath));
   }
 }

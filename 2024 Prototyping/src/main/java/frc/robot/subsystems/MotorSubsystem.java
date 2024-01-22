@@ -27,15 +27,15 @@ public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
   //private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
-  private final CANSparkMax testMotor = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkFlex intakeMotor = new CANSparkFlex(12, MotorType.kBrushless);
+  private final CANSparkFlex shootMotor = new CANSparkFlex(11, MotorType.kBrushless);
 
 
 
   
   private final ColorSensorV3 colorSensor = new ColorSensorV3(Port.kOnboard);
   
-  private double led_percent = 0;
-  private double bar_offset = 0;
+  
 
   public double shootSpeed = 1;
   
@@ -45,7 +45,7 @@ public class MotorSubsystem extends SubsystemBase {
   
 
   //get the pid controller from the motor
-  private SparkPIDController pid = testMotor.getPIDController();
+  private SparkPIDController pid = intakeMotor.getPIDController();
 
   /** Creates a new MotorSubsystem. */
   public MotorSubsystem() {
@@ -68,23 +68,26 @@ public class MotorSubsystem extends SubsystemBase {
   double applyDeadband(double value, double range){
     return (Math.abs(value) < range)? 0: value;
   }
-  void runMotors(double speed){
+  void runIntakeMotor(double speed){
     double inputSpeed = applyDeadband(speed, 0.1);
-    testMotor.set(inputSpeed); 
+    intakeMotor.set(inputSpeed); 
+    //testMotorR.set(inputSpeed);
+  }
+  void runShootMotor(double speed){
+    double inputSpeed = applyDeadband(speed, 0.1);
+    shootMotor.set(inputSpeed); 
     //testMotorR.set(inputSpeed);
   }
   //A command that sets the motor to a given speed
-  public CommandBase setMotor(DoubleSupplier speed){
+  public CommandBase IntakeShoot(DoubleSupplier ispeed, DoubleSupplier sspeed){
     return runOnce(() -> {
       
-      if (colorSensor.getProximity() > 300){
-        runMotors(0);
-      } else {
-        runMotors(speed.getAsDouble());
-      }
+      runIntakeMotor(ispeed.getAsDouble());
+      runShootMotor(sspeed.getAsDouble());
     
     });
   }
+ 
   
 
 

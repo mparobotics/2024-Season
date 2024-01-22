@@ -79,6 +79,7 @@ public class RobotContainer {
     m_XboxController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_SwerveSubsystem.zeroGyro()));
     m_XboxController.button(Button.kB.value).onTrue(new InstantCommand(() -> m_SwerveSubsystem.setWheelsToX()));
    
+    m_XboxController.button(Button.kRightBumper.value).whileTrue(m_SwerveSubsystem.alignToTarget());
   }
 
   /**
