@@ -20,7 +20,7 @@ public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
   private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
-  private final CANSparkMax testMotorR = new CANSparkMax(12, MotorType.kBrushless);
+  private final CANSparkFlex testMotorR = new CANSparkFlex(12, MotorType.kBrushless);
   
  
   public double shootSpeed = 1;
