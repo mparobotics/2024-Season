@@ -5,11 +5,11 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
+import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
-import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.SparkPIDController;
 
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -46,8 +46,8 @@ public class SwerveModule {
   
     private CANCoder angleEncoder;
 
-    private final SparkMaxPIDController driveController;
-    private final SparkMaxPIDController angleController;
+    private final SparkPIDController driveController;
+    private final SparkPIDController angleController;
 
    private final SimpleMotorFeedforward feedforward =
    new SimpleMotorFeedforward(
