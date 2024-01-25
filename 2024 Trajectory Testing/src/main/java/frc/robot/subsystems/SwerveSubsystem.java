@@ -12,6 +12,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.Odometry;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
@@ -111,7 +112,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     //set desired speed and direction for all 4 modules
     for (SwerveModule module : swerveModules) {
-      module.setDesiredState(swerveModuleStates[module.moduleNumber], true);
+      module.setDesiredState(swerveModuleStates[module.moduleNumber], false);
     }
   }
 
@@ -217,6 +218,9 @@ public class SwerveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
     setLeds(LedMode.TELEOP);
+
+    SmartDashboard.putNumber("Pose X",  swerveOdometry.getPoseMeters().getX());
+    SmartDashboard.putNumber("Pose Direction",  swerveOdometry.getPoseMeters().getRotation().getDegrees());
   }
 }
 

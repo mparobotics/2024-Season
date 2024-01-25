@@ -50,8 +50,8 @@ public final class Constants {
     );
     //Config for PathPlanner. contains trajectory PID constants and other drivebase data
     public static final HolonomicPathFollowerConfig pathConfig = new HolonomicPathFollowerConfig( 
-      new PIDConstants(5.0, 0.0, 0.0), // Translation PID constants
-      new PIDConstants(5.0, 0.0, 0.0), // Rotation PID constants
+      new PIDConstants(5.0, 0.00001, 0.0), // Translation PID constants
+      new PIDConstants(5.0, 0.0005, 0.001), // Rotation PID constants
       4.5, // Max module speed, in m/s
       driveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
       new ReplanningConfig() // Default path replanning config. See the API for the options here
@@ -179,21 +179,6 @@ public final class Constants {
 
   }
 
-  public static final class AutoConstants {
-    public static final double kMaxSpeedMetersPerSecond = 1.75;
-    public static final double kMaxAccelerationMetersPerSecondSquared = 2;
-    public static final double kMaxAngularSpeedRadiansPerSecond = Math.PI;
-    public static final double kMaxAngularSpeedRadiansPerSecondSquared = Math.PI;
-
-    public static final double kPXController = 1;
-    public static final double kPYController = 1;
-    public static final double kPThetaController = 1;
-
-    // Constraint for the motion profilied robot angle controller
-    public static final TrapezoidProfile.Constraints kThetaControllerConstraints =
-        new TrapezoidProfile.Constraints(
-            kMaxAngularSpeedRadiansPerSecond, kMaxAngularSpeedRadiansPerSecondSquared);
-  }
 
 
 

@@ -88,17 +88,15 @@ public class RobotContainer {
     
     List<Translation2d> bezierPoints = PathPlannerPath.bezierFromPoses(
       waypoint(0,0,0),
-      waypoint(1,-1,0),
-      waypoint(2,1,0),
-      waypoint(3,0, 0)
+      waypoint(3,0,0)
       
     );
     PathPlannerPath testPath = new PathPlannerPath(
       bezierPoints,
-      new PathConstraints(3.0, 3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
+      new PathConstraints(4.0,3.0, 2 * Math.PI, 4 * Math.PI), // The constraints for this path. If using a differential drivetrain, the angular constraints have no effect.
       new GoalEndState(0.0, Rotation2d.fromDegrees(180)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
     );
-    
-    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(0, 0, 0))) ,AutoBuilder.followPath(testPath));
+    PathPlannerPath drawnPath = PathPlannerPath.fromPathFile("testpath01");
+    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(0, 0, 0))) ,AutoBuilder.followPath(drawnPath));
   }
 }
