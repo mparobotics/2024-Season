@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.autos.exampleAuto;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class RobotContainer {
 
   /* Subsystems */
   private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem();
-
+  private final ArmSubsystem m_ArmSubsystem = new ArmSubsystem();
 
 
   
@@ -75,6 +76,8 @@ public class RobotContainer {
 
   
   private void configureBindings() {
+    m_XboxController.button(Button.kA.value).onTrue(m_ArmSubsystem.upPosition());
+    m_XboxController.button(Button.kB.value).onTrue(m_ArmSubsystem.downPosition());
     m_XboxController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_SwerveSubsystem.zeroGyro()));
     m_XboxController.button(Button.kRightBumper.value).whileTrue(m_SwerveSubsystem.alignToTarget());
   }
