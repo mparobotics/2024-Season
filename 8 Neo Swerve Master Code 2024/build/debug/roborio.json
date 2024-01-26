@@ -1,0 +1,9 @@
+[
+  {
+    "type": "java",
+    "name": "frcJava",
+    "port": 8349,
+    "target": "10.39.26.2",
+    "project": "8 Neo Swerve Master Code 2024"
+  }
+]
