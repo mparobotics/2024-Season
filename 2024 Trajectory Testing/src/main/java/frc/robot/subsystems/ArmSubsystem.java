@@ -57,6 +57,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    //this code allows values to be changed from SmartDashboard
     armDown = SmartDashboard.getNumber("Arm Down", 0);
     armUp = SmartDashboard.getNumber("Arm Up", 0);
 
