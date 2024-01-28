@@ -8,6 +8,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.sensors.WPI_Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 
+import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,21 +19,24 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
+
 
 public class SwerveSubsystem extends SubsystemBase {
   private final WPI_Pigeon2 pigeon;
   
 
   private SwerveDriveOdometry swerveOdometry;
+  private SwerveDrivePoseEstimator odometry;
   private SwerveModule[] swerveModules;
 
+  private Vision vision = new Vision();
   private Field2d field;
   private CANdle leds = new CANdle(18);
 
@@ -41,34 +45,26 @@ public class SwerveSubsystem extends SubsystemBase {
     TELEOP,
     TEST,
   }
-  NetworkTable getLimelight(){
-    return NetworkTableInstance.getDefault().getTable("limelight");
-  }
-  boolean canSeeTarget(){
-    return getLimelight().getEntry("tv").getDouble(0) == 1;
-  }
-  double getTx(){
-    return getLimelight().getEntry("tx").getDouble(0);
-  }
+  
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
     //instantiates new pigeon gyro, wipes it, and zeros it
-    pigeon = new WPI_Pigeon2(Constants.SwerveConstants.PIGEON_ID);
+    pigeon = new WPI_Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.configFactoryDefault();
     zeroGyro();
 
     //list of all four swerve modules
     swerveModules =
     new SwerveModule[] {
-      new SwerveModule(0, Constants.SwerveConstants.Mod0.constants),
-      new SwerveModule(1, Constants.SwerveConstants.Mod1.constants),
-      new SwerveModule(2, Constants.SwerveConstants.Mod2.constants),
-      new SwerveModule(3, Constants.SwerveConstants.Mod3.constants)
+      new SwerveModule(0, SwerveConstants.Mod0.constants),
+      new SwerveModule(1, SwerveConstants.Mod1.constants),
+      new SwerveModule(2, SwerveConstants.Mod2.constants),
+      new SwerveModule(3, SwerveConstants.Mod3.constants)
     };
 
     //odometery will track where the robot is on the field
     swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, getYaw(), getPositions());
-
+    odometry = new SwerveDrivePoseEstimator(SwerveConstants.swerveKinematics, getYaw(), getPositions(),new Pose2d(0,0,Rotation2d.fromDegrees(0)));
     //display a (outdated) field on SmartDashboard
     field = new Field2d();
     SmartDashboard.putData("Field", field);
@@ -77,7 +73,7 @@ public class SwerveSubsystem extends SubsystemBase {
       this::getPose,
       this::resetOdometry,
       this::getRobotRelativeSpeed,
-      this::driveFromChassisSpeeds,
+      this::closedLoopDrive,
       SwerveConstants.pathConfig,
       () -> false,
       this
@@ -99,11 +95,15 @@ public class SwerveSubsystem extends SubsystemBase {
               //if you want field oriented driving, convert the desired speeds to robot oriented
               ? ChassisSpeeds.fromFieldRelativeSpeeds( translation.getX(), translation.getY(), rotation, getYaw())
               //if you want robot oriented driving, just generate the ChassisSpeeds
-              : new ChassisSpeeds(translation.getX(), translation.getY(), rotation));
+              : new ChassisSpeeds(translation.getX(), translation.getY(), rotation)
+              , true);
     
   }
+  public void closedLoopDrive(ChassisSpeeds speeds){
+    driveFromChassisSpeeds(speeds, false);
+  }
   //drive the robot at a desired ChassisSpeeds. this is the core drive function that calculates the speed and direction of each module
-  public void driveFromChassisSpeeds(ChassisSpeeds speeds){
+  public void driveFromChassisSpeeds(ChassisSpeeds speeds, boolean isOpenLoop){
     //get the target speed and direction for each module
     SwerveModuleState[] swerveModuleStates = SwerveConstants.swerveKinematics.toSwerveModuleStates(speeds);
     //if any module is asked to drive at more than 100% speed, then scale ALL 4 speeds until the max speed of any module is 100%
@@ -111,7 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     //set desired speed and direction for all 4 modules
     for (SwerveModule module : swerveModules) {
-      module.setDesiredState(swerveModuleStates[module.moduleNumber], false);
+      module.setDesiredState(swerveModuleStates[module.moduleNumber], isOpenLoop);
     }
   }
 
@@ -121,7 +121,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
   //reset the pose to a given pose
   public void resetOdometry(Pose2d pose) {
-    swerveOdometry.resetPosition(getYaw(), getPositions(), pose);
+    odometry.resetPosition(getYaw(), getPositions(), pose);
   }
   //set the current heading to be zero degrees
   public void zeroGyro() {
@@ -130,7 +130,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
   //get the robot's estimated location (in meters)
   public Pose2d getPose() {
-    return swerveOdometry.getPoseMeters();
+    return odometry.getEstimatedPosition();
   }
   //get the distance traveled and direction of each module as a list of SwerveModulePositions
   public SwerveModulePosition[] getPositions(){
@@ -173,11 +173,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public RepeatCommand alignToTarget(){
     return(new RepeatCommand(runOnce(() -> spinToTarget())));
   }
+  public void snapToTargetPose(Pose2d targetPose){
+    
+  }
   public void setLeds(LedMode mode){
     switch (mode){
       case TELEOP:
-        double tx = Math.abs(getTx());
-        if(canSeeTarget()){
+        double tx = Math.abs(vision.getTx());
+        if(vision.canSeeTarget()){
           if(tx < 2){
             leds.setLEDs(0,255,0);
           }
@@ -198,10 +201,14 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    //keep the odometry updated
-    swerveOdometry.update(getYaw(), getPositions());
-    if(canSeeTarget()){
-      targetDirection = getYaw().getDegrees() - getTx();
+    
+    odometry.update(getYaw(), getPositions());
+    if(vision.canSeeTarget()){
+      targetDirection = getYaw().getDegrees() - vision.getTx();
+    }
+    
+    if(vision.canSeeTarget() && vision.getTargetID() == 5){
+      odometry.addVisionMeasurement(vision.getBotPose(),vision.getLatency());
     }
     //display estimated position on the driver station
     field.setRobotPose(getPose());
@@ -218,8 +225,7 @@ public class SwerveSubsystem extends SubsystemBase {
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
     setLeds(LedMode.TELEOP);
 
-    SmartDashboard.putNumber("Pose X",  swerveOdometry.getPoseMeters().getX());
-    SmartDashboard.putNumber("Pose Direction",  swerveOdometry.getPoseMeters().getRotation().getDegrees());
+    
   }
 }
 

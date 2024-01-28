@@ -10,8 +10,8 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.autos.exampleAuto;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.LEDController;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.List;
@@ -54,7 +54,7 @@ public class RobotContainer {
 
   /* Subsystems */
   private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem();
-
+  private final LEDController m_leds = new LEDController();
 
 
   
