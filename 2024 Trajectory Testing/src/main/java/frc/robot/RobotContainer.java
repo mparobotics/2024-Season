@@ -54,7 +54,7 @@ public class RobotContainer {
 
   /* Subsystems */
   private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem();
-  private final LEDController m_leds = new LEDController();
+  final LEDController m_leds = new LEDController();
 
 
   
@@ -97,6 +97,7 @@ public class RobotContainer {
       new GoalEndState(0.0, Rotation2d.fromDegrees(180)) // Goal end state. You can set a holonomic rotation here. If using a differential drivetrain, the rotation will have no effect.
     );
     PathPlannerPath drawnPath = PathPlannerPath.fromPathFile("testpath01");
+    AutoBuilder.followPath(testPath);
     return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(0, 0, 0))) ,AutoBuilder.followPath(drawnPath));
   }
 }

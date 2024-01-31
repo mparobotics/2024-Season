@@ -5,7 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix.led.CANdle;
-import com.ctre.phoenix.sensors.WPI_Pigeon2;
+import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
@@ -14,12 +15,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
-import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.Timer;
+
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.RepeatCommand;
@@ -29,10 +27,10 @@ import frc.robot.Constants.SwerveConstants;
 
 
 public class SwerveSubsystem extends SubsystemBase {
-  private final WPI_Pigeon2 pigeon;
+  private final Pigeon2 pigeon;
   
 
-  private SwerveDriveOdometry swerveOdometry;
+  
   private SwerveDrivePoseEstimator odometry;
   private SwerveModule[] swerveModules;
 
@@ -49,8 +47,8 @@ public class SwerveSubsystem extends SubsystemBase {
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
     //instantiates new pigeon gyro, wipes it, and zeros it
-    pigeon = new WPI_Pigeon2(SwerveConstants.PIGEON_ID);
-    pigeon.configFactoryDefault();
+    pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
+    pigeon.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
 
     //list of all four swerve modules
@@ -62,10 +60,9 @@ public class SwerveSubsystem extends SubsystemBase {
       new SwerveModule(3, SwerveConstants.Mod3.constants)
     };
 
-    //odometery will track where the robot is on the field
-    swerveOdometry = new SwerveDriveOdometry(Constants.SwerveConstants.swerveKinematics, getYaw(), getPositions());
+    
     odometry = new SwerveDrivePoseEstimator(SwerveConstants.swerveKinematics, getYaw(), getPositions(),new Pose2d(0,0,Rotation2d.fromDegrees(0)));
-    //display a (outdated) field on SmartDashboard
+    
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
@@ -81,7 +78,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
 
-  //Simple field oriented drive speeds range from -1 (full backwards) to 1 (full forwards)
+  //Simple field oriented drive. speeds range from -1 (full backwards) to 1 (full forwards)
   public void drive(double xSpeed, double ySpeed, double spinSpeed){
     drive(new Translation2d(xSpeed,ySpeed).times(SwerveConstants.maxSpeed), spinSpeed * SwerveConstants.maxAngularVelocity, true);
   }
@@ -95,7 +92,8 @@ public class SwerveSubsystem extends SubsystemBase {
               //if you want field oriented driving, convert the desired speeds to robot oriented
               ? ChassisSpeeds.fromFieldRelativeSpeeds( translation.getX(), translation.getY(), rotation, getYaw())
               //if you want robot oriented driving, just generate the ChassisSpeeds
-              : new ChassisSpeeds(translation.getX(), translation.getY(), rotation)
+              
+              :new ChassisSpeeds(translation.getX(), translation.getY(), rotation)
               , true);
     
   }
@@ -154,10 +152,14 @@ public class SwerveSubsystem extends SubsystemBase {
     return SwerveConstants.swerveKinematics.toChassisSpeeds(states[0],states[1],states[2],states[3]);
   }
   //get the direction of the robot relative to its "zero" angle. this is usually pointing away from the driver station
-  public Rotation2d getYaw() {
+  public double getYawAsDouble(){
+    double yaw = pigeon.getAngle();
     return (Constants.SwerveConstants.invertPigeon)
-      ? Rotation2d.fromDegrees(360 - pigeon.getYaw())
-      : Rotation2d.fromDegrees(pigeon.getYaw());
+      ? 360 - yaw 
+      : yaw;
+  }
+  public Rotation2d getYaw() {
+    return Rotation2d.fromDegrees(getYawAsDouble());
   }
 
   
@@ -167,7 +169,7 @@ public class SwerveSubsystem extends SubsystemBase {
     drive(0,0,speed);
   }
   public void spinToTarget(){
-    spinInPlace(Math.min((targetDirection-pigeon.getYaw())/50, 0.8));
+    spinInPlace(Math.min((targetDirection-getYawAsDouble())/50, 0.8));
     
   }
   public RepeatCommand alignToTarget(){
@@ -193,8 +195,10 @@ public class SwerveSubsystem extends SubsystemBase {
         else{
           leds.setLEDs(255,0,0);
         }
-      }
+      case TEST:
+        leds.setLEDs(0,128,128);
     }
+  }
   
 
 
@@ -212,7 +216,7 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     //display estimated position on the driver station
     field.setRobotPose(getPose());
-    SmartDashboard.putNumber("Pigeon Direction",  pigeon.getYaw());
+    SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
     SmartDashboard.putNumber("Target Direction",  targetDirection);
     
