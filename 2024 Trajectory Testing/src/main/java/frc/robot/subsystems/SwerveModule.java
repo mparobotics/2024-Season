@@ -4,6 +4,9 @@
 
 package frc.robot.subsystems;
 
+
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
@@ -16,7 +19,6 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
 import frc.lib.CANSparkMaxUtil;
 import frc.lib.OnboardModuleState;
-import frc.lib.SwerveCANCoder;
 import frc.lib.SwerveModuleConstants;
 import frc.lib.CANSparkMaxUtil.Usage;
 import frc.robot.Constants;
@@ -39,7 +41,7 @@ public class SwerveModule {
     private RelativeEncoder driveEncoder;
     private RelativeEncoder integratedAngleEncoder;
   
-    private SwerveCANCoder angleEncoder;
+    private CANcoder angleEncoder;
 
     private final SparkPIDController driveController;
     private final SparkPIDController angleController;
@@ -52,16 +54,18 @@ public class SwerveModule {
 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
-        this.m_angleKP = moduleConstants.angleKP;
-        this.m_angleKI = moduleConstants.angleKI;
-        this.m_angleKD = moduleConstants.angleKD;
-        this.m_angleKFF = moduleConstants.angleKFF;
+        this.m_angleKP = SwerveConstants.angleKP;
+        this.m_angleKI = SwerveConstants.angleKI;
+        this.m_angleKD = SwerveConstants.angleKD;
+        this.m_angleKFF = SwerveConstants.angleKFF;
         angleOffset = moduleConstants.angleOffset;
         
         /* Angle Encoder Config */
-        angleEncoder = new SwerveCANCoder(moduleConstants.cancoderID);
+        angleEncoder = new CANcoder(moduleConstants.cancoderID);
         
+        angleEncoder.getConfigurator().apply(new CANcoderConfiguration());
 
+        angleEncoder.getAbsolutePosition().setUpdateFrequency(1);
         /* Angle Motor Config */
         angleMotor = new CANSparkMax(moduleConstants.angleMotorID, MotorType.kBrushless);
         integratedAngleEncoder = angleMotor.getEncoder();
@@ -157,7 +161,7 @@ public class SwerveModule {
       }
     
     public Rotation2d getCanCoder(){
-        return Rotation2d.fromDegrees(angleEncoder.getPosition0to360());
+        return Rotation2d.fromRotations(angleEncoder.getAbsolutePosition().getValue());
     }
 
     private void configAngleMotor(){

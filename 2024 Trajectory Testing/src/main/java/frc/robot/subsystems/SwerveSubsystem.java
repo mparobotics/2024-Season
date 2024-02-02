@@ -155,7 +155,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public double getYawAsDouble(){
     double yaw = pigeon.getAngle();
     return (Constants.SwerveConstants.invertPigeon)
-      ? 360 - yaw 
+      ? 360 - yaw
       : yaw;
   }
   public Rotation2d getYaw() {

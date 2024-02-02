@@ -98,6 +98,6 @@ public class RobotContainer {
     );
     PathPlannerPath drawnPath = PathPlannerPath.fromPathFile("testpath01");
     AutoBuilder.followPath(testPath);
-    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(0, 0, 0))) ,AutoBuilder.followPath(drawnPath));
+    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(2, 2, 0))) , AutoBuilder.followPath(drawnPath));
   }
 }
