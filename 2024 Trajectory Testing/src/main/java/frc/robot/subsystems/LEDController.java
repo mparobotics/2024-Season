@@ -15,13 +15,29 @@ public class LEDController extends SubsystemBase{
     private AddressableLED leds = new AddressableLED(0);
     private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
 
+    private LedPattern currentPattern;
+    public enum LedPattern{
+        TEST,
+        TELEOP_DRIVING,
+        HAS_NOTE,
+
+        PREPARING_SHOOT,
+        PREPARING_AMP,
+        SHOOTING,
+        AMP,
+
+
+    }
     public LEDController(){
         leds.setLength(led_count);
         leds.start();
         
     }
+    public void setPatternMode(LedPattern mode){
+        currentPattern = mode;
+    }
     public void green(){
-        for(int i = 0; i < led_count; i++){
+        for(var i = 0; i < led_count; i++){
             buffer.setRGB(i,0,255,0);
         }
     }
@@ -29,6 +45,25 @@ public class LEDController extends SubsystemBase{
     @Override
     
     public void periodic(){
+        switch (currentPattern){
+            case TEST:
+
+            case TELEOP_DRIVING:
+
+            case HAS_NOTE:
+
+            case PREPARING_AMP:
+            case PREPARING_SHOOT:
+
+            case AMP:
+
+            case SHOOTING:
+
+          
+
+             
+
+        }
         green();
         leds.setData(buffer);
     }

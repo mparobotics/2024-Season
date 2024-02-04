@@ -38,6 +38,12 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getShooterWheelSpeed(){
     return shooterEncoder.getVelocity();
   }
+  public void setBeltSpeed(double speed){
+    beltMotor.set(speed);
+  }
+  public void setShooterSpeed(double speed){
+    beltMotor.set(speed);
+  }
   public void setTargetShooterSpeed(double rotationsPerSec){
     shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity);
   }

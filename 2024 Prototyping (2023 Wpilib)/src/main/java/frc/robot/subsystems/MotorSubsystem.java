@@ -4,68 +4,74 @@
 
 package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
-import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.SparkPIDController;
-import com.revrobotics.CANSparkBase.ControlType;
+import com.revrobotics.RelativeEncoder;
+
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import com.ctre.phoenix.sensors.WPI_Pigeon2;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color8Bit;
+
 
 //A Subsystem to control a single NEO motor
 public class MotorSubsystem extends SubsystemBase {
 
   //Create a SparkMAX motor controller
-  private final CANSparkFlex testMotorL = new CANSparkFlex(11, MotorType.kBrushless);
-  private final CANSparkFlex testMotorR = new CANSparkFlex(12, MotorType.kBrushless);
+  private final CANSparkMax testMotor = new CANSparkMax(53, MotorType.kBrushless);
+  private final RelativeEncoder encoder = testMotor.getEncoder();
   
+  private final int led_count = 60;
+  private double offset = 0;
+  private final AddressableLED leds = new AddressableLED(0);
+  private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
+
+  private final DigitalInput beamBreak = new DigitalInput(0);
+  
+  
+
  
-  public double shootSpeed = 1;
 
-  //Sets up the PigeonIMU
-  public WPI_Pigeon2 testPigeon = new WPI_Pigeon2(1);
-
-  //get the pid controller from the motor
-  private  SparkPIDController pid = testMotorL.getPIDController();
+  
 
   /** Creates a new MotorSubsystem. */
   public MotorSubsystem() {
-    //set PID values
-    pid.setP(1);
-    pid.setI(0);
-    pid.setD(0);
-
-    //inverts right motor
-    testMotorR.setInverted(true);
-
-
-    SmartDashboard.putNumber("Shooting Speed", shootSpeed);
-
-
+    leds.setLength(led_count);
+    leds.start();
+    
+    
     
   }
   //A command that sets the motor to a given speed
   public CommandBase setMotor(DoubleSupplier speed){
-    return runOnce(() -> {testMotorL.set(speed.getAsDouble()); testMotorR.set(speed.getAsDouble());});
+    return runOnce(() -> {testMotor.set(speed.getAsDouble()); });
   }
 
-  //A command that sets the motor's setpoint to a specified angle and uses PID position control to get the motor to the target direction
-  public CommandBase setPositionPID(DoubleSupplier position){
-    return runOnce(() -> pid.setReference(position.getAsDouble(),ControlType.kPosition));
-  }
-
-  public CommandBase shoot(){
-    double shootSpeed = SmartDashboard.getNumber("Shooting Speed", 0);
-    return runOnce(() -> {testMotorL.set(shootSpeed); testMotorR.set(-shootSpeed);});
-  }
-
-  
+  double fixedMod(double a, double b){
+    double bad = a % b;
+    return bad + (bad < 0? b: 0);
+}
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("Pigeon Roll", testPigeon.getRoll());
+    offset += encoder.getVelocity()/5500;
+    if(beamBreak.get()){
+      for(var i = 0; i < led_count; i++){
+        buffer.setRGB(i,0,0,(int)(64 * fixedMod(i + offset,12)/12));
+      }
+    }
+    else{
+      for(var i = 0; i < led_count; i++){
+        buffer.setRGB(i,(int)(64 * fixedMod(i + offset,12)/12),0,0);
+      }
+    }
+    
+    
+    leds.setData(buffer);
+    
+    
   }
 }

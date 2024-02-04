@@ -88,30 +88,7 @@ public class SwerveModule {
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
     }
-    //modified modulo function that actually works properly with negative numbers.  e.g.  -8 % 6 == -2  but fixedMod(-8,6) = 4
-    double fixedMod(double a, double b){
-        double bad = a % b;
-        return bad + (bad < 0? b: 0);
-    }
-    //for a given target angle, find the closest equivalent angle to the module's current direction
-    //custom optimize function because built-in doesn't work for some reason
-    //see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html for more info
-    SwerveModuleState smolOptimize(SwerveModuleState desiredState, Rotation2d currentAngle){
-        //the module's current direction
-        double current = currentAngle.getDegrees();
-        //the direction you want to drive in
-        double target = desiredState.angle.getDegrees();
-
-        //find the direction that points you in the target direction with the least angle change
-        double error = fixedMod(target - current + 90,180) - 90;
-        //sometimes we can reverse the drive motor to avoid turning 180 degress.
-        //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
-        //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster
-        int reverseSpeed = fixedMod(target - current - 90, 360) > 180? -1: 1;
-
-        double speed = desiredState.speedMetersPerSecond * reverseSpeed;
-        return new SwerveModuleState(speed,Rotation2d.fromDegrees(current + error));
-    }
+    
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
