@@ -49,6 +49,13 @@ public class ArmSubsystemTalon extends SubsystemBase {
     SmartDashboard.putNumber("kI", m_armKI);
     SmartDashboard.putNumber("kD", m_armKD);
 
+    PIDconfig.kP = m_armKP;
+    PIDconfig.kI = m_armKI;
+    PIDconfig.kD = m_armKD;
+    PIDconfig.kG = m_armKG;
+    PIDconfig.kV = m_armKV;
+    PIDconfig.kS = m_armKS;
+    PIDconfig.kA = m_armKA;
 
     armMotorR.getConfigurator().apply(PIDconfig);
     armMotorR.getConfigurator().apply(MMconfig);
