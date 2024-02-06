@@ -13,7 +13,6 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -29,15 +28,13 @@ public class TeleopSwerve extends Command {
   private BooleanSupplier m_robotCentricSupplier, m_isAmpScoringSupplier, m_isSpeakerScoringSupplier;
 
 
-  private TrapezoidProfile.Constraints translationConstraints = new TrapezoidProfile.Constraints(0, 0); 
-  private TrapezoidProfile.Constraints rotationConstraints = new TrapezoidProfile.Constraints(0,0);
 
-  private ProfiledPIDController xController = new ProfiledPIDController(0, 0, 0, translationConstraints);
-  private ProfiledPIDController yController = new ProfiledPIDController(0, 0, 0, translationConstraints);
-  private ProfiledPIDController angleController = new ProfiledPIDController(0, 0, 0, rotationConstraints);
+  private ProfiledPIDController xController = new ProfiledPIDController(0, 0, 0, SwerveConstants.autoAlignXYConstraints);
+  private ProfiledPIDController yController = new ProfiledPIDController(0, 0, 0, SwerveConstants.autoAlignXYConstraints);
+  private ProfiledPIDController angleController = new ProfiledPIDController(0, 0, 0, SwerveConstants.autoAlignRConstraints);
 
 
-  private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); //can only change by 3 m/s in the span of 1 s
+  private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
   private SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
   /** Creates a new TeleopSwerve. */
@@ -75,7 +72,7 @@ public class TeleopSwerve extends Command {
             MathUtil.applyDeadband(m_rotationSupplier.getAsDouble(), SwerveConstants.inputDeadband));
     boolean isFieldOriented = !m_robotCentricSupplier.getAsBoolean();
     boolean isAmpScoring = m_isAmpScoringSupplier.getAsBoolean();
-    boolean isSpeakerScoring = m_isAmpScoringSupplier.getAsBoolean();
+    boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
 
     boolean isRedAlliance = DriverStation.getAlliance().get() == Alliance.Red;
     Pose2d currentPose = m_SwerveSubsystem.getPose();

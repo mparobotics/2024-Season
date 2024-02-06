@@ -8,12 +8,16 @@ import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicDutyCycle;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.revrobotics.AbsoluteEncoder;
+
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardLayout;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ArmConstants;
 
@@ -22,7 +26,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motorR = new TalonFX(ArmConstants.RmotorID);
   private final TalonFX motorL = new TalonFX(ArmConstants.LmotorID);
   
-
+  
   //configurations for the motors and control loop
   private MotionMagicConfigs MMconfig = new MotionMagicConfigs();
   private SoftwareLimitSwitchConfigs limitConfig = new SoftwareLimitSwitchConfigs();
@@ -69,17 +73,24 @@ public class ArmSubsystem extends SubsystemBase {
   }
   //move the arm to the desired position
   public void setTarget(double degrees){
-    motorR.setControl(new MotionMagicDutyCycle(Units.degreesToRotations(degrees)));
+    motorR.setControl(new MotionMagicVoltage(Units.degreesToRotations(degrees)));
     setpoint = degrees;
   }
   public double getArmPosition(){
     return 0;
   }
   public boolean isAtTarget(){
-    return setpoint - getArmPosition() < 0.01;
+    return Math.abs(setpoint - getArmPosition()) < 0.01;
   }
+  
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    
+    ShuffleboardLayout armLayout = Shuffleboard.getTab("Testing").getLayout("Arm");
+    armLayout.add("Set Arm Motor Speed",new InstantCommand(() -> motorR.set(SmartDashboard.getNumber("setValue", 0))));
+    
+    armLayout.add("Set Arm Setpoint",new InstantCommand(() -> motorR.set(SmartDashboard.getNumber("setValue", 0))));
   }
 }

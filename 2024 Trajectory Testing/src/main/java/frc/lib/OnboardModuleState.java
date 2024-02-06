@@ -10,7 +10,7 @@ public class OnboardModuleState {
     return bad + (bad < 0? b: 0);
   }
   public static double smolOptimize180(double currentValue, double targetValue){
-    return currentValue + fixedMod(targetValue - currentValue -180, 360) + 180;
+    return currentValue + fixedMod(targetValue - currentValue -180, 360) - 180;
   }
   //for a given target angle, find the closest equivalent angle to the module's current direction
   //custom optimize function because built-in doesn't work for some reason
@@ -22,11 +22,22 @@ public class OnboardModuleState {
     double target = desiredState.angle.getDegrees();
 
     //find the direction that points you in the target direction with the least angle change
-    double error = fixedMod(target - current + 90,180) - 90;
+    double error = smolOptimize180(current, target);
     //sometimes we can reverse the drive motor to avoid turning 180 degress.
     //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
     //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster
-    int reverseSpeed = fixedMod(target - current - 90, 360) > 180? -1: 1;
+
+    int reverseSpeed = 1;
+    if(error > 90){
+      error -= 180;
+      reverseSpeed = -1;
+    }
+    if(error < -90){
+      error = 180;
+      reverseSpeed = -1;
+    }
+
+    
 
     double speed = desiredState.speedMetersPerSecond * reverseSpeed;
     return new SwerveModuleState(speed,Rotation2d.fromDegrees(current + error));

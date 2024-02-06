@@ -9,6 +9,8 @@ import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -44,6 +46,9 @@ public class Autos {
             () -> (DriverStation.getAlliance().get() ==  Alliance.Red),
             drive
         );
+    }
+    Pose2d waypoint(double x, double y, double r){
+        return new Pose2d(x,y, Rotation2d.fromDegrees(r));
     }
     
     public static SequentialCommandGroup getAuto(AutoChoices auto){

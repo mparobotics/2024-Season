@@ -19,8 +19,8 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
 
   }
-  public void runIntake(){
-    intakeMotor.set(0);
+  public void runIntake(double speed){
+    intakeMotor.set(speed);
   }
   public boolean isNoteInIntake(){
     return beamSensor.get();

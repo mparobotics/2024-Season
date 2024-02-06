@@ -22,6 +22,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
   private final SparkPIDController shooterSpeedController = shooterMotor.getPIDController();
+
+  private double setpoint;
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     beltMotor.setIdleMode(IdleMode.kBrake);
@@ -38,6 +40,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public double getShooterWheelSpeed(){
     return shooterEncoder.getVelocity();
   }
+  public boolean isAtShootingSpeed(){
+    return(Math.abs(setpoint - getShooterWheelSpeed()) < 0.01);
+  }
   public void setBeltSpeed(double speed){
     beltMotor.set(speed);
   }
@@ -46,8 +51,11 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public void setTargetShooterSpeed(double rotationsPerSec){
     shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity);
+    setpoint = rotationsPerSec;
   }
+  
 
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

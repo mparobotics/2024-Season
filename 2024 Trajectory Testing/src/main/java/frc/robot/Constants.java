@@ -6,12 +6,14 @@ package frc.robot;
 
 
 
+import com.pathplanner.lib.path.PathConstraints;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
 import frc.lib.SwerveModuleConstants;
 
@@ -37,6 +39,7 @@ public final class Constants {
 
     public static final double shooterWheelSpeed = 10; //RPMs
     
+    
   }
   public static final class ArmConstants{
     public static final int LmotorID = 0;
@@ -45,6 +48,9 @@ public final class Constants {
 
     public static final double minArmPosition = 0;
     public static final double maxArmPosition = 0;
+
+    public static final double handoffPosition = 0;
+    public static final double ampPosition = 0;
 
     public static final double kMaxAcceleration = 0; //max angular acceleration of the arm (rotations per second^2)
     public static final double kMaxVelocity = 0; //max angular velocity of the arm (rotations per second)
@@ -61,6 +67,7 @@ public final class Constants {
     public static final double kV = 0; //how much voltage to move a specific speed
     public static final double kA = 0; //how much voltage to accelerate a certain amount
     
+
 
 
   }
@@ -111,6 +118,21 @@ public final class Constants {
     public static final double maxSpeed = 9; // meters per second
     public static final double maxAngularVelocity = 11.5; //radians per second
 
+    /*maximum speed and angular velocity while auto-aligning to a target */
+    public static final double maxVelocityAutoAlign = 0; //   m/s
+    public static final double maxAccelerationAutoAlign = 0;//   m/s^2
+    public static final double maxAngularVelocityAutoAlign = 0;//   rad/s
+    public static final double maxAngularAccelerationAutoAlign = 0;// rad/s^2
+
+    /*maximum speeds during auto */
+    public static final double maxVelocityAuto = 4; //  m/s
+    public static final double maxAccelerationAuto = 3; //  m/s^2
+    public static final double maxAngularVelocityAuto = 2 * Math.PI; //  rad/s
+    public static final double maxAngularAccelerationAuto = 4 * Math.PI; //  rad/s^2
+
+    public static final PathConstraints autoConstraints = new PathConstraints(maxVelocityAuto, maxAccelerationAuto, maxAngularVelocityAuto, maxAngularAccelerationAuto);
+    public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
+    public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
     //give location of each module to a swerveDriveKinematics relative to robot center in meters
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
       new Translation2d(halfWheelBase, halfTrackWidth), 
@@ -164,6 +186,8 @@ public final class Constants {
     /* Angle Encoder Invert */
     public static final boolean canCoderInvert = false;
     
+    public static final boolean angleMotorInvert = false;
+    public static final boolean driveMotorInvert = false;
 
         /* Module Specific Constants */
     /* Front Left Module - Module 0 */
@@ -218,8 +242,7 @@ public final class Constants {
     }
   
 
-    public static final boolean angleMotorInvert = false;
-    public static final boolean driveMotorInvert = false;
+    
 
   }
 }

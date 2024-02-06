@@ -11,7 +11,10 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.commands.TeleopSwerve;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDController;
+import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.List;
@@ -35,7 +38,7 @@ public class RobotContainer {
   
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_XboxController = new CommandXboxController(0);
+  private final CommandXboxController driveController = new CommandXboxController(0);
   //private final CommandJoystick m_JoystickL = new CommandJoystick(0);
   //private final CommandJoystick m_JoystickR = new CommandJoystick(1);
 
@@ -45,15 +48,18 @@ public class RobotContainer {
   private final int rotationAxis = XboxController.Axis.kRightX.value;
   
   private final Trigger robotCentric =
-  new Trigger(m_XboxController.leftBumper());
+  new Trigger(driveController.leftBumper());
 
 
-  /*private final int translationAxis = Joystick.AxisType.kY.value; //left flight stick
-  private final int strafeAxis = Joystick.AxisType.kX.value; //left flight stick
-  private final int rotationAxis = Joystick.AxisType.kX.value; //right flight stick*/
+  
 
   /* Subsystems */
-  private final SwerveSubsystem m_SwerveSubsystem = new SwerveSubsystem();
+  private final SwerveSubsystem m_Drive = new SwerveSubsystem();
+  private final ArmSubsystem m_Arm = new ArmSubsystem();
+  private final IntakeSubsystem m_Intake = new IntakeSubsystem();
+  private final ShooterSubsystem m_Shooter = new ShooterSubsystem();
+
+
   final LEDController m_leds = new LEDController();
 
 
@@ -61,12 +67,12 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
-    m_SwerveSubsystem.setDefaultCommand(
+    m_Drive.setDefaultCommand(
       new TeleopSwerve(
-          m_SwerveSubsystem,
-          () -> -m_XboxController.getRawAxis(translationAxis),
-          () -> -m_XboxController.getRawAxis(strafeAxis),
-          () -> -m_XboxController.getRawAxis(rotationAxis),
+          m_Drive,
+          () -> -driveController.getRawAxis(translationAxis),
+          () -> -driveController.getRawAxis(strafeAxis),
+          () -> -driveController.getRawAxis(rotationAxis),
           () -> robotCentric.getAsBoolean(),
           () -> false,
           () -> false
@@ -79,8 +85,8 @@ public class RobotContainer {
 
   
   private void configureBindings() {
-    m_XboxController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_SwerveSubsystem.zeroGyro()));
-    m_XboxController.button(Button.kRightBumper.value).whileTrue(m_SwerveSubsystem.alignToTarget());
+    driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_Drive.zeroGyro()));
+    driveController.button(Button.kRightBumper.value).whileTrue(m_Drive.alignToTarget());
   }
 
   Pose2d waypoint(double x, double y, double r){
@@ -102,6 +108,6 @@ public class RobotContainer {
     );
     PathPlannerPath drawnPath = PathPlannerPath.fromPathFile("testpath01");
     AutoBuilder.followPath(testPath);
-    return new SequentialCommandGroup(new InstantCommand(() -> m_SwerveSubsystem.resetOdometry(waypoint(2, 2, 0))) , AutoBuilder.followPath(drawnPath));
+    return new SequentialCommandGroup(new InstantCommand(() -> m_Drive.resetOdometry(waypoint(2, 2, 0))) , AutoBuilder.followPath(drawnPath));
   }
 }
