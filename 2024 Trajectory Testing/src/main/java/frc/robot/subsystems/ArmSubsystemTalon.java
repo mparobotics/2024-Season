@@ -48,6 +48,10 @@ public class ArmSubsystemTalon extends SubsystemBase {
     SmartDashboard.putNumber("kP", m_armKP);
     SmartDashboard.putNumber("kI", m_armKI);
     SmartDashboard.putNumber("kD", m_armKD);
+    SmartDashboard.putNumber("kG", m_armKG);
+    SmartDashboard.putNumber("kV", m_armKV);
+    SmartDashboard.putNumber("kS", m_armKS);
+    SmartDashboard.putNumber("kA", m_armKA);
 
     PIDconfig.kP = m_armKP;
     PIDconfig.kI = m_armKI;
@@ -87,8 +91,12 @@ public class ArmSubsystemTalon extends SubsystemBase {
     //this code allows values to be changed from SmartDashboard
     armDown = SmartDashboard.getNumber("Arm Down Degrees", 0);
     armUp = SmartDashboard.getNumber("Arm Up Degrees", 0);
-    m_armKP = SmartDashboard.getNumber("kP", 0);
+    m_armKP = SmartDashboard.getNumber("kP", 1);
     m_armKI = SmartDashboard.getNumber("kI", 0);
     m_armKD = SmartDashboard.getNumber("kD", 0);
+    m_armKG = SmartDashboard.getNumber("kG", 0);
+    m_armKV = SmartDashboard.getNumber("kV", 0);
+    m_armKS = SmartDashboard.getNumber("kS", 0);
+    m_armKA = SmartDashboard.getNumber("kA", 0);
   }
 }
