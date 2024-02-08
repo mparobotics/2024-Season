@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.RelativeEncoder;
@@ -36,7 +37,7 @@ public class SwerveModule {
     private Rotation2d angleOffset;
 
     private CANSparkMax angleMotor;
-    private CANSparkMax driveMotor;
+    private CANSparkFlex driveMotor;
 
     private RelativeEncoder driveEncoder;
     private RelativeEncoder integratedAngleEncoder;
@@ -73,7 +74,7 @@ public class SwerveModule {
         configAngleMotor();
 
         /* Drive Motor Config */
-        driveMotor = new CANSparkMax(moduleConstants.driveMotorID, MotorType.kBrushless);
+        driveMotor = new CANSparkFlex(moduleConstants.driveMotorID, MotorType.kBrushless);
         driveEncoder = driveMotor.getEncoder();
         driveController = driveMotor.getPIDController();
         configDriveMotor();
@@ -93,7 +94,8 @@ public class SwerveModule {
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
         //3512's optimize function. might use more ...optimized... version if it works (needs testing)
-        desiredState = OnboardModuleState.optimize(desiredState, getState().angle);
+        desiredState = 
+        OnboardModuleState.optimize(desiredState, getState().angle);
         
         setAngle(desiredState);
         setSpeed(desiredState, isOpenLoop);
@@ -172,7 +174,7 @@ public class SwerveModule {
         //factory resets the spark max    
         driveMotor.restoreFactoryDefaults();
         //full utilisation on the can loop hell yea
-        CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
+        //CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
         //sets current limit
         driveMotor.setSmartCurrentLimit(SwerveConstants.driveContinuousCurrentLimit);
         //sets inverted or not

@@ -15,7 +15,7 @@ public class OnboardModuleState {
   //for a given target angle, find the closest equivalent angle to the module's current direction
   //custom optimize function because built-in doesn't work for some reason
   //see https://docs.wpilib.org/en/stable/docs/software/kinematics-and-odometry/swerve-drive-kinematics.html for more info
-  SwerveModuleState smolOptimize(SwerveModuleState desiredState, Rotation2d currentAngle){
+  public static SwerveModuleState smolOptimize(SwerveModuleState desiredState, Rotation2d currentAngle){
     //the module's current direction
     double current = currentAngle.getDegrees();
     //the direction you want to drive in

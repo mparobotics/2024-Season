@@ -94,8 +94,8 @@ public final class Constants {
     public static final boolean invertPigeon = true;
 
     /* Drivetrain Constants */
-    public static final double halfTrackWidth = Units.inchesToMeters(17.5) / 2; //half of the left-right distance between the wheels
-    public static final double halfWheelBase = Units.inchesToMeters(20.5) / 2; //half of the forward-backward distance between the wheels
+    public static final double halfTrackWidth = Units.inchesToMeters(21) / 2; //half of the left-right distance between the wheels
+    public static final double halfWheelBase = Units.inchesToMeters(21) / 2; //half of the forward-backward distance between the wheels
     public static final double driveBaseRadius =  Math.sqrt(halfWheelBase * halfWheelBase + halfTrackWidth * halfTrackWidth);
 
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
@@ -137,8 +137,8 @@ public final class Constants {
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
       new Translation2d(halfWheelBase, halfTrackWidth), 
       new Translation2d(halfWheelBase, -halfTrackWidth),
-      new Translation2d(-halfWheelBase, halfTrackWidth),
-      new Translation2d(-halfWheelBase, -halfTrackWidth)
+      new Translation2d(-halfWheelBase, -halfTrackWidth),
+      new Translation2d(-halfWheelBase, halfTrackWidth)
     );
     
 
@@ -217,8 +217,8 @@ public final class Constants {
 
     /* Back Left Module - Module 2 */
     public static final class Mod2 {
-      public static final int driveMotorID = 7;
-      public static final int angleMotorID = 8;
+      public static final int driveMotorID = 5;
+      public static final int angleMotorID = 6;
       public static final int canCoderID = 11;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(223.2-180);
       
@@ -230,8 +230,8 @@ public final class Constants {
 
     /* Back Right Module - Module 3 */
     public static final class Mod3 {
-      public static final int driveMotorID = 5;
-      public static final int angleMotorID = 6;
+      public static final int driveMotorID = 7;
+      public static final int angleMotorID = 8;
       public static final int canCoderID = 12 ;
       public static final Rotation2d angleOffset = Rotation2d.fromDegrees(320.8-180);
        

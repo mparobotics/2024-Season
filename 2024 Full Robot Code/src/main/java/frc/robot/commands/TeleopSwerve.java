@@ -71,8 +71,8 @@ public class TeleopSwerve extends Command {
         rotationLimiter.calculate(
             MathUtil.applyDeadband(m_rotationSupplier.getAsDouble(), SwerveConstants.inputDeadband));
     boolean isFieldOriented = !m_robotCentricSupplier.getAsBoolean();
-    boolean isAmpScoring = m_isAmpScoringSupplier.getAsBoolean();
-    boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
+    boolean isAmpScoring = false;//m_isAmpScoringSupplier.getAsBoolean();
+    boolean isSpeakerScoring = false;//m_isSpeakerScoringSupplier.getAsBoolean();
 
     boolean isRedAlliance = DriverStation.getAlliance().get() == Alliance.Red;
     Pose2d currentPose = m_SwerveSubsystem.getPose();
