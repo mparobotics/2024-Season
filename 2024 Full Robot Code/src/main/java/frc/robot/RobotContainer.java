@@ -83,7 +83,7 @@ public class RobotContainer {
   
   private void configureBindings() {
     driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_Drive.zeroGyro()));
-    driveController.button(Button.kRightBumper.value).whileTrue(m_Drive.alignToTarget());
+    
   }
 
   Pose2d waypoint(double x, double y, double r){

@@ -15,9 +15,10 @@ public class LEDController extends SubsystemBase{
     private AddressableLED leds = new AddressableLED(0);
     private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
 
-    private LedPattern currentPattern;
+    private LedPattern currentPattern = LedPattern.IDLE;
     public enum LedPattern{
         TEST,
+        IDLE,
         TELEOP_DRIVING,
         HAS_NOTE,
 
@@ -47,6 +48,8 @@ public class LEDController extends SubsystemBase{
     public void periodic(){
         switch (currentPattern){
             case TEST:
+            
+            case IDLE:
 
             case TELEOP_DRIVING:
 
@@ -64,7 +67,7 @@ public class LEDController extends SubsystemBase{
              
 
         }
-        green();
+        
         leds.setData(buffer);
     }
 

@@ -19,7 +19,7 @@ import edu.wpi.first.math.kinematics.SwerveModuleState;
 
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.SwerveConstants;
 
@@ -155,16 +155,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
 
   
-  public void spinInPlace(double speed){
-    drive(0,0,speed);
-  }
-  public void spinToTarget(){
-    spinInPlace(Math.min((targetDirection-getYawAsDouble())/50, 0.8));
-    
-  }
-  public RepeatCommand alignToTarget(){
-    return(new RepeatCommand(runOnce(() -> spinToTarget())));
-  }
+ 
  
   
 
@@ -174,11 +165,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
-    if(Vision.canSeeTarget()){
-      targetDirection = getYaw().getDegrees() - Vision.getTx();
-    }
     
-    if(Vision.canSeeTarget()){
+    
+    if(Vision.canSeeAprilTag()){
       
       
       odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());

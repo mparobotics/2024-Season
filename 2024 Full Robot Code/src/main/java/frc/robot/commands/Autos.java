@@ -4,7 +4,12 @@
 
 package frc.robot.commands;
 
+
+
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.GoalEndState;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
 import com.pathplanner.lib.util.PIDConstants;
 import com.pathplanner.lib.util.ReplanningConfig;
@@ -13,12 +18,14 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 /** Add your docs here. */
 public class Autos {
+    private static SwerveSubsystem drivebase;
     public static enum AutoChoices{
         SIXNOTE,
         CENTERLINE,
@@ -45,10 +52,17 @@ public class Autos {
             pathConfig,
             () -> (DriverStation.getAlliance().get() ==  Alliance.Red),
             drive
-        );
+        );  
+        drivebase = drive;
     }
     Pose2d waypoint(double x, double y, double r){
         return new Pose2d(x,y, Rotation2d.fromDegrees(r));
+    }
+    public PathPlannerPath driveTo(Rotation2d directionOfMotion, Pose2d goalPose, Rotation2d goalDirection){
+
+        Pose2d startPose = new Pose2d(drivebase.getPose().getTranslation(),directionOfMotion);
+        GoalEndState endState = new GoalEndState(0, goalDirection);
+        return new PathPlannerPath(PathPlannerPath.bezierFromPoses(),SwerveConstants.autoConstraints, endState);
     }
     
     public static SequentialCommandGroup getAuto(AutoChoices auto){

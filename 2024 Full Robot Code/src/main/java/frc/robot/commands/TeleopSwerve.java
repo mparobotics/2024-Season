@@ -22,6 +22,7 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
+
 public class TeleopSwerve extends Command {
   private SwerveSubsystem m_SwerveSubsystem;
   private DoubleSupplier m_xSupplier, m_ySupplier, m_rotationSupplier;
@@ -71,8 +72,11 @@ public class TeleopSwerve extends Command {
         rotationLimiter.calculate(
             MathUtil.applyDeadband(m_rotationSupplier.getAsDouble(), SwerveConstants.inputDeadband));
     boolean isFieldOriented = !m_robotCentricSupplier.getAsBoolean();
-    boolean isAmpScoring = false;//m_isAmpScoringSupplier.getAsBoolean();
-    boolean isSpeakerScoring = false;//m_isSpeakerScoringSupplier.getAsBoolean();
+
+
+    boolean isAmpScoring = m_isAmpScoringSupplier.getAsBoolean();
+    boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
+    boolean isAutoIntaking = false;
 
     boolean isRedAlliance = DriverStation.getAlliance().get() == Alliance.Red;
     Pose2d currentPose = m_SwerveSubsystem.getPose();
@@ -92,6 +96,10 @@ public class TeleopSwerve extends Command {
       double rSpeed = angleController.calculate(currentDirection, targetDirection);
       
       m_SwerveSubsystem.drive(xSpeed, ySpeed, rSpeed, true);
+    }
+    else if(isAutoIntaking){
+     
+
     }
     else if(isSpeakerScoring){
       //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands

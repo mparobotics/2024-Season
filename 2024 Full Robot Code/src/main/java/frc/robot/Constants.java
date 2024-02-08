@@ -80,6 +80,13 @@ public final class Constants {
     public static final Translation2d BLUE_SPEAKER_LOCATION = new Translation2d(0,0);
   }
   public static final class VisionConstants{
+    //offset from center of robot to the note-detector limelight (meters)
+    public static final double noteLimelightTx = 0;
+    public static final double noteLimelightTy = 0;
+    public static final double noteLimelightTz = 0;
+
+    public static final double noteLimelightAngle = 0; //degrees above horizontal
+    
     //standard deviations of vision-based pose estimates
     public static final double STDDEV_X = 0.1; // meters
     public static final double STDDEV_Y = 0.1; 
@@ -87,6 +94,10 @@ public final class Constants {
 
 
 
+  }
+  public static final class ClimberConstants{
+    public static final int MotorIDLeft = 0;
+    public static final int MotorIDRight = 0;
   }
   public static final class SwerveConstants{
     public static final double inputDeadband = .1;
