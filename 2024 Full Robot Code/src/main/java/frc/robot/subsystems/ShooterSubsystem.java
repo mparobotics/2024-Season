@@ -11,6 +11,7 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
@@ -22,6 +23,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
   private final SparkPIDController shooterSpeedController = shooterMotor.getPIDController();
+
+  private final SimpleMotorFeedforward shooterFeedforward = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
 
   private double setpoint;
   /** Creates a new ShooterSubsystem. */
@@ -50,7 +53,7 @@ public class ShooterSubsystem extends SubsystemBase {
     beltMotor.set(speed);
   }
   public void setTargetShooterSpeed(double rotationsPerSec){
-    shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity);
+    shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity, 0, shooterFeedforward.calculate(rotationsPerSec));
     setpoint = rotationsPerSec;
   }
   

@@ -36,7 +36,7 @@ public class SwerveSubsystem extends SubsystemBase {
   private Field2d field;
   
 
-  private double targetDirection = 0;
+  
   
   
   /** Creates a new SwerveSubsystem. */
@@ -66,10 +66,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
   }
 
-  //Simple field oriented drive. speeds range from -1 (full backwards) to 1 (full forwards)
-  public void drive(double xSpeed, double ySpeed, double spinSpeed){
-    drive(xSpeed * SwerveConstants.maxSpeed ,ySpeed * SwerveConstants.maxSpeed, spinSpeed * SwerveConstants.maxAngularVelocity, true);
-  }
+ 
   //drive the robot. translation: how fast you want to move in x and y direcitons, rotation: how fast you want to spin
   //fieldRelative: whether or not the controls are field or robot oriented, 
   public void drive(double x, double y, double rotation, boolean isFieldRelative)
@@ -119,16 +116,18 @@ public class SwerveSubsystem extends SubsystemBase {
   public Pose2d getPose() {
     return odometry.getEstimatedPosition();
   }
+  
   //get the distance traveled and direction of each module as a list of SwerveModulePositions
-  public SwerveModulePosition[] getPositions(){
+  private SwerveModulePosition[] getPositions(){
     SwerveModulePosition[] positions = new SwerveModulePosition[4];
     for(SwerveModule module : swerveModules){
         positions[module.moduleNumber] = module.getPosition();
     }
     return positions;
   }
+  
   //get the speed and direction of each module as a list of SwerveModuleStates
-  public SwerveModuleState[] getStates() {
+  private SwerveModuleState[] getStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
     for (SwerveModule module : swerveModules) {
       states[module.moduleNumber] = module.getState();
@@ -176,8 +175,7 @@ public class SwerveSubsystem extends SubsystemBase {
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
-    SmartDashboard.putNumber("Target Direction",  targetDirection);
-    
+   
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());

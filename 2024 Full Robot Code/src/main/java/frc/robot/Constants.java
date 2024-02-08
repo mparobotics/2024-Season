@@ -38,7 +38,16 @@ public final class Constants {
     public static final int beamSensorPort = 0;
 
     public static final double shooterWheelSpeed = 10; //RPMs
-    
+    //Feedforward constants
+    public static final double kS = 0;
+    public static final double kV = 0;
+    public static final double kA = 0;
+
+    //PID constants
+    public static final double kP = 0;
+    public static final double kI = 0;
+    public static final double kD = 0;
+
     
   }
   public static final class ArmConstants{
@@ -55,6 +64,7 @@ public final class Constants {
     public static final double kMaxAcceleration = 0; //max angular acceleration of the arm (rotations per second^2)
     public static final double kMaxVelocity = 0; //max angular velocity of the arm (rotations per second)
 
+    public static final double ticksToRotations = 1/8192;
     //PID constants for the arm's motion control
     public static final double kP = 0; 
     public static final double kI = 0;
