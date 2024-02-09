@@ -18,7 +18,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.ArmConstants;
 
@@ -54,7 +53,7 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
     
   }
   public double getArmPosition(){
-    return 0;
+    return armEncoder.getPosition() * ArmConstants.ticksToRadians;
   }
   public boolean isAtTarget(){
     return Math.abs(setpoint - getArmPosition()) < 0.01;

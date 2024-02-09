@@ -65,6 +65,7 @@ public final class Constants {
     public static final double kMaxVelocity = 0; //max angular velocity of the arm (rotations per second)
 
     public static final double ticksToRotations = 1/8192;
+    public static final double ticksToRadians = ticksToRotations * 2 * Math.PI;
     //PID constants for the arm's motion control
     public static final double kP = 0; 
     public static final double kI = 0;
