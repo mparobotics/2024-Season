@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
@@ -20,6 +22,7 @@ import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
@@ -69,7 +72,9 @@ public class ArmSubsystem extends SubsystemBase {
     .angularPosition(arm_position.mut_replace(Units.Radians.of(getEncoderRadians())))
     .angularVelocity(arm_velocity.mut_replace(Units.RadiansPerSecond.of(getEncoderRadiansPerSecond())));
   }
-  
+  public Command controlArmWithJoystick(DoubleSupplier speed){
+    return runOnce(() -> motorR.set(speed.getAsDouble()));
+  }
 
 
   @Override
