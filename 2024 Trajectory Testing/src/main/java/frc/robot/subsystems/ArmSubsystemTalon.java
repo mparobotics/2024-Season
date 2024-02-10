@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.configs.MotionMagicConfigs;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
@@ -35,8 +37,8 @@ public class ArmSubsystemTalon extends SubsystemBase {
   public double armDown = 0;
   public double armUp = 0;
 
-  private TalonFX armMotorL = new TalonFX(1);
-  private TalonFX armMotorR = new TalonFX(2);
+  private TalonFX armMotorL = new TalonFX(41);
+  private TalonFX armMotorR = new TalonFX(42);
 
   private MotionMagicConfigs MMconfig = new MotionMagicConfigs();
   private SoftwareLimitSwitchConfigs limitSwtchConfig = new SoftwareLimitSwitchConfigs();

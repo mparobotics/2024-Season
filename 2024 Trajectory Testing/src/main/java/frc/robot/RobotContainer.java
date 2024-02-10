@@ -17,6 +17,7 @@ import frc.robot.subsystems.ArmSubsystemTalon;
 import frc.robot.subsystems.SwerveSubsystem;
 
 import java.util.List;
+import java.util.function.DoubleSupplier;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.GoalEndState;
