@@ -8,40 +8,60 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
+
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Angle;
 
 import edu.wpi.first.units.Measure;
 import edu.wpi.first.units.MutableMeasure;
 import edu.wpi.first.units.Units;
+
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
+import edu.wpi.first.wpilibj.smartdashboard.MechanismRoot2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj.util.Color8Bit;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
-
+/*This class defines commands for running a Sysid Characterization routine for an arm 
+powered by two Falcon500 motors and with angle measurements from a REV throughbore encoder.*/
 public class ArmSubsystem extends SubsystemBase {
+  //Motor IDs
   final int RmotorID = 0;
   final int LmotorID = 0;
+  final int EncoderID = 0;
 
+  //Define two motors
   private final TalonFX motorR = new TalonFX(RmotorID);
   private final TalonFX motorL = new TalonFX(LmotorID);
-  private final RelativeEncoder encoder = new CANSparkMax(0,MotorType.kBrushed).getEncoder();
+  //REV encoder wired to a SparkMAX without a motor. 
+  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
 
+  //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
+  // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
+
+  //define measurement variables for the voltage going to the motors, the arm's angle, and the arm's angular velocoity.
   private final MutableMeasure<Voltage> arm_motor_voltage = MutableMeasure.ofBaseUnits(0,Units.Volts);
 
   private final MutableMeasure<Angle> arm_position = MutableMeasure.ofBaseUnits(0,Units.Radians);
 
   private final MutableMeasure<Velocity<Angle>> arm_velocity = MutableMeasure.ofBaseUnits(0, Units.RadiansPerSecond);
 
+ 
+  //use default configuration, but could potentially customize the voltages for the characterization routine by supplying them here
   private final SysIdRoutine.Config config = new SysIdRoutine.Config();
+
+
   private final Mechanism Arm = new Mechanism(
     (Measure<Voltage> volts) -> {runMotorsFromVoltage(volts);}, //code that runs the mechanism goes here. must use a Measure<Voltage> to supply voltage to the motors, 
                 (SysIdRoutineLog log) -> logArmState(log), 
@@ -53,6 +73,8 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     motorL.setControl(new Follower(RmotorID, true));
+
+    
   }
   public double getEncoderRadians(){
     return encoder.getPosition() * 2 * Math.PI / 8192;
@@ -75,7 +97,9 @@ public class ArmSubsystem extends SubsystemBase {
   public Command controlArmWithJoystick(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()));
   }
-
+  public Command stopMotors(){
+    return runOnce(() -> motorR.set(0));
+  }
 
   @Override
   public void periodic() {
@@ -84,5 +108,8 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+
+    SmartDashboard.putNumber("Arm Position (Degrees)", getEncoderRadians() * 180 / Math.PI);
+
   }
 }
