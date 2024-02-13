@@ -37,15 +37,15 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 powered by two Falcon500 motors and with angle measurements from a REV throughbore encoder.*/
 public class ArmSubsystem extends SubsystemBase {
   //Motor IDs
-  final int RmotorID = 0;
-  final int LmotorID = 0;
+  final int RmotorID = 42;
+  final int LmotorID = 41;
   final int EncoderID = 0;
 
   //Define two motors
   private final TalonFX motorR = new TalonFX(RmotorID);
   private final TalonFX motorL = new TalonFX(LmotorID);
   //REV encoder wired to a SparkMAX without a motor. 
-  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
+  //private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
@@ -77,10 +77,12 @@ public class ArmSubsystem extends SubsystemBase {
     
   }
   public double getEncoderRadians(){
-    return encoder.getPosition() * 2 * Math.PI / 8192;
+    //return encoder.getPosition() * 2 * Math.PI / 8192;
+    return 0;
   }
   public double getEncoderRadiansPerSecond(){
-    return encoder.getVelocity();
+    //return encoder.getVelocity();
+    return 0;
   }
   public double getMotorVoltage(){
     return (motorR.get() + motorL.get())/2 * RobotController.getBatteryVoltage();
@@ -95,7 +97,15 @@ public class ArmSubsystem extends SubsystemBase {
     .angularVelocity(arm_velocity.mut_replace(Units.RadiansPerSecond.of(getEncoderRadiansPerSecond())));
   }
   public Command controlArmWithJoystick(DoubleSupplier speed){
-    return runOnce(() -> motorR.set(speed.getAsDouble()));
+    return runOnce(() -> {
+      if(Math.abs(speed.getAsDouble()) < 0.1){
+        motorR.set(0);
+      }
+      else{
+        motorR.set(speed.getAsDouble() * 0.4);
+      }
+      
+    });
   }
   public Command stopMotors(){
     return runOnce(() -> motorR.set(0));
@@ -103,13 +113,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
+    //SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
+    //SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
-    SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+    //SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
+    //SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
 
-    SmartDashboard.putNumber("Arm Position (Degrees)", getEncoderRadians() * 180 / Math.PI);
+    SmartDashboard.putNumber("Arm Position ", motorR.getPosition().getValue());
 
   }
 }
