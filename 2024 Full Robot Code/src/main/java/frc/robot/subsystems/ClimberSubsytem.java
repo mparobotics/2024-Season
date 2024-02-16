@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -20,6 +21,9 @@ public class ClimberSubsytem extends SubsystemBase {
   public ClimberSubsytem() {
     motorL.setInverted(true);
     motorR.setInverted(false);
+
+    motorL.setIdleMode(IdleMode.kBrake);
+    motorR.setIdleMode(IdleMode.kBrake);
   }
   public Command climb(DoubleSupplier leftSpeed, DoubleSupplier rightSpeed){
     return runOnce(() -> {

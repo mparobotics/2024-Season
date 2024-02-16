@@ -8,7 +8,7 @@ import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
-
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -44,6 +44,8 @@ public class ArmSubsystem extends SubsystemBase {
   //Define two motors
   private final TalonFX motorR = new TalonFX(RmotorID);
   private final TalonFX motorL = new TalonFX(LmotorID);
+
+  
   //REV encoder wired to a SparkMAX without a motor. 
   //private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
 
@@ -107,6 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
       
     });
   }
+  
   public Command stopMotors(){
     return runOnce(() -> motorR.set(0));
   }

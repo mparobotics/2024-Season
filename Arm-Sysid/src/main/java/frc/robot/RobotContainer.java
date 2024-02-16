@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -17,20 +18,22 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
   private final ArmSubsystem m_armSubsystem = new ArmSubsystem();
+  private final IntakeSubsystem m_intakeSubsystem = new IntakeSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
   private final CommandXboxController xbox =
       new CommandXboxController(OperatorConstants.kDriverControllerPort);
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
+  /**The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
   }
-
+  
  
   private void configureBindings() {
     m_armSubsystem.setDefaultCommand(m_armSubsystem.controlArmWithJoystick(() -> xbox.getLeftY()));
+    m_intakeSubsystem.setDefaultCommand(m_intakeSubsystem.controlIntakeWithJoystick(() -> xbox.getRightY()));
     xbox.button(Button.kA.value).onTrue(m_armSubsystem.stopMotors());
   }
 

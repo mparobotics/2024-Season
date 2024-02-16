@@ -119,7 +119,7 @@ public class SwerveModule {
 
 
     private void setAngle(SwerveModuleState desiredState){
-        //If we are effectively stopped, then there is no point in rotating the modules.
+        //If we are moving at a very low speed, then there is no point in rotating the modules.
         // with zero speed, the target angle will be calculated as zero and the modules would point at zero every time you stop moving
         //if the speed is less than 1%, don't bother updating the angle
         Rotation2d angle = (Math.abs(desiredState.speedMetersPerSecond) <= (Constants.SwerveConstants.maxSpeed * 0.01)) ? lastAngle : desiredState.angle; 

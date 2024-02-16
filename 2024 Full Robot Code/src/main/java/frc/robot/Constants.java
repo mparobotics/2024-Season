@@ -7,6 +7,9 @@ package frc.robot;
 
 
 import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.util.HolonomicPathFollowerConfig;
+import com.pathplanner.lib.util.PIDConstants;
+import com.pathplanner.lib.util.ReplanningConfig;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -15,6 +18,8 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.lib.SwerveModuleConstants;
 
 
@@ -38,6 +43,7 @@ public final class Constants {
     public static final int beamSensorPort = 0;
 
     public static final double shooterWheelSpeed = 10; //RPMs
+    public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
     //Feedforward constants
     public static final double kS = 0;
     public static final double kV = 0;
@@ -79,10 +85,24 @@ public final class Constants {
     public static final double kA = 0; //how much voltage to accelerate a certain amount
     
 
-
+    public static final Double[][] ArmAngleMapData = {
+    // each pair of doubles pairs a shooting distance with the ideal arm angle for that distance. 
+    //We can then interpolate between these data points to approximate a good shooting angle for any distance in between
+    // { DistanceToSpeaker (meters), Arm Angle(radians) }
+      {0.0,1.0},
+      {2.0,3.0},
+      {0.0,1.0},
+      {2.0,3.0},
+    
+    };
+    
 
   }
   public static final class FieldConstants{
+    public static boolean isRedAlliance(){
+      return (DriverStation.getAlliance().get() == Alliance.Red);
+    }
+    
     public static final Pose2d RED_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
 
@@ -109,6 +129,33 @@ public final class Constants {
   public static final class ClimberConstants{
     public static final int MotorIDLeft = 0;
     public static final int MotorIDRight = 0;
+  }
+  public static final class AutoConstants{
+    //Config for PathPlanner. contains trajectory PID constants and other drivebase data
+    public static final HolonomicPathFollowerConfig pathConfig = new HolonomicPathFollowerConfig( 
+        new PIDConstants(5.0, 0.00001, 0.0), // Translation PID constants
+        new PIDConstants(5.0, 0.0005, 0.001), // Rotation PID constants
+        SwerveConstants.maxSpeed, // Max module speed, in m/s
+        SwerveConstants.driveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
+        new ReplanningConfig() // Default path replanning config. See the Pathplanner API for the options here
+    );
+
+    /*maximum speed and angular velocity while auto-aligning to a target */
+    public static final double maxVelocityAutoAlign = 0; //   m/s
+    public static final double maxAccelerationAutoAlign = 0;//   m/s^2
+    public static final double maxAngularVelocityAutoAlign = 0;//   rad/s
+    public static final double maxAngularAccelerationAutoAlign = 0;// rad/s^2
+
+    /*maximum speeds during auto */
+    public static final double maxVelocityAuto = 4; //  m/s
+    public static final double maxAccelerationAuto = 3; //  m/s^2
+    public static final double maxAngularVelocityAuto = 2 * Math.PI; //  rad/s
+    public static final double maxAngularAccelerationAuto = 4 * Math.PI; //  rad/s^2
+
+    public static final PathConstraints autoConstraints = new PathConstraints(maxVelocityAuto, maxAccelerationAuto, maxAngularVelocityAuto, maxAngularAccelerationAuto);
+    public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
+    public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
+    
   }
   public static final class SwerveConstants{
     public static final double inputDeadband = .1;
@@ -140,21 +187,6 @@ public final class Constants {
     public static final double maxSpeed = 9; // meters per second
     public static final double maxAngularVelocity = 11.5; //radians per second
 
-    /*maximum speed and angular velocity while auto-aligning to a target */
-    public static final double maxVelocityAutoAlign = 0; //   m/s
-    public static final double maxAccelerationAutoAlign = 0;//   m/s^2
-    public static final double maxAngularVelocityAutoAlign = 0;//   rad/s
-    public static final double maxAngularAccelerationAutoAlign = 0;// rad/s^2
-
-    /*maximum speeds during auto */
-    public static final double maxVelocityAuto = 4; //  m/s
-    public static final double maxAccelerationAuto = 3; //  m/s^2
-    public static final double maxAngularVelocityAuto = 2 * Math.PI; //  rad/s
-    public static final double maxAngularAccelerationAuto = 4 * Math.PI; //  rad/s^2
-
-    public static final PathConstraints autoConstraints = new PathConstraints(maxVelocityAuto, maxAccelerationAuto, maxAngularVelocityAuto, maxAngularAccelerationAuto);
-    public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
-    public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
     //give location of each module to a swerveDriveKinematics relative to robot center in meters
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
       new Translation2d(halfWheelBase, halfTrackWidth), 

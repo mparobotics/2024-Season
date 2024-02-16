@@ -27,19 +27,19 @@ public class OnboardModuleState {
     //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
     //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster
 
-    int reverseSpeed = 1;
+    int direction = 1;
     if(error > 90){
       error -= 180;
-      reverseSpeed = -1;
+      direction = -1;
     }
     if(error < -90){
-      error = 180;
-      reverseSpeed = -1;
+      error += 180;
+      direction = -1;
     }
 
     
 
-    double speed = desiredState.speedMetersPerSecond * reverseSpeed;
+    double speed = desiredState.speedMetersPerSecond * direction;
     return new SwerveModuleState(speed,Rotation2d.fromDegrees(current + error));
   }
   /**
