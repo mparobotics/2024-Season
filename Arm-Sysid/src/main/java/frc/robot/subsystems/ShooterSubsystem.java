@@ -10,6 +10,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.units.Angle;
@@ -31,29 +32,27 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 /*This class defines commands for running a Sysid Characterization routine for an arm 
 powered by two Falcon500 motors and with angle measurements from a REV throughbore encoder.*/
-public class ArmSubsystem extends SubsystemBase {
+public class ShooterSubsystem extends SubsystemBase {
   //Motor IDs
-  final int RmotorID = 42;
-  final int LmotorID = 41;
-  final int EncoderID = 0;
+  final int ShooterID = 42;
+  
+  
 
-  //Define two motors
-  private final TalonFX motorR = new TalonFX(RmotorID);
-  private final TalonFX motorL = new TalonFX(LmotorID);
+  //Define motor
+  private final CANSparkMax motor = new CANSparkMax(ShooterID, MotorType.kBrushless);
+ 
 
   
-  //REV encoder wired to a SparkMAX without a motor. 
-  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
+  
+  private final RelativeEncoder encoder = motor.getEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
 
   //define measurement variables for the voltage going to the motors, the arm's angle, and the arm's angular velocoity.
-  private final MutableMeasure<Voltage> arm_motor_voltage = MutableMeasure.ofBaseUnits(0,Units.Volts);
+  private final MutableMeasure<Voltage> motor_voltage = MutableMeasure.ofBaseUnits(0,Units.Volts);
 
-  private final MutableMeasure<Angle> arm_position = MutableMeasure.ofBaseUnits(0,Units.Radians);
-
-  private final MutableMeasure<Velocity<Angle>> arm_velocity = MutableMeasure.ofBaseUnits(0, Units.RadiansPerSecond);
+  private final MutableMeasure<Velocity<Angle>> motor_velocity = MutableMeasure.ofBaseUnits(0, Units.RadiansPerSecond);
 
  
   //use default configuration, but could potentially customize the voltages for the characterization routine by supplying them here
@@ -69,9 +68,9 @@ public class ArmSubsystem extends SubsystemBase {
   
   
 
-  public ArmSubsystem() {
-    motorL.setControl(new Follower(RmotorID, true));
-
+  public ShooterSubsystem() {
+    motor.setIdleMode(IdleMode.kCoast);
+    motor.setInverted(false);
     SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
@@ -79,47 +78,39 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
     
   }
-  public double getEncoderRadians(){
-    //return encoder.getPosition() * 2 * Math.PI / 8192;
-    return 0;
-  }
-  public double getEncoderRadiansPerSecond(){
-    //return encoder.getVelocity();
-    return 0;
-  }
+  
   public double getMotorVoltage(){
-    return motorR.get() * RobotController.getBatteryVoltage();
+    return motor.get() * RobotController.getBatteryVoltage();
   }
   private void runMotorsFromVoltage(Measure<Voltage> volts){
-    motorR.setVoltage(volts.in(Units.Volts));
+    motor.setVoltage(volts.in(Units.Volts));
   }
   private void logArmState(SysIdRoutineLog log){
     log.motor("Arm Motors")
-    .voltage(arm_motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
-    .angularPosition(arm_position.mut_replace(Units.Radians.of(getEncoderRadians())))
-    .angularVelocity(arm_velocity.mut_replace(Units.RadiansPerSecond.of(getEncoderRadiansPerSecond())));
+    .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
+    .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())));
   }
   public Command controlArmWithJoystick(DoubleSupplier speed){
     return runOnce(() -> {
       if(Math.abs(speed.getAsDouble()) < 0.1){
-        motorR.set(0);
+        motor.set(0);
       }
       else{
-        motorR.set(speed.getAsDouble() * 0.4);
+        motor.set(speed.getAsDouble());
       }
       
     });
   }
   
-  public Command stopMotors(){
-    return runOnce(() -> motorR.set(0));
+  public Command stopMotor(){
+    return runOnce(() -> motor.set(0));
   }
 
   @Override
   public void periodic() {
  
 
-    SmartDashboard.putNumber("Arm Position ", getEncoderRadians());
+    SmartDashboard.putNumber("Arm Position ", encoder.getVelocity());
 
   }
 }
