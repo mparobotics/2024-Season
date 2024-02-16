@@ -31,13 +31,15 @@ public class IndexNote extends Command {
   public void initialize() {
     m_arm.setTarget(ArmConstants.handoffPosition);
     m_shooter.setBeltSpeed(1);
-    m_intake.runIntake(1);
+    m_intake.runIntake(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    
+    if(m_arm.isAtTarget()){
+      m_intake.runIntake(1);
+    }
   }
 
   // Called once the command ends or is interrupted.

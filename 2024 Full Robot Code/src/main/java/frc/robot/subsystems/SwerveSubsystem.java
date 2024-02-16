@@ -5,22 +5,30 @@
 package frc.robot.subsystems;
 
 
+
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
+import com.pathplanner.lib.auto.AutoBuilder;
 
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
-
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.AutoConstants;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.SwerveConstants;
 
 
@@ -35,9 +43,6 @@ public class SwerveSubsystem extends SubsystemBase {
   
   private Field2d field;
   
-
-  
-  
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
@@ -45,6 +50,8 @@ public class SwerveSubsystem extends SubsystemBase {
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
+
+    configPathPlanner();
 
     //list of all four swerve modules
     swerveModules =
@@ -100,7 +107,6 @@ public class SwerveSubsystem extends SubsystemBase {
   }
 
   
-  
 
   
   //reset the pose to a given pose
@@ -146,12 +152,37 @@ public class SwerveSubsystem extends SubsystemBase {
       ? 360 - yaw
       : yaw;
   }
-
   public Rotation2d getYaw() {
     return Rotation2d.fromDegrees(getYawAsDouble());
   }
 
-  
+  public double metersToSpeaker(){
+    Translation2d targetPose = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
+    return targetPose.minus(getPose().getTranslation()).getNorm();
+  }
+  public Pose2d getIntakePose(){
+    Translation2d relativeNoteLocation = Vision.getRelativeNoteLocation().rotateBy(getYaw().times(-1));
+    Rotation2d targetDirection = relativeNoteLocation.getAngle();
+    Translation2d noteLocation = getPose().getTranslation().plus(relativeNoteLocation);
+    return new Pose2d(noteLocation, targetDirection);
+  }
+
+
+  public void configPathPlanner(){
+    AutoBuilder.configureHolonomic(
+      this::getPose,
+      this::resetOdometry,
+      this::getRobotRelativeSpeed,
+      this::closedLoopDrive,
+      AutoConstants.pathConfig,
+      () -> (DriverStation.getAlliance().get() ==  Alliance.Red),
+      this
+    );  
+  }
+
+  public Command followPathFromFile(String filename){
+    return AutoBuilder.followPath(PathPlannerPath.fromPathFile(filename));
+  }
 
   
  
@@ -167,10 +198,9 @@ public class SwerveSubsystem extends SubsystemBase {
     
     
     if(Vision.canSeeAprilTag()){
-      
-      
       odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
+    
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());

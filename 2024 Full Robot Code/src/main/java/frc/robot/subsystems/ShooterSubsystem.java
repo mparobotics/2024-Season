@@ -46,11 +46,19 @@ public class ShooterSubsystem extends SubsystemBase {
   public boolean isAtShootingSpeed(){
     return(Math.abs(setpoint - getShooterWheelSpeed()) < 0.01);
   }
+
   public void setBeltSpeed(double speed){
     beltMotor.set(speed);
   }
   public void setShooterSpeed(double speed){
-    beltMotor.set(speed);
+    shooterMotor.set(speed);
+  }
+  public void spinUpShooter(){
+    setTargetShooterSpeed(ShooterConstants.shooterWheelSpeed);
+  }
+  public void stopShooting(){
+    beltMotor.set(0);
+    shooterMotor.set(0);
   }
   public void setTargetShooterSpeed(double rotationsPerSec){
     shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity, 0, shooterFeedforward.calculate(rotationsPerSec));

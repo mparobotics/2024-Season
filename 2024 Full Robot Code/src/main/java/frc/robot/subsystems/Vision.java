@@ -28,6 +28,12 @@ public class Vision {
     public static boolean canSeeNote(){
         return getNoteDetector().getEntry("tv").getDouble(0) == 1;
     }
+    public static double getTagXAngleOffset(){
+        return getAprilTagDetector().getEntry("tx").getDouble(0);
+    }
+    public static double getTagYAngleOffset(){
+        return getAprilTagDetector().getEntry("ty").getDouble(0);
+    }
     public static double getNoteXAngleOffset(){
         return getNoteDetector().getEntry("tx").getDouble(0);
     }
