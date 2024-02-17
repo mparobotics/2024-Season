@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import java.util.function.DoubleSupplier;
+
 import com.ctre.phoenix6.controls.Follower;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,6 +20,7 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.trajectory.TrapezoidProfile.State;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.TrapezoidProfileSubsystem;
 import frc.robot.Constants.ArmConstants;
 //the arm uses a TrapezoidProfileSubsystem to automatically generate a smooth motion to each setpoint
@@ -87,6 +90,12 @@ public class ArmSubsystem extends TrapezoidProfileSubsystem {
   protected void useState(State state) {
     motorR.setVoltage(armFF.calculate(state.position,state.velocity) + armPID.calculate(getArmPosition(),state.position));
     profilePosition = state.position;
+  }
+  public Command setArmSetpointCommand(DoubleSupplier setpoint){
+    return runOnce(() ->setTarget(setpoint.getAsDouble()));
+  }
+  public Command teleopArmControlCommand(DoubleSupplier speed){
+    return runOnce(() -> motorR.set(speed.getAsDouble()));
   }
   @Override
   public void periodic() {

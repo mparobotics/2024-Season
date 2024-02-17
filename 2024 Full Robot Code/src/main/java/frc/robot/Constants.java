@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import frc.lib.SwerveModuleConstants;
 
 
-/** We define all CAN IDs, pin numbers, motion control constants, field coordinates, etc. in this {@link Constants} file
+/** We define all CAN IDs, pin numbers, motion control constants, field coordinates, etc. in this {@link Constants} file.
 All positions and lengths are in meters, and 
 all rotations are in degrees unless otherwise noted.
 
@@ -34,12 +34,12 @@ is the origin. +X is towards the red alliance wall and +Y is to the left (from t
   */
 public final class Constants {
   public static final class IntakeConstants{
-    public static final int intakeMotorID = 0;
+    public static final int intakeMotorID = 20;
     public static final int beamSensorPort = 0;
   }
   public static final class ShooterConstants{
-    public static final int beltMotorID = 0;
-    public static final int shooterMotorID = 0;
+    public static final int beltMotorID = 22;
+    public static final int shooterMotorID = 21;
     public static final int beamSensorPort = 0;
 
     public static final double shooterWheelSpeed = 10; //RPMs
@@ -57,8 +57,8 @@ public final class Constants {
     
   }
   public static final class ArmConstants{
-    public static final int LmotorID = 0;
-    public static final int RmotorID = 0;
+    public static final int LmotorID = 41;
+    public static final int RmotorID = 42;
     public static final int encoderID = 0;
 
     public static final double minArmPosition = 0;
