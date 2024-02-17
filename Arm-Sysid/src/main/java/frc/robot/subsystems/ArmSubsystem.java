@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   
   //REV encoder wired to a SparkMAX without a motor. 
-  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
+  //private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.

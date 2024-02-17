@@ -34,17 +34,18 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 powered by two Falcon500 motors and with angle measurements from a REV throughbore encoder.*/
 public class ShooterSubsystem extends SubsystemBase {
   //Motor IDs
-  final int ShooterID = 42;
+  final int ShooterID = 21;
+  final int IndexerID = 22;
   
   
 
   //Define motor
-  private final CANSparkMax motor = new CANSparkMax(ShooterID, MotorType.kBrushless);
- 
+  private final CANSparkMax shooter = new CANSparkMax(ShooterID, MotorType.kBrushless);
+  private final CANSparkMax indexer = new CANSparkMax(IndexerID, MotorType.kBrushless);
 
   
   
-  private final RelativeEncoder encoder = motor.getEncoder();
+  private final RelativeEncoder encoder = shooter.getEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
@@ -69,8 +70,10 @@ public class ShooterSubsystem extends SubsystemBase {
   
 
   public ShooterSubsystem() {
-    motor.setIdleMode(IdleMode.kCoast);
-    motor.setInverted(false);
+    shooter.setIdleMode(IdleMode.kCoast);
+    shooter.setInverted(false);
+
+    indexer.setInverted(true);
     SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
@@ -80,30 +83,36 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public double getMotorVoltage(){
-    return motor.get() * RobotController.getBatteryVoltage();
+    return shooter.get() * RobotController.getBatteryVoltage();
   }
   private void runMotorsFromVoltage(Measure<Voltage> volts){
-    motor.setVoltage(volts.in(Units.Volts));
+    shooter.setVoltage(volts.in(Units.Volts));
   }
   private void logArmState(SysIdRoutineLog log){
     log.motor("Arm Motors")
     .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
     .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())));
   }
-  public Command controlArmWithJoystick(DoubleSupplier speed){
+  public Command controlShooterWithJoystick(DoubleSupplier shootspeed, DoubleSupplier beltspeed){
     return runOnce(() -> {
-      if(Math.abs(speed.getAsDouble()) < 0.1){
-        motor.set(0);
+      if(Math.abs(shootspeed.getAsDouble()) < 0.1){
+        //shooter.set(0);
       }
       else{
-        motor.set(speed.getAsDouble());
+        //shooter.set(shootspeed.getAsDouble());
+      }
+      if(Math.abs(beltspeed.getAsDouble()) < 0.1){
+        indexer.set(0);
+      }
+      else{
+        indexer.set(beltspeed.getAsDouble());
       }
       
     });
   }
   
   public Command stopMotor(){
-    return runOnce(() -> motor.set(0));
+    return runOnce(() -> shooter.set(0));
   }
 
   @Override

@@ -47,20 +47,20 @@ public class RobotContainer {
 
   /* Subsystems */
   private final SwerveSubsystem m_drive = new SwerveSubsystem();
-  private final ArmSubsystem m_arm = new ArmSubsystem();
-  private final IntakeSubsystem m_intake = new IntakeSubsystem();
-  private final ShooterSubsystem m_shooter = new ShooterSubsystem();
+  //private final ArmSubsystem m_arm = new ArmSubsystem();
+  //private final IntakeSubsystem m_intake = new IntakeSubsystem();
+  //private final ShooterSubsystem m_shooter = new ShooterSubsystem();
 
 
   private final LEDController m_leds = new LEDController();
 
 
-  private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
+  //private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
     
-
+    //m_intake.setDefaultCommand(new InstantCommand( () -> m_intake.runIntake(driveController.getRawAxis(2)),m_intake));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,
@@ -79,9 +79,11 @@ public class RobotContainer {
   private void configureBindings() {
     driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro()));
     
+    
   }
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
-    return m_autoModeSelector.getAuto(AutoMode.TEST);
+    //return m_autoModeSelector.getAuto(AutoMode.TEST);
+    return null;
   }
 }

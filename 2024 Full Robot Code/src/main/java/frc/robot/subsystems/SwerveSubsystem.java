@@ -7,6 +7,8 @@ package frc.robot.subsystems;
 
 
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -68,7 +70,11 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    
+    SmartDashboard.putData("zero", runOnce(() -> {
+      for(SwerveModule module: swerveModules){
+        module.setDesiredState(new SwerveModuleState(0.0,new Rotation2d(0)), true);
+      }
+    }));
 
     
   }
