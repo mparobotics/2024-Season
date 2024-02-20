@@ -70,11 +70,7 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    SmartDashboard.putData("zero", runOnce(() -> {
-      for(SwerveModule module: swerveModules){
-        module.setDesiredState(new SwerveModuleState(0.0,new Rotation2d(0)), true);
-      }
-    }));
+    
 
     
   }
@@ -211,7 +207,7 @@ public class SwerveSubsystem extends SubsystemBase {
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
-   
+    /* 
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
@@ -222,7 +218,8 @@ public class SwerveSubsystem extends SubsystemBase {
     
 
     
-  }
+    }
+    */
 }
 
 }

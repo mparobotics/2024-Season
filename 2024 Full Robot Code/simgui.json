@@ -1,0 +1,33 @@
+{
+  "HALProvider": {
+    "Other Devices": {
+      "SPARK MAX [3]": {
+        "header": {
+          "open": true
+        }
+      }
+    }
+  },
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/SmartDashboard/Arm to 0": "Command",
+      "/SmartDashboard/Arm to 45": "Command",
+      "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Zero Arm Enocder": "Command"
+    }
+  },
+  "NetworkTables": {
+    "transitory": {
+      "Shuffleboard": {
+        "open": true
+      },
+      "SmartDashboard": {
+        "open": true
+      }
+    }
+  },
+  "NetworkTables Info": {
+    "visible": true
+  }
+}

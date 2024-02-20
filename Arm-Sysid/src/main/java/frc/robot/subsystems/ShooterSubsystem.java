@@ -74,11 +74,11 @@ public class ShooterSubsystem extends SubsystemBase {
     shooter.setInverted(false);
 
     indexer.setInverted(true);
-    SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Shooter: Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Shooter: Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
-    SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Shooter: Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Shooter: Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
     
   }
   

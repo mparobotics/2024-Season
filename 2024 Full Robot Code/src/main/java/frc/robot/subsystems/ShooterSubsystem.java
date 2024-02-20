@@ -21,8 +21,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
-  private final CANSparkMax beltMotor = new CANSparkMax(0, MotorType.kBrushless);
-  private final CANSparkMax shooterMotor = new CANSparkMax(0, MotorType.kBrushless);
+  private final CANSparkMax beltMotor = new CANSparkMax(ShooterConstants.beltMotorID, MotorType.kBrushless);
+  private final CANSparkMax shooterMotor = new CANSparkMax(ShooterConstants.shooterMotorID, MotorType.kBrushless);
   private final DigitalInput beamSensor = new DigitalInput(ShooterConstants.beamSensorPort);
 
   private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
