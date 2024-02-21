@@ -11,9 +11,7 @@ import javax.swing.text.StyleContext.SmallAttributeSet;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.pathplanner.lib.auto.AutoBuilder;
-
-import com.pathplanner.lib.path.PathPlannerPath;
+import com.ctre.phoenix6.mechanisms.swerve.SwerveRequest.SysIdSwerveSteerGains;
 
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -23,19 +21,43 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.units.Angle;
+import edu.wpi.first.units.Distance;
+import edu.wpi.first.units.Measure;
+import edu.wpi.first.units.MutableMeasure;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.units.Velocity;
+import edu.wpi.first.units.Voltage;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.AutoConstants;
-import frc.robot.Constants.FieldConstants;
-import frc.robot.Constants.ShooterConstants;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Mechanism;
 import frc.robot.Constants.SwerveConstants;
 
 
 public class SwerveSubsystem extends SubsystemBase {
+
+  private final SysIdRoutine.Config config = new SysIdRoutine.Config();
+
+  //define measurement variables for the voltage going to the motors, the arm's angle, and the arm's angular velocoity.
+  private final MutableMeasure<Voltage> drive_motor_voltage = MutableMeasure.ofBaseUnits(0,Units.Volts);
+
+  private final MutableMeasure<Distance> drive_distance = MutableMeasure.ofBaseUnits(0,Units.Meters);
+
+  private final MutableMeasure<Velocity<Distance>> arm_velocity = MutableMeasure.ofBaseUnits(0, Units.MetersPerSecond);
+
+  private final Mechanism swerve_mechanism = new Mechanism(
+    (Measure<Voltage> volts) -> {driveFromVoltage(volts.in(Units.Volts));}, //code that runs the mechanism goes here. must use a Measure<Voltage> to supply voltage to the motors, 
+                (SysIdRoutineLog log) -> logDriveState(log), 
+                this);
+
+  private final SysIdRoutine swerve_sysid = new SysIdRoutine(config, swerve_mechanism);
+
   private final Pigeon2 pigeon;
   
 
@@ -49,12 +71,16 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
+    SmartDashboard.putData("Swerve: Run Quasistatic Forward",swerve_sysid.quasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Swerve: Run Quasistatic Reverse",swerve_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
+
+    SmartDashboard.putData("Swerve: Run Dynamic Forward",swerve_sysid.dynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Swerve: Run Dynamic Reverse",swerve_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+
     //instantiates new pigeon gyro, wipes it, and zeros it
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
     zeroGyro();
-
-    configPathPlanner();
 
     //list of all four swerve modules
     swerveModules =
@@ -76,7 +102,20 @@ public class SwerveSubsystem extends SubsystemBase {
     
   }
 
- 
+  public void driveFromVoltage(double volts){
+    for(SwerveModule module: swerveModules){
+      module.driveVolts(volts);
+    }
+  }
+  public double getVoltage(){
+    return swerveModules[0].getVoltage();
+  }
+  private void logDriveState(SysIdRoutineLog log){
+    log.motor("Arm Motors")
+    .voltage(drive_motor_voltage.mut_replace(Units.Volts.of(getVoltage())))
+    .linearPosition(drive_distance.mut_replace(Units.Meters.of(getPose().getX())))
+    .linearVelocity(arm_velocity.mut_replace(Units.MetersPerSecond.of(getRobotRelativeSpeed().vxMetersPerSecond)));
+  }
   //drive the robot. translation: how fast you want to move in x and y direcitons, rotation: how fast you want to spin
   //fieldRelative: whether or not the controls are field or robot oriented, 
   public void drive(double x, double y, double rotation, boolean isFieldRelative)
@@ -159,46 +198,10 @@ public class SwerveSubsystem extends SubsystemBase {
     return Rotation2d.fromDegrees(getYawAsDouble());
   }
 
-  public Translation2d getRelativeSpeakerLocation(){
-    Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
-    return targetLocation.minus(getPose().getTranslation());
-  }
-  public Translation2d getVirtualTarget(){
-    Translation2d speakerLocation = getRelativeSpeakerLocation();
-    //calculate the time it would take for a note to get from here to the speaker if the robot was stationary
-    double timeToSpeaker = speakerLocation.getNorm() / ShooterConstants.noteSpeedMetersPerSecond;
-    //get the speed of the robot as a chassisSpeeds
-    ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
-    //make a translation2d with the x and y components of the velocity
-    Translation2d velocity = new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
-
-    //the "virtual target" we should aim as is offset from the actual speaker location.
-    return speakerLocation.minus(velocity.times(timeToSpeaker));
-  }
   
-  public Pose2d getIntakePose(){
-    Translation2d relativeNoteLocation = Vision.getRelativeNoteLocation().rotateBy(getYaw().times(-1));
-    Rotation2d targetDirection = relativeNoteLocation.getAngle();
-    Translation2d noteLocation = getPose().getTranslation().plus(relativeNoteLocation);
-    return new Pose2d(noteLocation, targetDirection);
-  }
 
 
-  public void configPathPlanner(){
-    AutoBuilder.configureHolonomic(
-      this::getPose,
-      this::resetOdometry,
-      this::getRobotRelativeSpeed,
-      this::closedLoopDrive,
-      AutoConstants.pathConfig,
-      () -> (DriverStation.getAlliance().get() ==  Alliance.Red),
-      this
-    );  
-  }
 
-  public Command followPathFromFile(String filename){
-    return AutoBuilder.followPath(PathPlannerPath.fromPathFile(filename));
-  }
 
   
  
@@ -211,17 +214,11 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
-    
-    
-    if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
-    }
-    
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
-    /* 
+     
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
@@ -229,11 +226,8 @@ public class SwerveSubsystem extends SubsystemBase {
           "Mod " + module.moduleNumber + " Integrated", module.getState().angle.getDegrees());
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
-    
-
-    
     }
-    */
+    
 }
 
 }

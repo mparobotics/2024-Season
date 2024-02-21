@@ -46,6 +46,12 @@
           "data": {
             "pathName": "SFC1"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C1SF"
+          }
         }
       ]
     }

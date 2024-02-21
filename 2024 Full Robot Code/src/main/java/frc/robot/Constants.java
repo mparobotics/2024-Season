@@ -42,6 +42,7 @@ public final class Constants {
     public static final int shooterMotorID = 21;
     public static final int beamSensorPort = 1;
 
+    public static final double noteSpeedMetersPerSecond = 0;
     public static final double shooterWheelSpeed = 10; //RPMs
     public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
     //Feedforward constants

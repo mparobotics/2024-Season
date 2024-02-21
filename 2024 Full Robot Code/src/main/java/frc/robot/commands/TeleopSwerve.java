@@ -84,8 +84,7 @@ public class TeleopSwerve extends Command {
   
     if(isSpeakerScoring){
       //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
-        Translation2d targetLocation = isRedAlliance? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
-        Translation2d relativeTargetPosition = targetLocation.minus(currentPose.getTranslation());
+        Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation();
 
         double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees());
         double rSpeed = angleController.calculate(currentDirection, targetDirection);
