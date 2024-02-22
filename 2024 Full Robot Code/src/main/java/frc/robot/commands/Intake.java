@@ -8,6 +8,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDController;
 
@@ -26,7 +27,14 @@ public class Intake extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    if (FieldConstants.isRedAlliance()){
+      m_led.setAll(255, 0, 0);
+    } else {
+      m_led.setAll(0, 0, 255);
+    }
+    
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -40,6 +48,8 @@ public class Intake extends Command {
     m_intake.runIntake(0);
     if (m_intake.isNoteInIntake()) {
       m_led.setAll(255, 115, 0);
+    } else {
+      m_led.setAll(0, 0, 0);
     }
   }
 
