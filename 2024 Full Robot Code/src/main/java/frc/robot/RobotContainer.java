@@ -70,6 +70,7 @@ public class RobotContainer {
     m_arm.setDefaultCommand(m_arm.teleopArmControlCommand(() -> helmsController.getLeftY()));
     m_shooter.setDefaultCommand(m_shooter.shooterControlCommand(() -> helmsController.getLeftTriggerAxis() > 0.5? 1:0, () -> -helmsController.getRightY()));
     m_intake.setDefaultCommand(m_intake.IntakeControlCommand(() -> helmsController.getRightY()));
+    m_leds.setDefaultCommand(m_leds.idleLedPattern());
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,

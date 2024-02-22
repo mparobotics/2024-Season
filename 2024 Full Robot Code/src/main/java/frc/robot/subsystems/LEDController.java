@@ -53,6 +53,7 @@ public class LEDController extends SubsystemBase{
                     }
                 }
             }
+            leds.setData(Buffer);
 
         });
         
