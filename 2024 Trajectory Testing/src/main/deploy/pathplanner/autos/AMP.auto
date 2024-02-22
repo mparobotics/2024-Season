@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 2.0,
-      "y": 2.0
+      "x": 0.6791751180063115,
+      "y": 6.610781021542011
     },
-    "rotation": 2.107052888527574
+    "rotation": 61.56960792811647
   },
   "command": {
     "type": "sequential",
@@ -14,19 +14,25 @@
         {
           "type": "path",
           "data": {
-            "pathName": "testpath01"
+            "pathName": "SW1(A)"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "testpath01"
+            "pathName": "W1A"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "testpath01"
+            "pathName": "AC1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C1A"
           }
         }
       ]

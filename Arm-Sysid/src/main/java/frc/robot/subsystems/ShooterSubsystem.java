@@ -65,7 +65,7 @@ public class ShooterSubsystem extends SubsystemBase {
                 (SysIdRoutineLog log) -> logArmState(log), 
                 this);
 
-  private SysIdRoutine arm_sysid = new SysIdRoutine(config, Arm);
+  private SysIdRoutine shooter_sysid = new SysIdRoutine(config, Arm);
   
   
 
@@ -74,11 +74,11 @@ public class ShooterSubsystem extends SubsystemBase {
     shooter.setInverted(false);
 
     indexer.setInverted(true);
-    SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Shooter: Run Quasistatic Forward",shooter_sysid.quasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Shooter: Run Quasistatic Reverse",shooter_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
-    SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Shooter: Run Dynamic Forward",shooter_sysid.dynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Shooter: Run Dynamic Reverse",shooter_sysid.dynamic(SysIdRoutine.Direction.kReverse));
     
   }
   
@@ -89,7 +89,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooter.setVoltage(volts.in(Units.Volts));
   }
   private void logArmState(SysIdRoutineLog log){
-    log.motor("Arm Motors")
+    log.motor("Shooter Motor")
     .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
     .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())));
   }
@@ -119,7 +119,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
  
 
-    SmartDashboard.putNumber("Arm Position ", encoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Speed ", encoder.getVelocity());
 
   }
 }

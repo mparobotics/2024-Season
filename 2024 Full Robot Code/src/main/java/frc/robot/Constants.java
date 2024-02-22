@@ -40,8 +40,9 @@ public final class Constants {
   public static final class ShooterConstants{
     public static final int beltMotorID = 22;
     public static final int shooterMotorID = 21;
-    public static final int beamSensorPort = 0;
+    public static final int beamSensorPort = 1;
 
+    public static final double noteSpeedMetersPerSecond = 0;
     public static final double shooterWheelSpeed = 10; //RPMs
     public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
     //Feedforward constants
@@ -67,8 +68,8 @@ public final class Constants {
     public static final double handoffPosition = 0;
     public static final double ampPosition = 0;
 
-    public static final double kMaxAcceleration = 0; //max angular acceleration of the arm (rotations per second^2)
-    public static final double kMaxVelocity = 0; //max angular velocity of the arm (rotations per second)
+    public static final double kMaxAcceleration = 3; //max angular acceleration of the arm (degrees per second^2)
+    public static final double kMaxVelocity = 5; //max angular velocity of the arm (degrees per second)
 
     public static final double ticksToRotations = 1/8192;
     public static final double ticksToRadians = ticksToRotations * 2 * Math.PI;
@@ -88,11 +89,11 @@ public final class Constants {
     public static final Double[][] ArmAngleMapData = {
     // each pair of doubles pairs a shooting distance with the ideal arm angle for that distance. 
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between
-    // { DistanceToSpeaker (meters), Arm Angle(radians) }
-      {0.0,1.0},
-      {2.0,3.0},
-      {0.0,1.0},
-      {2.0,3.0},
+    // { DistanceToSpeaker (meters), Arm Angle(degrees) }
+      {0.0,0.0},
+      {1.0,90.0},
+      {2.0,120.0},
+      {3.0,150.0},
     
     };
     

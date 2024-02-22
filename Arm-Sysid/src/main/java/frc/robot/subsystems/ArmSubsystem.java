@@ -43,7 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   
   //REV encoder wired to a SparkMAX without a motor. 
-  //private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
+  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
@@ -72,20 +72,20 @@ public class ArmSubsystem extends SubsystemBase {
   public ArmSubsystem() {
     motorL.setControl(new Follower(RmotorID, true));
 
-    SmartDashboard.putData("Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Arm: Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Arm: Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
-    SmartDashboard.putData("Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
-    SmartDashboard.putData("Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
+    SmartDashboard.putData("Arm: Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
+    SmartDashboard.putData("Arm: Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
     
   }
   public double getEncoderRadians(){
-    //return encoder.getPosition() * 2 * Math.PI / 8192;
-    return 0;
+    return encoder.getPosition() * 2 * Math.PI / 8192;
+    
   }
   public double getEncoderRadiansPerSecond(){
-    //return encoder.getVelocity();
-    return 0;
+    return encoder.getVelocity() * 2 * Math.PI / 8192;
+    
   }
   public double getMotorVoltage(){
     return motorR.get() * RobotController.getBatteryVoltage();
@@ -102,10 +102,10 @@ public class ArmSubsystem extends SubsystemBase {
   public Command controlArmWithJoystick(DoubleSupplier speed){
     return runOnce(() -> {
       if(Math.abs(speed.getAsDouble()) < 0.1){
-        motorR.set(0);
+        motorR.setVoltage(0);
       }
       else{
-        motorR.set(speed.getAsDouble() * 0.4);
+        motorR.setVoltage(speed.getAsDouble() * 2);
       }
       
     });
@@ -120,6 +120,7 @@ public class ArmSubsystem extends SubsystemBase {
  
 
     SmartDashboard.putNumber("Arm Position ", getEncoderRadians());
+    SmartDashboard.putNumber("Encoder Position ", encoder.getPosition());
 
   }
 }

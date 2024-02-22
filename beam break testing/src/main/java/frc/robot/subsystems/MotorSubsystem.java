@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.networktables.NetworkTable;
@@ -12,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DigitalInput;
 
 
 
@@ -26,7 +28,7 @@ public class MotorSubsystem extends SubsystemBase {
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
 
  
-  
+  private DigitalInput beambreak = new DigitalInput(0);
   
 
   public NetworkTable getNoteDetector(){
@@ -48,7 +50,7 @@ public class MotorSubsystem extends SubsystemBase {
     
   }
   //A command that sets the motor to a given speed
-  public CommandBase setMotor(DoubleSupplier speed){
+  public Command setMotor(DoubleSupplier speed){
     return runOnce(() -> {});
   }
 
@@ -59,26 +61,17 @@ public class MotorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     offset -= 1;
-    boolean canSeeTag = 1 == getAprilTagDetector().getEntry("tv").getDouble(10);
-    boolean canSeeNote = 1 == getNoteDetector().getEntry("tv").getDouble(10);
     for(var i = 0; i < led_count/2; i++){
-      if(canSeeTag){
-        buffer.setRGB(i,128, 128,128);
+      if(beambreak.get()){
+        buffer.setRGB(i,0, 128,0);
       }
       else{
-        buffer.setRGB(i,0, 0,0);
+        buffer.setRGB(i,128, 0,0);
       }
     }
     
-    for(var i = led_count/2; i < led_count; i++){
-      if(canSeeNote){
-        buffer.setRGB(i,128, 30,0);
-      }
-      else{
-        buffer.setRGB(i,0, 0,0);
-      }
-      
-    }
+    
+  
     
     
     

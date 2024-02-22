@@ -6,7 +6,8 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.revrobotics.CANSparkMax;
+
+import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -17,11 +18,16 @@ import frc.robot.Constants.IntakeConstants;
 
 
 public class IntakeSubsystem extends SubsystemBase {
-  private final CANSparkMax intakeMotor = new CANSparkMax(IntakeConstants.intakeMotorID, MotorType.kBrushless);
+  private final CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.intakeMotorID, MotorType.kBrushless);
   private final DigitalInput beamSensor = new DigitalInput(IntakeConstants.beamSensorPort);
+
+  
+
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
+    intakeMotor.setInverted(true);
 
+   
   }
   public void runIntake(double speed){
     intakeMotor.set(speed);
@@ -30,7 +36,14 @@ public class IntakeSubsystem extends SubsystemBase {
     return beamSensor.get();
   }
   public Command IntakeControlCommand(DoubleSupplier speed){
-    return runOnce(() -> runIntake(speed.getAsDouble()));
+    return runOnce(() -> {
+      if(Math.abs(speed.getAsDouble()) < 0.1){
+        runIntake(0);
+      }
+      else{
+        runIntake(speed.getAsDouble());
+      }
+  });
   }
   @Override
   public void periodic() {
