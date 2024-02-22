@@ -6,17 +6,18 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.FieldConstants;
 
 /** Add your docs here. */
 public class LEDController extends SubsystemBase{
-    private final int led_count = 60;
+    private final int led_count = 120;
     //Plug LEDs into PWM port #0
     private AddressableLED leds = new AddressableLED(0);
-    private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
+    private AddressableLEDBuffer Buffer = new AddressableLEDBuffer(led_count);
 
-    
+    private double offset = 0;
     public LEDController(){
         leds.setLength(led_count);
         leds.start();
@@ -24,13 +25,38 @@ public class LEDController extends SubsystemBase{
 
     public void setAll(int r, int g, int b){
         for(var i = 0; i < led_count; i++){
-            buffer.setRGB(i,r,g,b);
+            Buffer.setRGB(i,r,g,b);
         }
-        leds.setData(buffer);
+        leds.setData(Buffer);
     }
+    
+    public Command idleLedPattern(){
+        return runOnce(() -> {
+            if (FieldConstants.isRedAlliance()){
+                offset += 0.5;
+                for(var i = 0; i < led_count; i ++){
+                    if((i + offset)% 6 >= 3){
+                        Buffer.setRGB (i, 255,0,0);
+                    }
+                    else{ 
+                        Buffer.setRGB (i,0,255,0);
+                    }
+                }
+            } else {
+                offset += 0.5;
+                for(var i = 0; i < led_count; i ++){
+                    if((i + offset)% 6 >= 3){
+                        Buffer.setRGB (i, 0,0,255);
+                    }
+                    else{ 
+                        Buffer.setRGB (i,0,255,0);
+                    }
+                }
+            }
 
-    
-    
+        });
+        
+    }
     @Override
     public void periodic(){
         
