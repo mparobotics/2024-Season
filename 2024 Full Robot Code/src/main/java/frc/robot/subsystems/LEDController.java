@@ -21,16 +21,18 @@ public class LEDController extends SubsystemBase{
         leds.setLength(led_count);
         leds.start();
     }
+
     public void setAll(int r, int g, int b){
         for(var i = 0; i < led_count; i++){
             buffer.setRGB(i,r,g,b);
         }
         leds.setData(buffer);
     }
+
+    
     
     @Override
     public void periodic(){
-        
         
     }
 
