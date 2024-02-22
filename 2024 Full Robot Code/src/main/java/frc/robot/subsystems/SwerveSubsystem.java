@@ -7,8 +7,6 @@ package frc.robot.subsystems;
 
 
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.pathplanner.lib.auto.AutoBuilder;
@@ -71,9 +69,6 @@ public class SwerveSubsystem extends SubsystemBase {
     field = new Field2d();
     SmartDashboard.putData("Field", field);
 
-    
-
-    
   }
 
  
@@ -163,16 +158,33 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
     return targetLocation.minus(getPose().getTranslation());
   }
+ 
   public Translation2d getVirtualTarget(){
+    /* When trying to shoot while moving, we will often miss if we aim directly at the speaker. This is because the motion of the 
+    robot affects the note's velocity leaving the shooter, which affects where it ends up going and how fast it moves. The goal of this function is to use
+    the robot's velocity and some math to estimate the location of a "virtual target" that we should aim at in order to get our note
+    to fly straight towards the speaker. 
+   */
+    //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
-    //calculate the time it would take for a note to get from here to the speaker if the robot was stationary
-    double timeToSpeaker = speakerLocation.getNorm() / ShooterConstants.noteSpeedMetersPerSecond;
+
     //get the speed of the robot as a chassisSpeeds
     ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
-    //make a translation2d with the x and y components of the velocity
+    //make a translation2d with the x and y components of the velocity of the robot
     Translation2d velocity = new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+    //Calculate the component of the velocity parallel to the speaker direction, and the component going perpendicular to the speaker direction
+    Translation2d rotatedVelocity = velocity.rotateBy(speakerLocation.getAngle().times(-1));
+    //The robot's velocity is always moving the note off of the straight path to the speaker, so we want to pick a shooting direction that cancels out the perpendicular velocity
+    double shootDirection = Math.asin(-rotatedVelocity.getY() / ShooterConstants.noteSpeedMetersPerSecond);
+    
+    //make a translation2d of the note's velocity as it leaves the shooter
+    Translation2d relativeNoteVelocity = new Translation2d(ShooterConstants.noteSpeedMetersPerSecond, new Rotation2d(shootDirection));
 
-    //the "virtual target" we should aim as is offset from the actual speaker location.
+    //The parallel components of the robot velocity and the shooter velocity are added together together to find how fast the note is approaching the speaker.
+    //We calculate how long the note will take to arrive at the speaker by dividing the distance to the speaker by the speed of the note
+    double timeToSpeaker = speakerLocation.getNorm()/(relativeNoteVelocity.getX() + rotatedVelocity.getX());
+
+    //the "virtual target" we should aim as is offset from the actual speaker location by the robot velocity times the amount of time the note will be in the air for
     return speakerLocation.minus(velocity.times(timeToSpeaker));
   }
   
@@ -220,7 +232,7 @@ public class SwerveSubsystem extends SubsystemBase {
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
-    
+    getVirtualTarget();
     /* 
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(

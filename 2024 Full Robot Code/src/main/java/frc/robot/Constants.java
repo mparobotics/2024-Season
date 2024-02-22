@@ -24,8 +24,7 @@ import frc.lib.SwerveModuleConstants;
 
 
 /** We define all CAN IDs, pin numbers, motion control constants, field coordinates, etc. in this {@link Constants} file.
-All positions and lengths are in meters, and 
-all rotations are in degrees unless otherwise noted.
+
 
 Our localization systems assume that the far right corner of the blue alliance side of the field (where the red source station is)
 is the origin. +X is towards the red alliance wall and +Y is to the left (from the perspective of the blue side).
@@ -42,7 +41,7 @@ public final class Constants {
     public static final int shooterMotorID = 21;
     public static final int beamSensorPort = 1;
 
-    public static final double noteSpeedMetersPerSecond = 0;
+    public static final double noteSpeedMetersPerSecond = 20; //the speed that the note leaves the shooter at
     public static final double shooterWheelSpeed = 10; //RPMs
     public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
     //Feedforward constants
@@ -80,16 +79,18 @@ public final class Constants {
 
 
     //Feedforward constants for the arm's motion control
-    public static final double kG = 0; //counteracts the force of gravity on the arm
-    public static final double kS = 0; //counteracts friction in the mechanism
+    public static final double kG = 0; //How much voltage is needed to resist the force of gravity on the arm
+    public static final double kS = 0; //how many volts are needed to overcome friction in the mechanism
     public static final double kV = 0; //how much voltage to move a specific speed
     public static final double kA = 0; //how much voltage to accelerate a certain amount
     
 
     public static final Double[][] ArmAngleMapData = {
     // each pair of doubles pairs a shooting distance with the ideal arm angle for that distance. 
+    //These values are determined by doing physical testing with the real robot.
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between
     // { DistanceToSpeaker (meters), Arm Angle(degrees) }
+    //! NOT REAL VALUES: WE STILL NEED TO TEST THIS
       {0.0,0.0},
       {1.0,90.0},
       {2.0,120.0},
@@ -101,7 +102,7 @@ public final class Constants {
   }
   public static final class FieldConstants{
     public static boolean isRedAlliance(){
-      return (DriverStation.getAlliance().get() == Alliance.Red);
+      return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
     
     public static final Pose2d RED_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
@@ -119,13 +120,6 @@ public final class Constants {
 
     public static final double noteLimelightAngle = 0; //degrees above horizontal
     
-    //standard deviations of vision-based pose estimates
-    public static final double STDDEV_X = 0.1; // meters
-    public static final double STDDEV_Y = 0.1; 
-    public static final double STDDEV_ROTATION = 5; //degrees
-
-
-
   }
   public static final class ClimberConstants{
     public static final int MotorIDLeft = 0;
@@ -166,7 +160,7 @@ public final class Constants {
     /* Drivetrain Constants */
     public static final double halfTrackWidth = Units.inchesToMeters(21.0 / 2.0); //half of the left-right distance between the wheels
     public static final double halfWheelBase = Units.inchesToMeters(21.0 /2.0 ) ; //half of the forward-backward distance between the wheels
-    public static final double driveBaseRadius =  Math.sqrt(halfWheelBase * halfWheelBase + halfTrackWidth * halfTrackWidth);
+    public static final double driveBaseRadius =  Math.hypot(halfTrackWidth,halfWheelBase);
 
     public static final double wheelDiameter = Units.inchesToMeters(4.0);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
@@ -186,7 +180,7 @@ public final class Constants {
  
     /* Maximum speed and angular velocity of the robot */
     public static final double maxSpeed = 9; // meters per second
-    public static final double maxAngularVelocity = 11.5; //radians per second
+    public static final double maxAngularVelocity = maxSpeed / driveBaseRadius; //radians per second
 
     //give location of each module to a swerveDriveKinematics relative to robot center in meters
     public static final SwerveDriveKinematics swerveKinematics = new SwerveDriveKinematics(
