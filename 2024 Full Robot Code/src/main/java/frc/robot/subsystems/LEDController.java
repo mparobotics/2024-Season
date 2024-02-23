@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.OnboardModuleState;
 import frc.robot.Constants.FieldConstants;
 
 /** Add your docs here. */
@@ -22,6 +23,32 @@ public class LEDController extends SubsystemBase{
         leds.setLength(led_count);
         leds.start();
     }
+    //             .*´^`*.         .*´^`*.         .*´^`*.
+    //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      
+    private double wave(double position, double min, double max, double period){
+        return Math.sin(position * period * 2 * Math.PI) * (max - min) + min;
+    }
+    //    /\  /\  /\  /\  /\  /\  /\  /\
+    //   /  \/  \/  \/  \/  \/  \/  \/  \
+    private double zigzag(double position, double min, double max, double period){
+        return Math.abs(OnboardModuleState.fixedMod(position / period - 0.5, 1) - 0.5) * (max - min) + min;
+    }
+    //    / / / / / / / / / / / / / / / / / / / / 
+    //   / / / / / / / / / / / / / / / / / / / / 
+    private double sawtooth(double position, double min, double max, double period){
+        return OnboardModuleState.fixedMod(position / period, 1) * (max - min) + min;
+    }
+    //       ____    ____    ____    ____    ____
+    //   ____    ____    ____    ____    ____    
+    private double square(double position, double min, double max, double period){
+        return OnboardModuleState.fixedMod(position / period, 1) > 0.5? max : min;
+    }
+    //                     /\
+    //____________________/  \________________________________
+    private double spike(double position, double spikePosition, double width, double min, double max){
+        return Math.max(-Math.abs((spikePosition - position + max - min) / width),0) + min;
+    }
+
 
     public void setAll(int r, int g, int b){
         for(var i = 0; i < led_count; i++){

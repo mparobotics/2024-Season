@@ -75,6 +75,16 @@ public class ShooterSubsystem extends SubsystemBase {
       setBeltSpeed(beltSpeed.getAsDouble());
     });
   }
+  public Command spinUpShooterCommand(){
+    return runOnce(() -> {
+      spinUpShooter();
+    });
+  }
+  public Command stopShooterCommand(){
+    return runOnce(()-> {
+      stopShooting();
+    });
+  }
 
   
   @Override
