@@ -24,27 +24,27 @@ public class LEDController extends SubsystemBase{
         leds.start();
     }
     //             .*´^`*.         .*´^`*.         .*´^`*.
-    //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      
+    //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      ~~~~~~~~~~~~~~~
     private double wave(double position, double min, double max, double period){
         return Math.sin(position * period * 2 * Math.PI) * (max - min) + min;
     }
     //    /\  /\  /\  /\  /\  /\  /\  /\
-    //   /  \/  \/  \/  \/  \/  \/  \/  \
+    //   /  \/  \/  \/  \/  \/  \/  \/  \           /\/\/\/\/\/\/\/\/\/\/\/\
     private double zigzag(double position, double min, double max, double period){
         return Math.abs(OnboardModuleState.fixedMod(position / period - 0.5, 1) - 0.5) * (max - min) + min;
     }
     //    / / / / / / / / / / / / / / / / / / / / 
-    //   / / / / / / / / / / / / / / / / / / / / 
+    //   / / / / / / / / / / / / / / / / / / / /        ///////////
     private double sawtooth(double position, double min, double max, double period){
         return OnboardModuleState.fixedMod(position / period, 1) * (max - min) + min;
     }
-    //       ____    ____    ____    ____    ____
-    //   ____    ____    ____    ____    ____    
+    //       ____    ____    ____    ____    ____               This is a square -> ☐
+    //   ____    ____    ____    ____    ____      <- That's not a square           
     private double square(double position, double min, double max, double period){
         return OnboardModuleState.fixedMod(position / period, 1) > 0.5? max : min;
     }
-    //                     /\
-    //____________________/  \________________________________
+    //                           /\  
+    //__________________________/  \__________________________         _/\_
     private double spike(double position, double spikePosition, double width, double min, double max){
         return Math.max(-Math.abs((spikePosition - position + max - min) / width),0) + min;
     }
