@@ -34,12 +34,12 @@ is the origin. +X is towards the red alliance wall and +Y is to the left (from t
 public final class Constants {
   public static final class IntakeConstants{
     public static final int intakeMotorID = 20;
-    public static final int beamSensorPort = 0;
+    public static final int beamSensorPort = 1;
   }
   public static final class ShooterConstants{
     public static final int beltMotorID = 22;
     public static final int shooterMotorID = 21;
-    public static final int beamSensorPort = 1;
+    public static final int beamSensorPort = 0;
 
     public static final double noteSpeedMetersPerSecond = 20; //the speed that the note leaves the shooter at
     public static final double shooterWheelSpeed = 10; //RPMs
