@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -36,6 +37,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motorR = new TalonFX(ArmConstants.RmotorID);
   private final TalonFX motorL = new TalonFX(ArmConstants.LmotorID);
 
+  private final TalonFXConfiguration motorConfig= new TalonFXConfiguration();
   //private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getEncoder();
   private final SparkAbsoluteEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
 
@@ -63,6 +65,11 @@ public class ArmSubsystem extends SubsystemBase {
     currentState = new TrapezoidProfile.State(getArmPosition(),0);
     goalState = currentState;
 
+    motorConfig.CurrentLimits.StatorCurrentLimit = 50;
+    motorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    motorL.getConfigurator().apply(motorConfig);
+    motorR.getConfigurator().apply(motorConfig);
     
     SmartDashboard.putData("Zero Arm Enocder", runOnce(() -> motorR.setPosition(0)));
     SmartDashboard.putData("Arm to 0", setArmSetpointCommand(() -> 0));
@@ -71,6 +78,8 @@ public class ArmSubsystem extends SubsystemBase {
     //The left motor follows the right motor. The right motor runs the control loop, and the left motor copies the output of the right motor
     //opposite motor directions spin the arm in the same direction, so opposeMasterDirection is set to true
     motorL.setControl(new Follower(ArmConstants.RmotorID, true));
+
+    
 
     //populate the InterpolatingTreeMap with our data points
     for(Double[] dataPoint : ArmConstants.ArmAngleMapData){
@@ -102,7 +111,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
   //returns true if the arm is close enough to the goal position
   public boolean isAtTarget(){
-    return Math.abs(goalState.position - getArmPosition()) < 0.1;
+    return Math.abs(goalState.position - getArmPosition()) < 1;
   }
   
   

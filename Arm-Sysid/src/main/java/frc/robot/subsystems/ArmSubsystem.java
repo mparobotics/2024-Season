@@ -20,6 +20,8 @@ import edu.wpi.first.units.Units;
 
 import edu.wpi.first.units.Velocity;
 import edu.wpi.first.units.Voltage;
+import edu.wpi.first.wpilibj.DigitalSource;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.RobotController;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -43,7 +45,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   
   //REV encoder wired to a SparkMAX without a motor. 
-  private final RelativeEncoder encoder = new CANSparkMax(EncoderID,MotorType.kBrushed).getEncoder();
+  private final DutyCycleEncoder encoder = new DutyCycleEncoder();
 
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
@@ -71,7 +73,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     motorL.setControl(new Follower(RmotorID, true));
-
+    
     SmartDashboard.putData("Arm: Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Arm: Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 

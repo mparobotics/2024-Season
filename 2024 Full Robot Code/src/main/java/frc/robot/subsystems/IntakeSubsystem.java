@@ -33,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
   public boolean isNoteInIntake(){
-    return beamSensor.get();
+    return !beamSensor.get();
   }
   public Command IntakeControlCommand(DoubleSupplier speed){
     return runOnce(() -> {
