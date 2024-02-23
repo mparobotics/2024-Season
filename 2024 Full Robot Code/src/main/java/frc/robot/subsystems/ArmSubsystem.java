@@ -10,8 +10,10 @@ import java.util.function.DoubleSupplier;
 import com.ctre.phoenix6.controls.Follower;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.revrobotics.AbsoluteEncoder;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.ArmFeedforward;
@@ -22,6 +24,7 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -33,8 +36,9 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motorR = new TalonFX(ArmConstants.RmotorID);
   private final TalonFX motorL = new TalonFX(ArmConstants.LmotorID);
 
-  private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getEncoder();
-  
+  //private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getEncoder();
+  private final SparkAbsoluteEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
+
   //A Feedforward controller moves the arm according to the motion profile, and the PID controller corrects for any error in the system
   //These constants will be calculated with a SysID test
   private PIDController armPID = new PIDController(ArmConstants.kP,ArmConstants.kI, ArmConstants.kD);
