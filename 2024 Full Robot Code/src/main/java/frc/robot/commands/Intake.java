@@ -22,7 +22,7 @@ public class Intake extends Command {
   private ArmSubsystem m_arm;
 
 
-  /** Creates a new Intake. */
+  /** Intakes until a note is detected in the shooter*/
   public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter, LEDController led) {
     addRequirements(intake);
     addRequirements(arm);

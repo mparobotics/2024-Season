@@ -19,14 +19,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TwoNoteAuto extends SequentialCommandGroup {
+public class FiveNoteAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
   private LEDController m_leds;
-  /** A simple Two Note Auto */
-  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
+  /** A five note auto. Take that 1678 ;P */
+  public FiveNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
@@ -37,13 +37,19 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       m_shooter.spinUpShooterCommand(),
       //shoot the preload
-      new Shoot(m_shooter, () -> true).withTimeout(1),
-      //drive to the note that's next to the stage
+      new Shoot(m_shooter, () -> true),
+      //drive to the note that's next to the stage (W3)
       new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
-      new Shoot(m_shooter, () -> true).withTimeout(1)
+      new Shoot(m_shooter, () -> true),
+      //drive to the note that's next to the stage (W3)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      //drive back to the speaker
+      m_drive.followPathFromFile("W3S"),
+      //Shoot the second note
+      new Shoot(m_shooter, () -> true)
 
     );
   }
