@@ -25,6 +25,8 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
+import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -39,8 +41,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   private final TalonFXConfiguration motorConfig= new TalonFXConfiguration();
   //private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getEncoder();
-  private final SparkAbsoluteEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-
+  private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(1);
   //A Feedforward controller moves the arm according to the motion profile, and the PID controller corrects for any error in the system
   //These constants will be calculated with a SysID test
   private PIDController armPID = new PIDController(ArmConstants.kP,ArmConstants.kI, ArmConstants.kD);
@@ -70,6 +71,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     motorL.getConfigurator().apply(motorConfig);
     motorR.getConfigurator().apply(motorConfig);
+    armEncoder.setDistancePerRotation(360);
     
     SmartDashboard.putData("Zero Arm Enocder", runOnce(() -> motorR.setPosition(0)));
     SmartDashboard.putData("Arm to 0", setArmSetpointCommand(() -> 0));
@@ -107,7 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getPosition();
+    return armEncoder.getDistance();
   }
   //returns true if the arm is close enough to the goal position
   public boolean isAtTarget(){
@@ -145,12 +147,7 @@ public class ArmSubsystem extends SubsystemBase {
     //Combine the feedforward and pid outputs and send them to the motor
     motorR.setVoltage(feedforward + pid);
     
-    
-    
-    
-
     setTarget(SmartDashboard.getNumber("Set Setpoint", 0));
-    
   }
 
   
