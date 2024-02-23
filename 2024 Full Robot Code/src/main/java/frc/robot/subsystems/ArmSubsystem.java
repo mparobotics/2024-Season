@@ -33,7 +33,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motorR = new TalonFX(ArmConstants.RmotorID);
   private final TalonFX motorL = new TalonFX(ArmConstants.LmotorID);
 
-  //private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushed).getEncoder();
+  private final RelativeEncoder armEncoder = new CANSparkMax(ArmConstants.encoderID, MotorType.kBrushless).getEncoder();
   
   //A Feedforward controller moves the arm according to the motion profile, and the PID controller corrects for any error in the system
   //These constants will be calculated with a SysID test
@@ -94,7 +94,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return -motorR.getPosition().getValue() / 192 * 360;
+    return armEncoder.getPosition();
   }
   //returns true if the arm is close enough to the goal position
   public boolean isAtTarget(){

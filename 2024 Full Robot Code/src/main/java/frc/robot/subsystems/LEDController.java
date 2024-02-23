@@ -36,20 +36,20 @@ public class LEDController extends SubsystemBase{
                 offset += 0.5;
                 for(var i = 0; i < led_count; i ++){
                     if((i + offset)% 6 >= 3){
-                        Buffer.setRGB (i, 255,0,0);
+                        Buffer.setRGB (i, 200,0,0);
                     }
                     else{ 
-                        Buffer.setRGB (i,0,255,0);
+                        Buffer.setRGB (i,130,40,130);
                     }
                 }
             } else {
                 offset += 0.5;
                 for(var i = 0; i < led_count; i ++){
                     if((i + offset)% 6 >= 3){
-                        Buffer.setRGB (i, 0,0,255);
+                        Buffer.setRGB (i, 0,0,200);
                     }
                     else{ 
-                        Buffer.setRGB (i,0,255,0);
+                        Buffer.setRGB (i,0,200,0);
                     }
                 }
             }

@@ -59,7 +59,7 @@ public final class Constants {
   public static final class ArmConstants{
     public static final int LmotorID = 41;
     public static final int RmotorID = 42;
-    public static final int encoderID = 0;
+    public static final int encoderID = 43;
 
     public static final double minArmPosition = 0;
     public static final double maxArmPosition = 0;
@@ -122,8 +122,8 @@ public final class Constants {
     
   }
   public static final class ClimberConstants{
-    public static final int MotorIDLeft = 0;
-    public static final int MotorIDRight = 0;
+    public static final int MotorIDLeft = 32;
+    public static final int MotorIDRight = 31;
   }
   public static final class AutoConstants{
     //Config for PathPlanner. contains trajectory PID constants and other drivebase data

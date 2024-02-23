@@ -16,6 +16,7 @@ import frc.robot.auto.AutoModeSelector;
 import frc.robot.auto.AutoModeSelector.AutoMode;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.ClimberSubsytem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDController;
 import frc.robot.subsystems.ShooterSubsystem;
@@ -54,16 +55,15 @@ public class RobotContainer {
   
 
   /* Subsystems */
-  private final SwerveSubsystem m_drive = new SwerveSubsystem();
+  //private final SwerveSubsystem m_drive = new SwerveSubsystem();
   private final ArmSubsystem m_arm = new ArmSubsystem();
   private final IntakeSubsystem m_intake = new IntakeSubsystem();
   private final ShooterSubsystem m_shooter = new ShooterSubsystem();
-
-
+  private final ClimberSubsytem m_climber = new ClimberSubsytem();
   private final LEDController m_leds = new LEDController();
 
 
-  private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
+  //private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
@@ -71,7 +71,8 @@ public class RobotContainer {
     m_shooter.setDefaultCommand(m_shooter.shooterControlCommand(() -> helmsController.getLeftTriggerAxis() > 0.5? 1:0, () -> -helmsController.getRightY()));
     m_intake.setDefaultCommand(m_intake.IntakeControlCommand(() -> helmsController.getRightY()));
     m_leds.setDefaultCommand(m_leds.idleLedPattern());
-    m_drive.setDefaultCommand(
+    m_climber.setDefaultCommand(m_climber.climb(() -> driveController.getLeftY(), () -> driveController.getRightY()));
+    /*m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,
           () -> -driveController.getRawAxis(translationAxis),
@@ -79,7 +80,7 @@ public class RobotContainer {
           () -> -driveController.getRawAxis(rotationAxis),
           () -> robotCentric.getAsBoolean(),
           () -> false 
-          ));
+          ));*/
 
     // Configure the trigger bindings
     configureBindings();
@@ -87,17 +88,18 @@ public class RobotContainer {
 
   
   private void configureBindings() {
-    driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro()));
+    //driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro()));
     helmsController.button(Button.kRightBumper.value).whileTrue(new InstantCommand(() -> {m_shooter.setBeltSpeed(-0.3); m_intake.runIntake(-0.6);}));
     
   }
   public Command getAutonomousCommand() {
     // An example command will be run in autonomous
     //return m_autoModeSelector.getAuto(AutoMode.TEST);
-    return new SequentialCommandGroup(
+    /*return new SequentialCommandGroup(
     new InstantCommand(() -> m_drive.resetOdometry(new Pose2d(16.02,2.04,Rotation2d.fromDegrees(180)))),
     m_intake.IntakeControlCommand(() -> 0.5),
     m_shooter.shooterControlCommand(() -> 0, () -> -0.5),
-    AutoBuilder.followPath(PathPlannerPath.fromPathFile("Kiwi")));
+    AutoBuilder.followPath(PathPlannerPath.fromPathFile("Kiwi")));*/
+    return null;
   }
 }
