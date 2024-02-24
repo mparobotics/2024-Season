@@ -16,6 +16,7 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
@@ -36,13 +37,17 @@ public class ShooterSubsystem extends SubsystemBase {
     beltMotor.setIdleMode(IdleMode.kBrake);
     shooterMotor.setIdleMode(IdleMode.kCoast);
 
+    beltMotor.setInverted(true);
+
+    shooterMotor.setSmartCurrentLimit(80);
+
     shooterSpeedController.setP(1);
     shooterSpeedController.setI(0);
     shooterSpeedController.setD(0);
   }
 
   public boolean isNoteInShooter(){
-    return beamSensor.get();
+    return !beamSensor.get();
   }
   public double getShooterWheelSpeed(){
     return shooterEncoder.getVelocity();
@@ -90,5 +95,7 @@ public class ShooterSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("Is Note In Shooter", isNoteInShooter());
+    SmartDashboard.putNumber("shooter Speed", shooterEncoder.getVelocity());
   }
 }

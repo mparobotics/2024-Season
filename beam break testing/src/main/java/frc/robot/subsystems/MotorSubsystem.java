@@ -29,7 +29,9 @@ public class MotorSubsystem extends SubsystemBase {
   private final AddressableLED leds = new AddressableLED(0);
   private AddressableLEDBuffer buffer = new AddressableLEDBuffer(led_count);
 
-  private final DutyCycleEncoder encoder = new DutyCycleEncoder(0);
+
+  private final DigitalInput beambreak = new DigitalInput(0);
+  
 
   //private DigitalInput beambreak = new DigitalInput(0);
   
@@ -49,13 +51,11 @@ public class MotorSubsystem extends SubsystemBase {
     leds.setLength(led_count);
     leds.start();
     
-    encoder.setDistancePerRotation(360);
+   
     
   }
 
-  public double getArmPosition(){
-    return encoder.getDistance();
-  }
+  
 
   //A command that sets the motor to a given speed
   public Command setMotor(DoubleSupplier speed){
@@ -78,7 +78,7 @@ public class MotorSubsystem extends SubsystemBase {
       }
     }*/
     
-    SmartDashboard.putNumber("Arm Position", getArmPosition());
+    SmartDashboard.putBoolean("Beam Break", beambreak.get());
     
     leds.setData(buffer);
   }

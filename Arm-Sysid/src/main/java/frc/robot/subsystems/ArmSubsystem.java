@@ -44,9 +44,11 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFX motorL = new TalonFX(LmotorID);
 
   
-  //REV encoder wired to a SparkMAX without a motor. 
-  private final DutyCycleEncoder encoder = new DutyCycleEncoder();
+  //REV through bore encoder 
+  private final DutyCycleEncoder encoder = new DutyCycleEncoder(1);
 
+  private double lastPostition = 0;
+  private double velocity = 0;
   //A MutableMeausre contains a measurement of a physical quantity that can be updated with a new value each frame.
   // The units library is a bit annoying to use, but we're still using it because it handles all the unit conversions neatly.
 
@@ -80,27 +82,31 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putData("Arm: Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Arm: Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
     
+    encoder.setDistancePerRotation(2 * Math.PI);
   }
   public double getEncoderRadians(){
-    return encoder.getPosition() * 2 * Math.PI / 8192;
-    
+    return encoder.getDistance();
   }
+
   public double getEncoderRadiansPerSecond(){
-    return encoder.getVelocity() * 2 * Math.PI / 8192;
-    
+    return velocity;
   }
+
   public double getMotorVoltage(){
     return motorR.get() * RobotController.getBatteryVoltage();
   }
+
   private void runMotorsFromVoltage(Measure<Voltage> volts){
     motorR.setVoltage(volts.in(Units.Volts));
   }
+
   private void logArmState(SysIdRoutineLog log){
     log.motor("Arm Motors")
     .voltage(arm_motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
     .angularPosition(arm_position.mut_replace(Units.Radians.of(getEncoderRadians())))
     .angularVelocity(arm_velocity.mut_replace(Units.RadiansPerSecond.of(getEncoderRadiansPerSecond())));
   }
+  
   public Command controlArmWithJoystick(DoubleSupplier speed){
     return runOnce(() -> {
       if(Math.abs(speed.getAsDouble()) < 0.1){
@@ -119,10 +125,12 @@ public class ArmSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
- 
+    velocity = (getEncoderRadians() - lastPostition)/0.02;
 
-    SmartDashboard.putNumber("Arm Position ", getEncoderRadians());
-    SmartDashboard.putNumber("Encoder Position ", encoder.getPosition());
+    lastPostition = getEncoderRadians();
+
+    SmartDashboard.putNumber("Arm Position (Radians)", getEncoderRadians());
+    SmartDashboard.putNumber("Arm Velocity (Radians)", getEncoderRadiansPerSecond());
 
   }
 }

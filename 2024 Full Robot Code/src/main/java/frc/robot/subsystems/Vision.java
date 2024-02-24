@@ -16,10 +16,10 @@ import frc.robot.Constants.VisionConstants;
 /** Add your docs here. */
 public class Vision {
     public static NetworkTable getAprilTagDetector(){
-        return NetworkTableInstance.getDefault().getTable("limelight-b");
+        return NetworkTableInstance.getDefault().getTable("limelight-a");
     }
     public static NetworkTable getNoteDetector(){
-        return NetworkTableInstance.getDefault().getTable("limelight-a");
+        return NetworkTableInstance.getDefault().getTable("limelight-b");
     }
     
     public static boolean canSeeAprilTag(){

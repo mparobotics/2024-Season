@@ -109,7 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getDistance();
+    return armEncoder.getAbsolutePosition();
   }
   //returns true if the arm is close enough to the goal position
   public boolean isAtTarget(){

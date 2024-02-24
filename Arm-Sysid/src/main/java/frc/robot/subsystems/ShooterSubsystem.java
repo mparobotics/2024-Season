@@ -55,7 +55,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final MutableMeasure<Velocity<Angle>> motor_velocity = MutableMeasure.ofBaseUnits(0, Units.RadiansPerSecond);
 
- 
+  private final MutableMeasure<Angle> motor_position = MutableMeasure.ofBaseUnits(0, Units.Radians);
   //use default configuration, but could potentially customize the voltages for the characterization routine by supplying them here
   private final SysIdRoutine.Config config = new SysIdRoutine.Config();
 
@@ -91,7 +91,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private void logArmState(SysIdRoutineLog log){
     log.motor("Shooter Motor")
     .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
-    .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())));
+    .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())))
+    .angularPosition(motor_position.mut_replace(Units.Radians.of(encoder.getPosition())));
   }
   public Command controlShooterWithJoystick(DoubleSupplier shootspeed, DoubleSupplier beltspeed){
     return runOnce(() -> {

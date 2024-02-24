@@ -33,7 +33,7 @@ public class IntakeSubsystem extends SubsystemBase {
     intakeMotor.set(speed);
   }
   public boolean isNoteInIntake(){
-    return !beamSensor.get();
+    return beamSensor.get();
   }
   public Command IntakeControlCommand(DoubleSupplier speed){
     return runOnce(() -> {
@@ -49,6 +49,6 @@ public class IntakeSubsystem extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     SmartDashboard.putNumber("intake duty cycle", intakeMotor.get());
-    SmartDashboard.putBoolean("Is Note In Intake", beamSensor.get());
+    
   }
 }

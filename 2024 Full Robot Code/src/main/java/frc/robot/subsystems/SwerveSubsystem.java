@@ -226,14 +226,14 @@ public class SwerveSubsystem extends SubsystemBase {
     
     
     if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+      //odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     getVirtualTarget();
-    /* 
+    
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
@@ -245,7 +245,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     
     }
-    */
+    
 }
 
 }

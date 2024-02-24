@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import com.revrobotics.CANSparkMax;
@@ -25,10 +26,12 @@ public class ClimberSubsytem extends SubsystemBase {
     motorL.setIdleMode(IdleMode.kBrake);
     motorR.setIdleMode(IdleMode.kBrake);
   }
-  public Command climb(DoubleSupplier leftSpeed, DoubleSupplier rightSpeed){
+  public Command climb(BooleanSupplier leftUp, BooleanSupplier leftDown, BooleanSupplier rightUp, BooleanSupplier rightDown){
     return runOnce(() -> {
-      motorL.set(leftSpeed.getAsDouble());
-      motorR.set(rightSpeed.getAsDouble());
+      double leftSpeed = (leftUp.getAsBoolean()? 1: (leftDown.getAsBoolean()? -1:0));
+      double rightSpeed = (rightUp.getAsBoolean()? 1: (rightDown.getAsBoolean()? -1:0));
+      motorL.set(leftSpeed);
+      motorR.set(rightSpeed);
 
     });
   }
