@@ -13,8 +13,10 @@ import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoModeSelector;
+import frc.robot.auto.OneCenterNote;
 import frc.robot.auto.AutoModeSelector.AutoMode;
 import frc.robot.commands.Intake;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsytem;
@@ -65,7 +67,7 @@ public class RobotContainer {
   private final LEDController m_leds = new LEDController();
 
 
-  //private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
+  private final AutoModeSelector m_autoModeSelector = new AutoModeSelector(m_arm,m_shooter,m_intake,m_drive,m_leds);
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
@@ -88,6 +90,7 @@ public class RobotContainer {
     // Configure the trigger bindings
     configureBindings();
     m_drive.resetOdometry(new Pose2d());
+    m_autoModeSelector.showOptions();
   }
   private double climberInput(boolean up, boolean down){
     return up? 1: (down? -1: 0);
@@ -100,13 +103,8 @@ public class RobotContainer {
     
   }
   public Command getAutonomousCommand() {
-    // An example command will be run in autonomous
-    //return m_autoModeSelector.getAuto(AutoMode.TEST);
-    /*return new SequentialCommandGroup(
-    new InstantCommand(() -> m_drive.resetOdometry(new Pose2d(16.02,2.04,Rotation2d.fromDegrees(180)))),
-    m_intake.IntakeControlCommand(() -> 0.5),
-    m_shooter.shooterControlCommand(() -> 0, () -> -0.5),
-    AutoBuilder.followPath(PathPlannerPath.fromPathFile("Kiwi")));*/
-    return null;
+    //return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm, m_leds);
+    return m_autoModeSelector.getSelectedAuto();
+
   }
 }

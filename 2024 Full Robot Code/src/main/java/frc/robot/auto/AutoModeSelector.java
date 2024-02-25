@@ -9,6 +9,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.LEDController;
@@ -25,8 +26,10 @@ public class AutoModeSelector {
 
     private SendableChooser<AutoMode> autoChoices;
     public enum AutoMode{
-        NOAUTO,
-        TEST
+        NO_AUTO,
+        TEST,
+        TWO_NOTE_CENTER,
+        FIVE_NOTE
     }
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive, LEDController led){
         m_arm = arm;
@@ -40,15 +43,22 @@ public class AutoModeSelector {
         for(AutoMode mode: AutoMode.values()){
             autoChoices.addOption(mode.toString(), mode);
         }
-        autoChoices.setDefaultOption("Do Nothing", AutoMode.NOAUTO);
+        autoChoices.setDefaultOption("Do Nothing", AutoMode.NO_AUTO);
         SmartDashboard.putData(autoChoices);
+    }
+    public Command getSelectedAuto(){
+        return getAuto(autoChoices.getSelected());
     }
     public Command getAuto(AutoMode mode){
         switch(mode){
-            case NOAUTO:
+            case NO_AUTO:
                 return null;
             case TEST:
                 return m_drive.followPathFromFile("testPath01");
+            case TWO_NOTE_CENTER:
+                return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm, m_led);
+            case FIVE_NOTE:
+                return new FiveNoteAuto(m_drive, m_intake, m_shooter, m_arm, m_led);
 
 
 

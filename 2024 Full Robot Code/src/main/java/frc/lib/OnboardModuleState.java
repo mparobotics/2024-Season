@@ -22,7 +22,7 @@ public class OnboardModuleState {
     double target = desiredState.angle.getDegrees();
 
     //find the direction that points you in the target direction with the least angle change
-    double error = smolOptimize180(current, target);
+    double error = smolOptimize180(current, target) - current;
     //sometimes we can reverse the drive motor to avoid turning 180 degress.
     //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
     //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster

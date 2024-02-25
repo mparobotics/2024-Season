@@ -6,6 +6,8 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.OnboardModuleState;
@@ -26,7 +28,7 @@ public class LEDController extends SubsystemBase{
     //             .*´^`*.         .*´^`*.         .*´^`*.
     //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      ~~~~~~~~~~~~~~~
     private double wave(double position, double min, double max, double period){
-        return Math.sin(position * period * 2 * Math.PI) * (max - min) + min;
+        return Math.sin(position * period * 2 * Math.PI) * (max - min) / 2 + min + (max - min)/2;
     }
     //    /\  /\  /\  /\  /\  /\  /\  /\
     //   /  \/  \/  \/  \/  \/  \/  \/  \           /\/\/\/\/\/\/\/\/\/\/\/\
@@ -76,7 +78,7 @@ public class LEDController extends SubsystemBase{
                         Buffer.setRGB (i, 0,0,200);
                     }
                     else{ 
-                        Buffer.setRGB (i,0,200,0);
+                        Buffer.setRGB (i,150,40,150);
                     }
                 }
             }
@@ -87,6 +89,16 @@ public class LEDController extends SubsystemBase{
     }
     @Override
     public void periodic(){
+        if (DriverStation.isDisabled()) {
+            offset += 1;
+            if(FieldConstants.isRedAlliance()){
+                setAll((int)wave(offset, 0, 200, 100),0,130);
+            }
+            else{
+                setAll(0, 0, (int)wave(offset, 0, 255, 100));
+            }
+            
+        }
         
     }
 

@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 
 
+import com.revrobotics.CANSparkBase.IdleMode;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.FieldConstants;
@@ -37,12 +39,7 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     m_arm.setToHandoffAngle();
-    
-    if (FieldConstants.isRedAlliance()){
-      m_led.setAll(255, 0, 0);
-    } else {
-      m_led.setAll(0, 0, 255);
-    }
+    m_shooter.setBeltMotorIdleMode(IdleMode.kBrake);
     
   }
 
@@ -50,7 +47,7 @@ public class Intake extends Command {
   @Override
   public void execute() {
     m_shooter.setBeltSpeed(1);
-    m_intake.runIntake(1);
+    m_intake.runIntake(0.75);
   }
 
   // Called once the command ends or is interrupted.

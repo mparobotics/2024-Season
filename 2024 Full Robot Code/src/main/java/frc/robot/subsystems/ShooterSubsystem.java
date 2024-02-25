@@ -34,18 +34,21 @@ public class ShooterSubsystem extends SubsystemBase {
   private double setpoint;
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-    beltMotor.setIdleMode(IdleMode.kBrake);
+    beltMotor.setIdleMode(IdleMode.kCoast);
     shooterMotor.setIdleMode(IdleMode.kCoast);
 
     beltMotor.setInverted(true);
 
     shooterMotor.setSmartCurrentLimit(80);
+    shooterEncoder.setVelocityConversionFactor(1);
 
     shooterSpeedController.setP(1);
     shooterSpeedController.setI(0);
     shooterSpeedController.setD(0);
   }
-
+  public void setBeltMotorIdleMode(IdleMode mode){
+    beltMotor.setIdleMode(mode);
+  }
   public boolean isNoteInShooter(){
     return !beamSensor.get();
   }
@@ -53,7 +56,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterEncoder.getVelocity();
   }
   public boolean isAtShootingSpeed(){
-    return(Math.abs(setpoint - getShooterWheelSpeed()) < 0.01);
+    return(getShooterWheelSpeed() > ShooterConstants.shooterWheelSpeed);
   }
 
   public void setBeltSpeed(double speed){
@@ -63,7 +66,7 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.set(speed);
   }
   public void spinUpShooter(){
-    setTargetShooterSpeed(ShooterConstants.shooterWheelSpeed);
+    //setTargetShooterSpeed(ShooterConstants.shooterWheelSpeed);
   }
   public void stopShooting(){
     beltMotor.set(0);
@@ -76,8 +79,14 @@ public class ShooterSubsystem extends SubsystemBase {
   
   public Command shooterControlCommand(DoubleSupplier shooterSpeed, DoubleSupplier beltSpeed){
     return runOnce(() ->{
+      if(Math.abs(beltSpeed.getAsDouble()) > 0.1){
+        setBeltSpeed(beltSpeed.getAsDouble());
+      }
+      else{
+        setBeltSpeed(0);
+      }
       setShooterSpeed(shooterSpeed.getAsDouble());
-      setBeltSpeed(beltSpeed.getAsDouble());
+      
     });
   }
   public Command spinUpShooterCommand(){
@@ -97,5 +106,6 @@ public class ShooterSubsystem extends SubsystemBase {
     // This method will be called once per scheduler run
     SmartDashboard.putBoolean("Is Note In Shooter", isNoteInShooter());
     SmartDashboard.putNumber("shooter Speed", shooterEncoder.getVelocity());
+    SmartDashboard.putBoolean("Is at shooting speed", isAtShootingSpeed());
   }
 }
