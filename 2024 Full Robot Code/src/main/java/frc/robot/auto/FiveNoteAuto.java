@@ -44,12 +44,30 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
       new Shoot(m_shooter, () -> true),
-      //drive to the note that's next to the stage (W3)
-      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      //drive to the middle close note (W2)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW2"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
       //drive back to the speaker
-      m_drive.followPathFromFile("W3S"),
-      //Shoot the second note
+      m_drive.followPathFromFile("W2S"),
+      //Shoot the third note
+      new Shoot(m_shooter, () -> true),
+
+      //drive to the last wing note (W1)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW1"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      //drive back to the speaker
+      m_drive.followPathFromFile("W1S"),
+      //Shoot the fourth note
+      new Shoot(m_shooter, () -> true),
+
+      //drive to the second centerline note (C2)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC2"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      //drive back to the speaker
+      m_drive.followPathFromFile("C2S"),
+      //Shoot the fifth note
       new Shoot(m_shooter, () -> true)
+
+
+
+
 
     );
   }

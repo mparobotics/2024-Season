@@ -27,7 +27,7 @@ public class IntakeSubsystem extends SubsystemBase {
   public IntakeSubsystem() {
     intakeMotor.setInverted(true);
 
-   
+    intakeMotor.setSmartCurrentLimit(80);
   }
   public void runIntake(double speed){
     intakeMotor.set(speed);

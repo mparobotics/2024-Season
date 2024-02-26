@@ -53,9 +53,9 @@ public class ShooterSubsystem extends SubsystemBase {
   //define measurement variables for the voltage going to the motors, the arm's angle, and the arm's angular velocoity.
   private final MutableMeasure<Voltage> motor_voltage = MutableMeasure.ofBaseUnits(0,Units.Volts);
 
-  private final MutableMeasure<Velocity<Angle>> motor_velocity = MutableMeasure.ofBaseUnits(0, Units.RadiansPerSecond);
+  private final MutableMeasure<Velocity<Angle>> motor_velocity = MutableMeasure.ofBaseUnits(0, Units.RotationsPerSecond);
 
-  private final MutableMeasure<Angle> motor_position = MutableMeasure.ofBaseUnits(0, Units.Radians);
+  private final MutableMeasure<Angle> motor_position = MutableMeasure.ofBaseUnits(0, Units.Rotations);
   //use default configuration, but could potentially customize the voltages for the characterization routine by supplying them here
   private final SysIdRoutine.Config config = new SysIdRoutine.Config();
 
@@ -72,7 +72,6 @@ public class ShooterSubsystem extends SubsystemBase {
   public ShooterSubsystem() {
     shooter.setIdleMode(IdleMode.kCoast);
     shooter.setInverted(false);
-
     indexer.setInverted(true);
     SmartDashboard.putData("Shooter: Run Quasistatic Forward",shooter_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Shooter: Run Quasistatic Reverse",shooter_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
@@ -91,8 +90,8 @@ public class ShooterSubsystem extends SubsystemBase {
   private void logArmState(SysIdRoutineLog log){
     log.motor("Shooter Motor")
     .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
-    .angularVelocity(motor_velocity.mut_replace(Units.RadiansPerSecond.of(encoder.getVelocity())))
-    .angularPosition(motor_position.mut_replace(Units.Radians.of(encoder.getPosition())));
+    .angularVelocity(motor_velocity.mut_replace(Units.RotationsPerSecond.of(encoder.getVelocity()/60)))
+    .angularPosition(motor_position.mut_replace(Units.Radians.of(encoder.getPosition()/60)));
   }
   public Command controlShooterWithJoystick(DoubleSupplier shootspeed, DoubleSupplier beltspeed){
     return runOnce(() -> {
@@ -120,7 +119,7 @@ public class ShooterSubsystem extends SubsystemBase {
   public void periodic() {
  
 
-    SmartDashboard.putNumber("Shooter Speed ", encoder.getVelocity());
+    SmartDashboard.putNumber("Shooter Speed (RPMs)", encoder.getVelocity());
 
   }
 }
