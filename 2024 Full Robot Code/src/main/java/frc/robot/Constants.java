@@ -44,15 +44,12 @@ public final class Constants {
     public static final double noteSpeedMetersPerSecond = 20; //the speed that the note leaves the shooter at
     public static final double shooterWheelSpeed = 3500; //RPMs
     public static final double shootTimeSeconds = 1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
-    //Feedforward constants
-    public static final double kS = 0;
-    public static final double kV = 0;
-    public static final double kA = 0;
 
     //PID constants
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
+    public static final double kFF = 12.0/4500.0;
 
     
   }
@@ -61,11 +58,11 @@ public final class Constants {
     public static final int RmotorID = 42;
     public static final int encoderID = 43;
 
-    public static final double minArmPosition = 0;
-    public static final double maxArmPosition = 0;
+    public static final double minArmPosition = 20;
+    public static final double maxArmPosition = 110;
 
-    public static final double handoffPosition = 0;
-    public static final double ampPosition = 0;
+    public static final double handoffPosition = 20;
+    public static final double ampPosition = 110;
 
     public static final double kMaxAcceleration = 3; //max angular acceleration of the arm (degrees per second^2)
     public static final double kMaxVelocity = 5; //max angular velocity of the arm (degrees per second)
@@ -73,16 +70,10 @@ public final class Constants {
     public static final double ticksToRotations = 1/8192;
     public static final double ticksToRadians = ticksToRotations * 2 * Math.PI;
     //PID constants for the arm's motion control
-    public static final double kP = 0; 
+    public static final double kP = 0.04; 
     public static final double kI = 0;
     public static final double kD = 0;
 
-
-    //Feedforward constants for the arm's motion control
-    public static final double kG = 0; //How much voltage is needed to resist the force of gravity on the arm
-    public static final double kS = 0; //how many volts are needed to overcome friction in the mechanism
-    public static final double kV = 0; //how much voltage to move a specific speed
-    public static final double kA = 0; //how much voltage to accelerate a certain amount
     
 
     public static final Double[][] ArmAngleMapData = {
@@ -104,7 +95,9 @@ public final class Constants {
     public static boolean isRedAlliance(){
       return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
-    
+    public static Pose2d flipPoseForAlliance(Pose2d pose){
+      return isRedAlliance()? new Pose2d( 16.4846 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
+    }
     public static final Pose2d RED_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
 
