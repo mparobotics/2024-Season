@@ -46,7 +46,7 @@ public final class Constants {
     public static final double shootTimeSeconds = 1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
 
     //PID constants
-    public static final double kP = 0.00125;
+    public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
     public static final double kFF = 12.0/4500.0;
