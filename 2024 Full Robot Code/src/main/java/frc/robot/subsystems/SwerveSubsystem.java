@@ -64,7 +64,7 @@ public class SwerveSubsystem extends SubsystemBase {
     };
 
     
-    odometry = new SwerveDrivePoseEstimator(SwerveConstants.swerveKinematics, getYaw(), getPositions(),new Pose2d(0,0,Rotation2d.fromDegrees(0)));
+    odometry = new SwerveDrivePoseEstimator(SwerveConstants.swerveKinematics, FieldConstants.flipYawForAlliance(getYaw()), getPositions(),new Pose2d(0,0,Rotation2d.fromDegrees(0)));
     
     field = new Field2d();
     SmartDashboard.putData("Field", field);
@@ -109,7 +109,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
   //reset the pose to a given pose
   public void resetOdometry(Pose2d pose) {
-    odometry.resetPosition(getYaw(), getPositions(), pose);
+    odometry.resetPosition(FieldConstants.flipYawForAlliance(getYaw()), getPositions(), pose);
   }
   public void startAutoPlacement(double x, double y, double direction){
     pigeon.setYaw(FieldConstants.isRedAlliance()? -direction: direction);
@@ -117,7 +117,7 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   //set the current heading to be zero degrees
   public void zeroGyro() {
-    pigeon.setYaw(0);
+    pigeon.setYaw(0);       
   }
   
   //get the robot's estimated location (in meters)
@@ -226,16 +226,17 @@ public class SwerveSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     
-    odometry.update(getYaw(), getPositions());
+    odometry.update(FieldConstants.flipYawForAlliance(getYaw()), getPositions());
     
     
     if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+      //odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     
     //display estimated position on the driver station
     field.setRobotPose(getPose());
-    SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
+    SmartDashboard.putNumber("Gyro Yaw",  getYaw().getDegrees());
+    SmartDashboard.putNumber("Pose Yaw",  getPose().getRotation().getDegrees());
     getVirtualTarget();
     
     for (SwerveModule module : swerveModules) {

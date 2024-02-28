@@ -20,14 +20,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class TwoNoteAuto extends SequentialCommandGroup {
+public class JustShoot extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
   /** A simple Two Note Auto */
-  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+  public JustShoot(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
@@ -39,12 +39,6 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       m_shooter.spinUpShooterCommand(),
       //shoot the preload
-      new Shoot(m_shooter, () -> true).withTimeout(1),
-      //drive to the note that's next to the stage
-      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter)),
-      //drive back to the speaker
-      m_drive.followPathFromFile("W3S"),
-      //Shoot the second note
       new Shoot(m_shooter, () -> true).withTimeout(1)
 
     );

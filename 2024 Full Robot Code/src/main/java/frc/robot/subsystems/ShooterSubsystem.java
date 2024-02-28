@@ -58,7 +58,7 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterEncoder.getVelocity();
   }
   public boolean isAtShootingSpeed(){
-    return(Math.abs(getShooterWheelSpeed() - ShooterConstants.shooterWheelSpeed) < 1);
+    return(Math.abs(getShooterWheelSpeed() - ShooterConstants.shooterWheelSpeed) < 350);
   }
   public void setBeltSpeed(double speed){
     beltMotor.set(speed);

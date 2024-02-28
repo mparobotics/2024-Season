@@ -98,6 +98,15 @@ public final class Constants {
     public static Pose2d flipPoseForAlliance(Pose2d pose){
       return isRedAlliance()? new Pose2d( 16.4846 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
+    public static Rotation2d flipYawForAlliance(Rotation2d yaw){
+      if(isRedAlliance()){
+        return yaw;
+      }
+      else{
+        return yaw.minus(Rotation2d.fromDegrees(180));
+      }
+      
+    }
     public static final Pose2d RED_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
 
