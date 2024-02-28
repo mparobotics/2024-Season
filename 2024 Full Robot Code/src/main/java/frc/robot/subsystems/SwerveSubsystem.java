@@ -111,7 +111,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(getYaw(), getPositions(), pose);
   }
-  
+  public void resetPoseAllianceRelative(Pose2d pose){
+    if(FieldConstants.isRedAlliance()){
+      resetOdometry(new Pose2d( 16.4846 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())));
+    }
+    else{
+      resetOdometry(pose);
+    }
+  }
   //set the current heading to be zero degrees
   public void zeroGyro() {
     pigeon.setYaw(0);
@@ -244,7 +251,7 @@ public class SwerveSubsystem extends SubsystemBase {
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
       SmartDashboard.putNumber(
         "Mod" + module.moduleNumber + " Distance", module.getPosition().distanceMeters);
-      
+    
 
     
     }

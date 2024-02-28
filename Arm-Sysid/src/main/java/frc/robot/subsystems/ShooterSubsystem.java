@@ -43,7 +43,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final CANSparkMax shooter = new CANSparkMax(ShooterID, MotorType.kBrushless);
   private final CANSparkMax indexer = new CANSparkMax(IndexerID, MotorType.kBrushless);
 
-  private double voltage = 0;
+  
   
   private final RelativeEncoder encoder = shooter.getEncoder();
 
@@ -62,7 +62,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
   private final Mechanism Arm = new Mechanism(
     (Measure<Voltage> volts) -> {runMotorsFromVoltage(volts);}, //code that runs the mechanism goes here. must use a Measure<Voltage> to supply voltage to the motors, 
-                (SysIdRoutineLog log) -> logShooterState(log), 
+                (SysIdRoutineLog log) -> logArmState(log), 
                 this);
 
   private SysIdRoutine shooter_sysid = new SysIdRoutine(config, Arm);
@@ -82,17 +82,16 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   
   public double getMotorVoltage(){
-    return voltage * RobotController.getBatteryVoltage();
+    return shooter.get() * RobotController.getBatteryVoltage();
   }
   private void runMotorsFromVoltage(Measure<Voltage> volts){
-    voltage = volts.in(Units.Volts);
-    shooter.setVoltage(voltage);
+    shooter.setVoltage(volts.in(Units.Volts));
   }
-  private void logShooterState(SysIdRoutineLog log){
+  private void logArmState(SysIdRoutineLog log){
     log.motor("Shooter Motor")
     .voltage(motor_voltage.mut_replace(Units.Volts.of(getMotorVoltage())))
     .angularVelocity(motor_velocity.mut_replace(Units.RotationsPerSecond.of(encoder.getVelocity()/60)))
-    .angularPosition(motor_position.mut_replace(Units.Rotations.of(encoder.getPosition())));
+    .angularPosition(motor_position.mut_replace(Units.Radians.of(encoder.getPosition()/60)));
   }
   public Command controlShooterWithJoystick(DoubleSupplier shootspeed, DoubleSupplier beltspeed){
     return runOnce(() -> {

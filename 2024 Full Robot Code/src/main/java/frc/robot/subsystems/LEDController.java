@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.OnboardModuleState;
@@ -102,25 +103,18 @@ public class LEDController extends SubsystemBase{
         }
         
     }
-    public void autoPeriodic(boolean hasNote){
-        offset += 1;
-        if(hasNote){
-            int brightness = (int)wave(offset, 0, 255, 100);
-            setAll(brightness * 255, brightness * 50, 0);
-        }
-        else if(FieldConstants.isRedAlliance()){
-            for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, (int)wave(offset, 0, 255, 10),0,0);
-            }
-        }
-        else{
-            for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 10));
-            }
-        }
-    }
     @Override
     public void periodic(){
+        if (DriverStation.isDisabled()) {
+            offset += 1;
+            if(FieldConstants.isRedAlliance()){
+                setAll((int)wave(offset, 0, 200, 100),0,130);
+            }
+            else{
+                setAll(0, 0, (int)wave(offset, 0, 255, 100));
+            }
+            
+        }
         
     }
 

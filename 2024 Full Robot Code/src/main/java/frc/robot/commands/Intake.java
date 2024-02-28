@@ -19,19 +19,20 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class Intake extends Command {
   private IntakeSubsystem m_intake;
+  private LEDController m_led;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
 
   /** Intakes until a note is detected in the shooter*/
-  public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
+  public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter, LEDController led) {
     addRequirements(intake);
     addRequirements(arm);
     addRequirements(shooter);
     m_intake = intake;
     m_arm = arm;
     m_shooter = shooter;
-    
+    m_led = led;
   }
 
   // Called when the command is initially scheduled.
@@ -54,6 +55,11 @@ public class Intake extends Command {
   public void end(boolean interrupted) {
     m_intake.runIntake(0);
     m_shooter.setBeltSpeed(0);
+    if (m_intake.isNoteInIntake()) {
+      m_led.setAll(255, 115, 0);
+    } else {
+      m_led.setAll(0, 0, 0);
+    }
   }
 
   // Returns true when the command should end.

@@ -39,7 +39,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       //shoot the preload
       new Shoot(m_shooter, () -> true).withTimeout(1),
       //drive to the note that's next to the stage
-      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter)),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note

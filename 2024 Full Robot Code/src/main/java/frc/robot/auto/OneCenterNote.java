@@ -11,7 +11,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
@@ -28,31 +27,31 @@ public class OneCenterNote extends SequentialCommandGroup {
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
-
+  private LEDController m_leds;
   /** Creates a new OneCenterNote. */
-  public OneCenterNote(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+  public OneCenterNote(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
     m_arm = arm;
-
+    m_leds = leds;
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(0.71,4.43,Rotation2d.fromDegrees(-59.49))))),
+      new InstantCommand(() -> m_drive.resetPoseAllianceRelative(new Pose2d(0.71,4.43,Rotation2d.fromDegrees(-59.49)))),
       //spins up shooter and shoots,
       m_shooter.shooterControlCommand(() -> 1,() -> 0),
       new Shoot(m_shooter, () -> true),
       
       //moves to the C5 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC5"), new Intake(m_intake, m_arm, m_shooter)),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC5"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
       //goes back to the speaker
       m_drive.followPathFromFile("C5S"),
       //shoots
       new Shoot(m_shooter, () -> true),
 
       //moves to the C5 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC4"), new Intake(m_intake, m_arm, m_shooter)),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC4"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
       //goes back to the speaker
       m_drive.followPathFromFile("C4S"),
       //shoots

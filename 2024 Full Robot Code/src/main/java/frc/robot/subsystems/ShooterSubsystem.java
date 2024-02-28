@@ -15,7 +15,6 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,6 +29,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final RelativeEncoder shooterEncoder = shooterMotor.getEncoder();
   private final SparkPIDController shooterSpeedController = shooterMotor.getPIDController();
 
+  private final SimpleMotorFeedforward shooterFeedforward = new SimpleMotorFeedforward(ShooterConstants.kS, ShooterConstants.kV, ShooterConstants.kA);
 
   private double setpoint;
   /** Creates a new ShooterSubsystem. */
@@ -42,12 +42,9 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.setSmartCurrentLimit(80);
     shooterEncoder.setVelocityConversionFactor(1);
 
-    shooterSpeedController.setP(ShooterConstants.kP);
-    shooterSpeedController.setI(ShooterConstants.kI);
-    shooterSpeedController.setD(ShooterConstants.kD);
-    
-
-    SmartDashboard.putData("Spin Up Shooter", spinUpShooterCommand());
+    shooterSpeedController.setP(1);
+    shooterSpeedController.setI(0);
+    shooterSpeedController.setD(0);
   }
   public void setBeltMotorIdleMode(IdleMode mode){
     beltMotor.setIdleMode(mode);
@@ -59,8 +56,9 @@ public class ShooterSubsystem extends SubsystemBase {
     return shooterEncoder.getVelocity();
   }
   public boolean isAtShootingSpeed(){
-    return(Math.abs(getShooterWheelSpeed() - ShooterConstants.shooterWheelSpeed) < 1);
+    return(getShooterWheelSpeed() > ShooterConstants.shooterWheelSpeed);
   }
+
   public void setBeltSpeed(double speed){
     beltMotor.set(speed);
   }
@@ -68,15 +66,15 @@ public class ShooterSubsystem extends SubsystemBase {
     shooterMotor.set(speed);
   }
   public void spinUpShooter(){
-    setTargetShooterSpeed(ShooterConstants.shooterWheelSpeed);
+    //setTargetShooterSpeed(ShooterConstants.shooterWheelSpeed);
   }
   public void stopShooting(){
     beltMotor.set(0);
     shooterMotor.set(0);
   }
-  public void setTargetShooterSpeed(double rpm){
-    shooterSpeedController.setReference(rpm, ControlType.kVelocity, 0, rpm * ShooterConstants.kFF);
-    setpoint = rpm;
+  public void setTargetShooterSpeed(double rotationsPerSec){
+    shooterSpeedController.setReference(rotationsPerSec, ControlType.kVelocity, 0, shooterFeedforward.calculate(rotationsPerSec));
+    setpoint = rotationsPerSec;
   }
   
   public Command shooterControlCommand(DoubleSupplier shooterSpeed, DoubleSupplier beltSpeed){
