@@ -72,10 +72,10 @@ public class RobotContainer {
   public RobotContainer() { 
     SmartDashboard.putData("Run Intake Until Full", new Intake(m_intake, m_arm, m_shooter));
     
+    
     m_intake.setDefaultCommand(m_intake.IntakeControlCommand(() -> helmsController.getRightY()));
     m_leds.setDefaultCommand(m_leds.idleLedPattern());
     m_climber.setDefaultCommand(m_climber.climb(() -> buttonBox.getHID().getRawButton(4), () -> buttonBox.getHID().getRawButton(2), () -> buttonBox.getHID().getRawButton(3), () -> buttonBox.getHID().getRawButton(1)));
-    m_shooter.setDefaultCommand(m_shooter.shooterControlCommand(() -> helmsController.getLeftTriggerAxis() > 0.5? 1:0, () -> helmsController.getRightY()));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,

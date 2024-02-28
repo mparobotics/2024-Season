@@ -87,7 +87,7 @@ public class ShooterSubsystem extends SubsystemBase {
       else{
         setBeltSpeed(0);
       }
-      //setShooterSpeed(shooterSpeed.getAsDouble());
+      setShooterSpeed(shooterSpeed.getAsDouble());
       
     });
   }
