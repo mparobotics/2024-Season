@@ -24,14 +24,14 @@ public class TwoNoteAuto extends SequentialCommandGroup {
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
-
+  private LEDController m_leds;
   /** A simple Two Note Auto */
-  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
     m_arm = arm;
-    
+    m_leds = leds;
 
     addCommands(
       //Spin up the shooter wheels. We keep them running for the entirety of auto

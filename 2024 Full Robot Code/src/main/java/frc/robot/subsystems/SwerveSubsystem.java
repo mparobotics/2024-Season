@@ -111,10 +111,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void resetOdometry(Pose2d pose) {
     odometry.resetPosition(getYaw(), getPositions(), pose);
   }
-  public void startAutoPlacement(double x, double y, double direction){
-    pigeon.setYaw(FieldConstants.isRedAlliance()? -direction: direction);
-    resetOdometry(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
-  }
+  
   //set the current heading to be zero degrees
   public void zeroGyro() {
     pigeon.setYaw(0);
@@ -230,7 +227,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     
     if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+      //odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     
     //display estimated position on the driver station

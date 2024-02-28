@@ -14,7 +14,8 @@ import com.revrobotics.CANSparkBase.ControlType;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-
+import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -30,7 +31,7 @@ public class ShooterSubsystem extends SubsystemBase {
   private final SparkPIDController shooterSpeedController = shooterMotor.getPIDController();
 
 
-
+  private double setpoint;
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
     beltMotor.setIdleMode(IdleMode.kCoast);
@@ -75,6 +76,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public void setTargetShooterSpeed(double rpm){
     shooterSpeedController.setReference(rpm, ControlType.kVelocity, 0, rpm * ShooterConstants.kFF);
+    setpoint = rpm;
   }
   
   public Command shooterControlCommand(DoubleSupplier shooterSpeed, DoubleSupplier beltSpeed){
