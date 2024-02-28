@@ -75,7 +75,7 @@ public class TeleopSwerve extends Command {
     boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
    
 
-    
+    boolean isRedAlliance = DriverStation.getAlliance().get() == Alliance.Red;
     Pose2d currentPose = m_SwerveSubsystem.getPose();
     double currentDirection = currentPose.getRotation().getDegrees();
 

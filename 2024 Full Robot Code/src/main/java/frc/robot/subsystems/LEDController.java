@@ -27,12 +27,12 @@ public class LEDController extends SubsystemBase{
     //             .*´^`*.         .*´^`*.         .*´^`*.
     //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      ~~~~~~~~~~~~~~~
     private double wave(double position, double min, double max, double period){
-        return Math.cos(position / period * 2 * Math.PI) * (max - min) / 2 + min + (max - min)/2;
+        return Math.sin(position * period * 2 * Math.PI) * (max - min) / 2 + min + (max - min)/2;
     }
     //    /\  /\  /\  /\  /\  /\  /\  /\
     //   /  \/  \/  \/  \/  \/  \/  \/  \           /\/\/\/\/\/\/\/\/\/\/\/\
     private double zigzag(double position, double min, double max, double period){
-        return Math.abs(OnboardModuleState.fixedMod(position / period - 0.5, 1) - 0.5) * 2 * (max - min) + min;
+        return Math.abs(OnboardModuleState.fixedMod(position / period - 0.5, 1) - 0.5) * (max - min) + min;
     }
     //    / / / / / / / / / / / / / / / / / / / / 
     //   / / / / / / / / / / / / / / / / / / / /        ///////////
@@ -47,7 +47,7 @@ public class LEDController extends SubsystemBase{
     //                           /\  
     //__________________________/  \__________________________         _/\_
     private double spike(double position, double spikePosition, double width, double min, double max){
-        return Math.max(-Math.abs((spikePosition - position) / width) + 1,0) * (max - min) + min;
+        return Math.max(-Math.abs((spikePosition - position + max - min) / width),0) + min;
     }
 
 

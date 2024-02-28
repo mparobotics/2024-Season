@@ -4,61 +4,54 @@
 
 package frc.robot.commands;
 
-
-
-import com.revrobotics.CANSparkBase.IdleMode;
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.FieldConstants;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDController;
 import frc.robot.subsystems.ShooterSubsystem;
 
-
-public class Intake extends Command {
-  private IntakeSubsystem m_intake;
-  private ShooterSubsystem m_shooter;
+public class IndexNote extends Command {
   private ArmSubsystem m_arm;
-
-
-  /** Intakes until a note is detected in the shooter*/
-  public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
-    addRequirements(intake);
+  private ShooterSubsystem m_shooter;
+  private IntakeSubsystem m_intake;
+  /** A command that lowers the arm and feeds a note into the indexed position. */
+  public IndexNote(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake) {
+    
     addRequirements(arm);
     addRequirements(shooter);
-    m_intake = intake;
+    addRequirements(intake);
+    
     m_arm = arm;
     m_shooter = shooter;
-    
+    m_intake = intake;
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setToHandoffAngle();
-    m_shooter.setBeltMotorIdleMode(IdleMode.kBrake);
-    
+    m_arm.setTarget(ArmConstants.handoffPosition);
+    m_shooter.setBeltSpeed(1);
+    m_intake.runIntake(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setBeltSpeed(1);
-    m_intake.runIntake(0.75);
+    if(m_arm.isAtTarget()){
+      m_intake.runIntake(1);
+    }
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.runIntake(0);
     m_shooter.setBeltSpeed(0);
+    m_intake.runIntake(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_shooter.isNoteInShooter();
+    return m_arm.isAtTarget() && m_shooter.isNoteInShooter();
   }
 }
