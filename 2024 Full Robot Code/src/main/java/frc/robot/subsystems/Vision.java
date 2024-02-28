@@ -28,29 +28,26 @@ public class Vision {
     public static boolean canSeeNote(){
         return getNoteDetector().getEntry("tv").getDouble(0) == 1;
     }
-    public static Rotation2d getTagXAngleOffset(){
-        return Rotation2d.fromDegrees(getAprilTagDetector().getEntry("tx").getDouble(0));
+    public static double getTagXAngleOffset(){
+        return getAprilTagDetector().getEntry("tx").getDouble(0);
     }
-    public static Rotation2d getTagYAngleOffset(){
-        return Rotation2d.fromDegrees(getAprilTagDetector().getEntry("ty").getDouble(0));
+    public static double getTagYAngleOffset(){
+        return getAprilTagDetector().getEntry("ty").getDouble(0);
     }
-    public static Rotation2d getNoteXAngleOffset(){
-        return Rotation2d.fromDegrees(getNoteDetector().getEntry("tx").getDouble(0));
+    public static double getNoteXAngleOffset(){
+        return getNoteDetector().getEntry("tx").getDouble(0);
     }
-    public static Rotation2d getNoteYAngleOffset(){
-        return Rotation2d.fromDegrees(getNoteDetector().getEntry("ty").getDouble(0));
+    public static double getNoteYAngleOffset(){
+        return getNoteDetector().getEntry("ty").getDouble(0);
     }
     public static Translation2d getRelativeNoteLocation(){
         
-        double distance = getNoteYAngleOffset().minus(VisionConstants.noteLimelightPitch).getTan()/VisionConstants.noteLimelightHeight;
+        double distance = Math.tan(getNoteYAngleOffset() - VisionConstants.noteLimelightAngle)/VisionConstants.noteLimelightTz;
 
-        double xoffset = getNoteXAngleOffset().getCos() * distance;
-        double yoffset = getNoteXAngleOffset().getSin() * distance; 
+        double xoffset = Math.cos(getNoteXAngleOffset()) * distance + VisionConstants.noteLimelightTx;
+        double yoffset = Math.sin(getNoteXAngleOffset()) * distance + VisionConstants.noteLimelightTy;
        
-        return new Translation2d(xoffset,yoffset).rotateBy(VisionConstants.noteLimelightYaw).plus(VisionConstants.noteLimelightHorizontalPosition);
-
-
-
+        return new Translation2d(xoffset,yoffset);
     }
     public static double getTagID(){
         return getAprilTagDetector().getEntry("tid").getDouble(0);

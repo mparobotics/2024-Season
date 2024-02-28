@@ -114,11 +114,11 @@ public final class Constants {
   }
   public static final class VisionConstants{
     //offset from center of robot to the note-detector limelight (meters)
-    public static final Translation2d noteLimelightHorizontalPosition = new Translation2d();
-    public static final double noteLimelightHeight = 0;
+    public static final double noteLimelightTx = 0;
+    public static final double noteLimelightTy = 0;
+    public static final double noteLimelightTz = 0;
 
-    public static final Rotation2d noteLimelightPitch = Rotation2d.fromDegrees(0); //degrees above horizontal
-    public static final Rotation2d noteLimelightYaw = Rotation2d.fromDegrees(0); 
+    public static final double noteLimelightAngle = 0; //degrees above horizontal
     
   }
   public static final class ClimberConstants{
