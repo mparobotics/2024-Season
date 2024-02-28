@@ -28,9 +28,7 @@ public class AutoModeSelector {
         NO_AUTO,
         TEST,
         TWO_NOTE_CENTER,
-        FIVE_NOTE,
-        TWO_NOTE,
-        JUST_SHOOT
+        FIVE_NOTE
     }
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
         m_arm = arm;
@@ -59,14 +57,11 @@ public class AutoModeSelector {
                 return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm);
             case FIVE_NOTE:
                 return new FiveNoteAuto(m_drive, m_intake, m_shooter, m_arm);
-            case TWO_NOTE:
-                return new TwoNoteAuto(m_drive, m_intake, m_shooter, m_arm);
-            case JUST_SHOOT:
-                return new JustShoot(m_drive, m_intake, m_shooter, m_arm);
+
+
 
         }
         return null;
-
     }
     
 }

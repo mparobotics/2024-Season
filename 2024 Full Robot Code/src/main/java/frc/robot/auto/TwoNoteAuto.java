@@ -6,7 +6,6 @@ package frc.robot.auto;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake;
@@ -35,7 +34,6 @@ public class TwoNoteAuto extends SequentialCommandGroup {
     
 
     addCommands(
-      new InstantCommand(() -> m_drive.startAutoPlacement(1.35, 5.49, 0)),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       m_shooter.spinUpShooterCommand(),
       //shoot the preload

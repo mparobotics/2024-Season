@@ -36,7 +36,7 @@ public class Shoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if(m_shooter.isAtShootingSpeed()){
+    if(m_shooter.isAtShootingSpeed() && m_shouldShoot.getAsBoolean()){
       m_shooter.setBeltSpeed(1);
     }
     if(!m_shooter.isNoteInShooter() && !shooterIsEmpty){
