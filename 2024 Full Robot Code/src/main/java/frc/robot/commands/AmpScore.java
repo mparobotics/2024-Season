@@ -16,7 +16,6 @@ import frc.robot.subsystems.ShooterSubsystem;
 
 public class AmpScore extends Command {
   private ArmSubsystem m_arm;
-  private LEDController m_led;
   private ShooterSubsystem m_shooter;
   
   private BooleanSupplier m_shouldScore;
@@ -30,7 +29,6 @@ public class AmpScore extends Command {
     addRequirements(led);
     addRequirements(shooter);
     m_arm = arm;
-    m_led = led;
     m_shooter = shooter;
     m_shouldScore = shouldScore;
   }
@@ -47,9 +45,6 @@ public class AmpScore extends Command {
     if(m_arm.isAtTarget()){
       //If we want to score, score. Otherwise, keep the robot ready but don't shoot. 
       if(m_shouldScore.getAsBoolean()){
-
-        //display shooting pattern
-        m_led.setAll(255,0,0);
         //run the belt and the shooter (at low speed) to eject the note
         m_shooter.setBeltSpeed(1);
         m_shooter.setShooterSpeed(0.4);
@@ -59,10 +54,6 @@ public class AmpScore extends Command {
 
         //we have now started scoring
         hasStartedScoring = true;
-      }
-      else{
-        //display ready to score pattern
-        m_led.setAll(0,255,0);
       }
     }
   }
