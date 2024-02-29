@@ -7,7 +7,6 @@ package frc.robot.subsystems;
 
 import java.util.function.DoubleSupplier;
 
-import com.ctre.phoenix6.Orchestra;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 
@@ -26,8 +25,9 @@ import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DutyCycle;
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
-
+import edu.wpi.first.wpilibj.motorcontrol.Spark;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -60,7 +60,6 @@ public class ArmSubsystem extends SubsystemBase {
 
   //An InterpolatingTreeMap interpolates between measured data points to figure out what angle to aim the shooter based on how far away from the speaker we are
   private InterpolatingTreeMap<Double,Double> armAngleMap = new InterpolatingDoubleTreeMap();
-
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     //Start by setting the goal state to the current position of the arm so the arm doesn't try to move on enable
@@ -89,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
       armAngleMap.put(dataPoint[0],dataPoint[1]);
     }
 
-    SmartDashboard.putNumber("Arm Set Setpoint", 0);
+    SmartDashboard.putNumber("Set Setpoint", 0);
   }
   //set the goal position to a specified angle
   public void setTarget(double degrees){
@@ -107,6 +106,7 @@ public class ArmSubsystem extends SubsystemBase {
   public void setToHandoffAngle(){
     setTarget(ArmConstants.handoffPosition);
   }
+
   //get the arm position in degrees
   public double getArmPosition(){
     return armEncoder.getAbsolutePosition();
@@ -115,13 +115,14 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean isAtTarget(){
     return Math.abs(goalState.position - getArmPosition()) < 1;
   }
+  
+  
   public Command setArmSetpointCommand(DoubleSupplier setpoint){
   return runOnce(() ->{setTarget(setpoint.getAsDouble());});
   }
   public Command teleopArmControlCommand(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()  * 0.4));
   }
-  
   @Override
   public void periodic() {
     
@@ -139,14 +140,14 @@ public class ArmSubsystem extends SubsystemBase {
     double error = currentState.position - getArmPosition();
     SmartDashboard.putNumber("Arm Profile Position", currentState.position);
     SmartDashboard.putNumber("Arm Profile Velocity", currentState.velocity);
-    SmartDashboard.putNumber("Arm PID Correction", pid);
-    SmartDashboard.putNumber("Arm Feedforward", feedforward);
-    SmartDashboard.putNumber("Arm Error", error);
+    SmartDashboard.putNumber("PID Correction", pid);
+    SmartDashboard.putNumber("Arm Feedforward", pid);
+    SmartDashboard.putNumber("Error", error);
 
     //Combine the feedforward and pid outputs and send them to the motor
     motorR.setVoltage(feedforward + pid);
     
-    setTarget(SmartDashboard.getNumber("Arm Set Setpoint", 0));
+    setTarget(SmartDashboard.getNumber("Set Setpoint", 0));
   }
 
   

@@ -87,22 +87,6 @@ public class LEDController extends SubsystemBase{
         });
         
     }
-    public void disabledPeriodic(){
-        offset += 1;
-        int brightness = (int)wave(offset, 0, 255, 100);
-        if(DriverStation.getAlliance().isPresent()){
-            if(FieldConstants.isRedAlliance()){
-                setAll(brightness,0,0);
-            }
-            else{
-                setAll(0, 0, brightness);
-            }
-        }
-        else{
-            setAll(brightness, brightness, brightness);
-        }
-        
-    }
     @Override
     public void periodic(){
         if (DriverStation.isDisabled()) {
