@@ -34,7 +34,7 @@ public class ShooterSubsystem extends SubsystemBase {
   
   /** Creates a new ShooterSubsystem. */
   public ShooterSubsystem() {
-    beltMotor.setIdleMode(IdleMode.kCoast);
+    beltMotor.setIdleMode(IdleMode.kBrake);
     shooterMotor.setIdleMode(IdleMode.kCoast);
 
     beltMotor.setInverted(true);

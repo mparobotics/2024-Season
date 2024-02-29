@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.auto.AutoModeSelector;
 
 import frc.robot.commands.Intake;
-
+import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsytem;
@@ -71,6 +71,7 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
     SmartDashboard.putData("Run Intake Until Full", new Intake(m_intake, m_arm, m_shooter));
+    SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
     
     
     m_intake.setDefaultCommand(m_intake.IntakeControlCommand(() -> helmsController.getRightY()));

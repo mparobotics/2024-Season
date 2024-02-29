@@ -233,7 +233,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     
     if(Vision.canSeeAprilTag()){
-      //odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     
     //display estimated position on the driver station

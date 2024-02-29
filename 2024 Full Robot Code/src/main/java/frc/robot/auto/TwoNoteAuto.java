@@ -6,8 +6,11 @@ package frc.robot.auto;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
@@ -33,16 +36,21 @@ public class TwoNoteAuto extends SequentialCommandGroup {
  
 
     addCommands(
+      new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(1.35,5.49,Rotation2d.fromDegrees(0))))),
+      m_arm.setArmSetpointCommand(() -> 25),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       m_shooter.spinUpShooterCommand(),
       //shoot the preload
-      new Shoot(m_shooter, () -> true).withTimeout(1),
+      new Shoot(m_shooter, () -> true),
+
+      m_arm.setArmSetpointCommand(() -> 19.8),
       //drive to the note that's next to the stage
       new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter)),
+      m_arm.setArmSetpointCommand(() -> 28),
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
-      new Shoot(m_shooter, () -> true).withTimeout(1)
+      new Shoot(m_shooter, () -> true)
 
     );
   }

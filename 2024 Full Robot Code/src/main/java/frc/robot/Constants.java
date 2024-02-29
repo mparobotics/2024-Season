@@ -58,10 +58,10 @@ public final class Constants {
     public static final int RmotorID = 42;
     public static final int encoderID = 43;
 
-    public static final double minArmPosition = 20;
+    public static final double minArmPosition = 17;
     public static final double maxArmPosition = 110;
 
-    public static final double handoffPosition = 20;
+    public static final double handoffPosition = 17;
     public static final double ampPosition = 110;
 
 
