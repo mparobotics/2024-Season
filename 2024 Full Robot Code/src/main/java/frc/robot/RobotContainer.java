@@ -74,7 +74,7 @@ public class RobotContainer {
     
     
     m_intake.setDefaultCommand(m_intake.IntakeControlCommand(() -> helmsController.getRightY()));
-    m_leds.setDefaultCommand(m_leds.idleLedPattern());
+
     m_climber.setDefaultCommand(m_climber.climb(() -> buttonBox.getHID().getRawButton(4), () -> buttonBox.getHID().getRawButton(2), () -> buttonBox.getHID().getRawButton(3), () -> buttonBox.getHID().getRawButton(1)));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
@@ -108,7 +108,7 @@ public class RobotContainer {
     m_leds.autoPeriodic(m_shooter.isNoteInShooter());
   }
   public void teleopPeriodic(){
-
+    m_leds.teleopPeriodic();
   }
   public Command getAutonomousCommand() {
     return m_autoModeSelector.getSelectedAuto();

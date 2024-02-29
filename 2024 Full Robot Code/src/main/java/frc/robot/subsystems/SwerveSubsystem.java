@@ -114,7 +114,13 @@ public class SwerveSubsystem extends SubsystemBase {
   
   //set the current heading to be zero degrees
   public void zeroGyro() {
-    pigeon.setYaw(0);
+    if(FieldConstants.isRedAlliance()){
+      pigeon.setYaw(180);
+    }
+    else{
+      pigeon.setYaw(0);
+    }
+    
   }
   
   //get the robot's estimated location (in meters)

@@ -38,7 +38,7 @@ public class Intake extends Command {
   @Override
   public void initialize() {
     m_arm.setToHandoffAngle();
-    m_shooter.setBeltMotorIdleMode(IdleMode.kBrake);
+    
     
   }
 

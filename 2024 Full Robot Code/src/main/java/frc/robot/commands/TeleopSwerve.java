@@ -57,11 +57,13 @@ public class TeleopSwerve extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-        /* Get Values, applies Deadband, (doesnt do anything if stick is less than a value)*/
-    double xVal =
+    //if we're on red alliance, translation values are inverted since the drivers face the opposite direction
+    int invert = FieldConstants.isRedAlliance()? -1: 1;
+    
+    double xVal = invert * 
         xLimiter.calculate(
             MathUtil.applyDeadband(m_xSupplier.getAsDouble(), SwerveConstants.inputDeadband));
-    double yVal =
+    double yVal = invert * 
         yLimiter.calculate(
             MathUtil.applyDeadband(m_ySupplier.getAsDouble(), SwerveConstants.inputDeadband));
     double rotationVal =

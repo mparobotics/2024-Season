@@ -12,7 +12,6 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.LEDController;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
@@ -24,14 +23,14 @@ public class TwoNoteAuto extends SequentialCommandGroup {
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
-  private LEDController m_leds;
+
   /** A simple Two Note Auto */
-  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
+  public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
     m_arm = arm;
-    m_leds = leds;
+ 
 
     addCommands(
       //Spin up the shooter wheels. We keep them running for the entirety of auto

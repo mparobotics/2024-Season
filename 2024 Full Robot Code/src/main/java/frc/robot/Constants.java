@@ -64,8 +64,6 @@ public final class Constants {
     public static final double handoffPosition = 20;
     public static final double ampPosition = 110;
 
-    public static final double kMaxAcceleration = 3; //max angular acceleration of the arm (degrees per second^2)
-    public static final double kMaxVelocity = 5; //max angular velocity of the arm (degrees per second)
 
     public static final double ticksToRotations = 1/8192;
     public static final double ticksToRadians = ticksToRotations * 2 * Math.PI;

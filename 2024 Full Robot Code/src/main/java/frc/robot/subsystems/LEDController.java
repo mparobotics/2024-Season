@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.OnboardModuleState;
 import frc.robot.Constants.FieldConstants;
@@ -57,35 +57,7 @@ public class LEDController extends SubsystemBase{
         }
         leds.setData(Buffer);
     }
-    
-    public Command idleLedPattern(){
-        return runOnce(() -> {
-            if (FieldConstants.isRedAlliance()){
-                offset += 0.5;
-                for(var i = 0; i < led_count; i ++){
-                    if((i + offset)% 6 >= 3){
-                        Buffer.setRGB (i, 200,0,0);
-                    }
-                    else{ 
-                        Buffer.setRGB (i,130,40,130);
-                    }
-                }
-            } else {
-                offset += 0.5;
-                for(var i = 0; i < led_count; i ++){
-                    if((i + offset)% 6 >= 3){
-                        Buffer.setRGB (i, 0,0,200);
-                    }
-                    else{ 
-                        Buffer.setRGB (i,150,40,150);
-                    }
-                }
-            }
-            leds.setData(Buffer);
 
-        });
-        
-    }
     public void disabledPeriodic(){
         offset += 1;
         int brightness = (int)wave(offset, 0, 255, 100);
@@ -118,6 +90,30 @@ public class LEDController extends SubsystemBase{
                 Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 10));
             }
         }
+    }
+    public void teleopPeriodic(){
+        if (FieldConstants.isRedAlliance()){
+            offset += 0.5;
+            for(var i = 0; i < led_count; i ++){
+                if((i + offset)% 6 >= 3){
+                    Buffer.setRGB (i, 200,0,0);
+                }
+                else{ 
+                    Buffer.setRGB (i,130,40,130);
+                }
+            }
+        } else {
+            offset += 0.5;
+            for(var i = 0; i < led_count; i ++){
+                if((i + offset)% 6 >= 3){
+                    Buffer.setRGB (i, 0,0,200);
+                }
+                else{ 
+                    Buffer.setRGB (i,150,40,150);
+                }
+            }
+        }
+        leds.setData(Buffer);
     }
     @Override
     public void periodic(){
