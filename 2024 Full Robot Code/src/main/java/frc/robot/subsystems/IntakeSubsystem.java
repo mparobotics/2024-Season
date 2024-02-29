@@ -19,7 +19,7 @@ import frc.robot.Constants.IntakeConstants;
 
 public class IntakeSubsystem extends SubsystemBase {
   private final CANSparkFlex intakeMotor = new CANSparkFlex(IntakeConstants.intakeMotorID, MotorType.kBrushless);
-  private final DigitalInput beamSensor = new DigitalInput(IntakeConstants.beamSensorPort);
+  
 
   
 
@@ -31,9 +31,6 @@ public class IntakeSubsystem extends SubsystemBase {
   }
   public void runIntake(double speed){
     intakeMotor.set(speed);
-  }
-  public boolean isNoteInIntake(){
-    return beamSensor.get();
   }
   public Command IntakeControlCommand(DoubleSupplier speed){
     return runOnce(() -> {

@@ -24,14 +24,14 @@ public class FiveNoteAuto extends SequentialCommandGroup {
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
-  private LEDController m_leds;
+
   /** A five note auto. Take that 1678 ;P */
-  public FiveNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm, LEDController leds) {
+  public FiveNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
     m_arm = arm;
-    m_leds = leds;
+
 
     addCommands(
       //Spin up the shooter wheels. We keep them running for the entirety of auto
@@ -39,16 +39,30 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       //shoot the preload
       new Shoot(m_shooter, () -> true),
       //drive to the note that's next to the stage (W3)
-      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter)),
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
       new Shoot(m_shooter, () -> true),
-      //drive to the note that's next to the stage (W3)
-      new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter, m_leds)),
+      //drive to the middle close note (W2)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW2"), new Intake(m_intake, m_arm, m_shooter)),
       //drive back to the speaker
-      m_drive.followPathFromFile("W3S"),
-      //Shoot the second note
+      m_drive.followPathFromFile("W2S"),
+      //Shoot the third note
+      new Shoot(m_shooter, () -> true),
+
+      //drive to the last wing note (W1)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW1"), new Intake(m_intake, m_arm, m_shooter)),
+      //drive back to the speaker
+      m_drive.followPathFromFile("W1S"),
+      //Shoot the fourth note
+      new Shoot(m_shooter, () -> true),
+
+      //drive to the second centerline note (C2)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC2"), new Intake(m_intake, m_arm, m_shooter)),
+      //drive back to the speaker
+      m_drive.followPathFromFile("C2S"),
+      //Shoot the fifth note
       new Shoot(m_shooter, () -> true)
 
     );
