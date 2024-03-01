@@ -55,7 +55,6 @@ public class LEDController extends SubsystemBase{
         for(var i = 0; i < led_count; i++){
             Buffer.setRGB(i,r,g,b);
         }
-        leds.setData(Buffer);
     }
 
     public void disabledPeriodic(){
@@ -120,7 +119,4 @@ public class LEDController extends SubsystemBase{
     public void periodic(){
         
     }
-
-
-
 }
