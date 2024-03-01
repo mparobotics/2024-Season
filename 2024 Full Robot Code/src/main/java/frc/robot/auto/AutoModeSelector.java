@@ -43,7 +43,8 @@ public class AutoModeSelector {
             autoChoices.addOption(mode.toString(), mode);
         }
         autoChoices.setDefaultOption("Do Nothing", AutoMode.NO_AUTO);
-        SmartDashboard.putData(autoChoices);
+        SmartDashboard.putData("Auto Mode Selector", autoChoices);
+        
     }
     public Command getSelectedAuto(){
         return getAuto(autoChoices.getSelected());

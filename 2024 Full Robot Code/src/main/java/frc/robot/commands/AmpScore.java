@@ -10,13 +10,12 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.LEDController;
+
 import frc.robot.subsystems.ShooterSubsystem;
 
 
 public class AmpScore extends Command {
   private ArmSubsystem m_arm;
-  private LEDController m_led;
   private ShooterSubsystem m_shooter;
   
   private BooleanSupplier m_shouldScore;
@@ -25,12 +24,12 @@ public class AmpScore extends Command {
   private boolean hasStartedScoring = false;
   
   /** Command to score a note in the AMP*/
-  public AmpScore(ArmSubsystem arm,LEDController led, ShooterSubsystem shooter, BooleanSupplier shouldScore) {
+  public AmpScore(ArmSubsystem arm, ShooterSubsystem shooter, BooleanSupplier shouldScore) {
     addRequirements(arm);
-    addRequirements(led);
+    
     addRequirements(shooter);
     m_arm = arm;
-    m_led = led;
+    
     m_shooter = shooter;
     m_shouldScore = shouldScore;
   }
@@ -48,8 +47,7 @@ public class AmpScore extends Command {
       //If we want to score, score. Otherwise, keep the robot ready but don't shoot. 
       if(m_shouldScore.getAsBoolean()){
 
-        //display shooting pattern
-        m_led.setAll(255,0,0);
+        
         //run the belt and the shooter (at low speed) to eject the note
         m_shooter.setBeltSpeed(1);
         m_shooter.setShooterSpeed(0.4);
@@ -59,10 +57,6 @@ public class AmpScore extends Command {
 
         //we have now started scoring
         hasStartedScoring = true;
-      }
-      else{
-        //display ready to score pattern
-        m_led.setAll(0,255,0);
       }
     }
   }

@@ -100,8 +100,8 @@ public final class Constants {
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
 
     //location of the speaker target on the field in meters
-    public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(0,0);
-    public static final Translation2d BLUE_SPEAKER_LOCATION = new Translation2d(0,0);
+    public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(16.4846,5.56);
+    public static final Translation2d BLUE_SPEAKER_LOCATION = new Translation2d(0,5.56);
   }
   public static final class VisionConstants{
     //offset from center of robot to the note-detector limelight (meters)

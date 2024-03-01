@@ -13,8 +13,7 @@ import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.OnboardModuleState;
 import frc.robot.Constants.AutoConstants;
@@ -77,7 +76,7 @@ public class TeleopSwerve extends Command {
     boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
    
 
-    boolean isRedAlliance = DriverStation.getAlliance().get() == Alliance.Red;
+    
     Pose2d currentPose = m_SwerveSubsystem.getPose();
     double currentDirection = currentPose.getRotation().getDegrees();
 
@@ -86,10 +85,13 @@ public class TeleopSwerve extends Command {
   
     if(isSpeakerScoring){
       //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
-        Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); //Could 
+        Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
 
         double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees());
         double rSpeed = angleController.calculate(currentDirection, targetDirection);
+        SmartDashboard.putNumber("Speaker Direction", relativeTargetPosition.getAngle().getDegrees());
+        SmartDashboard.putNumber("Speaker Closest Direction", targetDirection);
+        SmartDashboard.putNumber("PID output", rotationVal);
         m_SwerveSubsystem.drive(
        
       xVal * SwerveConstants.maxSpeed, 

@@ -72,7 +72,7 @@ public class LEDController extends SubsystemBase{
         else{
             setAll(brightness, brightness, brightness);
         }
-        
+        leds.setData(Buffer);
     }
     public void autoPeriodic(boolean hasNote){
         offset += 1;
@@ -90,6 +90,7 @@ public class LEDController extends SubsystemBase{
                 Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 10));
             }
         }
+        leds.setData(Buffer);
     }
     public void teleopPeriodic(){
         if (FieldConstants.isRedAlliance()){

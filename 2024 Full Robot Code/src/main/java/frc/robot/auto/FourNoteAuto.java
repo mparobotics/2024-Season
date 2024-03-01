@@ -51,13 +51,21 @@ public class FourNoteAuto extends SequentialCommandGroup {
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
       new Shoot(m_shooter, () -> true),
-      
+
       m_arm.setArmSetpointCommand(() -> 19.8),
       new ParallelCommandGroup(m_drive.followPathFromFile("SW2"), new Intake(m_intake, m_arm, m_shooter)),
       m_arm.setArmSetpointCommand(() -> 28),
       //drive back to the speaker
       m_drive.followPathFromFile("W2S"),
+      new Shoot(m_shooter, () -> true),
+
+      m_arm.setArmSetpointCommand(() -> 19.8),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SW1"), new Intake(m_intake, m_arm, m_shooter)),
+      m_arm.setArmSetpointCommand(() -> 28),
+      //drive back to the speaker
+      m_drive.followPathFromFile("W1S"),
       new Shoot(m_shooter, () -> true)
+
     );
   }
   public Pose2d getStartingPose(){
