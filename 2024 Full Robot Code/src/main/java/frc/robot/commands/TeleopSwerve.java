@@ -29,7 +29,7 @@ public class TeleopSwerve extends Command {
   private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier;
 
 
-  private ProfiledPIDController angleController = new ProfiledPIDController(0, 0, 0, AutoConstants.autoAlignRConstraints);
+  private ProfiledPIDController angleController = new ProfiledPIDController(0.2, 0, 0, AutoConstants.autoAlignRConstraints);
 
 
   private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
@@ -79,19 +79,21 @@ public class TeleopSwerve extends Command {
     
     Pose2d currentPose = m_SwerveSubsystem.getPose();
     double currentDirection = currentPose.getRotation().getDegrees();
+    //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
+    Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
+
+    double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
+    double rSpeed = angleController.calculate(currentDirection, targetDirection);
+    SmartDashboard.putNumber("Speaker Direction", relativeTargetPosition.getAngle().getDegrees() + 180);
+    SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
+    SmartDashboard.putNumber("Speaker Closest Direction", targetDirection);
+    SmartDashboard.putNumber("PID output", rSpeed);
 
 
     
   
     if(isSpeakerScoring){
-      //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
-        Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
-
-        double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
-        double rSpeed = angleController.calculate(currentDirection, targetDirection);
-        SmartDashboard.putNumber("Speaker Direction", relativeTargetPosition.getAngle().getDegrees() + 180);
-        SmartDashboard.putNumber("Speaker Closest Direction", targetDirection);
-        SmartDashboard.putNumber("PID output", rotationVal);
+      
         m_SwerveSubsystem.drive(
        
       xVal * SwerveConstants.maxSpeed, 

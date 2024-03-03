@@ -228,7 +228,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    boolean yawIsOk = pigeon.getYaw().is
     odometry.update(getYaw(), getPositions());
     
     
@@ -239,7 +239,7 @@ public class SwerveSubsystem extends SubsystemBase {
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
-    getVirtualTarget();
+    
     
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(

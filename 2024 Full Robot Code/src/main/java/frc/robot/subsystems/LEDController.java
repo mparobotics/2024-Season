@@ -76,26 +76,35 @@ public class LEDController extends SubsystemBase{
     public void autoPeriodic(boolean hasNote){
         offset += 1;
         if(hasNote){
-            int brightness = (int)wave(offset, 0, 255, 100);
-            setAll(brightness * 255, brightness * 50, 0);
+            double brightness = wave(offset, 0, 255, 100);
+            setAll((int)brightness,(int)(brightness * 0.1), 0);
         }
         else if(FieldConstants.isRedAlliance()){
             for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, (int)wave(offset, 0, 255, 10),0,0);
+                Buffer.setRGB(i, (int)wave(offset, 0, 255, 100),0,0);
             }
         }
         else{
             for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 10));
+                Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 100));
             }
         }
         leds.setData(Buffer);
     }
-    public void teleopPeriodic(){
-        if (FieldConstants.isRedAlliance()){
-            offset += 0.5;
+    public void teleopPeriodic(boolean hasNote, boolean isAtShootingSpeed){
+        offset += 1;
+        if(isAtShootingSpeed){
+            
+            int brightness = (int)wave(offset, 128,255,100);
+            setAll(0, brightness, 0);
+        }
+        else if(hasNote){
+            double brightness = wave(offset, 128,255,100);
+            setAll((int) brightness, (int) (brightness * 0.1), 0);
+        }
+        else if (FieldConstants.isRedAlliance()){
             for(var i = 0; i < led_count; i ++){
-                if((i + offset)% 6 >= 3){
+                if((i + offset * 0.5)% 6 >= 3){
                     Buffer.setRGB (i, 200,0,0);
                 }
                 else{ 
@@ -103,9 +112,8 @@ public class LEDController extends SubsystemBase{
                 }
             }
         } else {
-            offset += 0.5;
             for(var i = 0; i < led_count; i ++){
-                if((i + offset)% 6 >= 3){
+                if((i + offset * 0.5)% 6 >= 3){
                     Buffer.setRGB (i, 0,0,200);
                 }
                 else{ 

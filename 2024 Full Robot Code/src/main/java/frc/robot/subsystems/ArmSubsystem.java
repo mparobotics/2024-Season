@@ -34,7 +34,7 @@ public class ArmSubsystem extends SubsystemBase {
   private final TalonFXConfiguration motorConfig= new TalonFXConfiguration();
 
   //a REV throughbore encoder tells us the arm's current angle
-  private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(1);
+  private final DutyCycleEncoder armEncoder = new DutyCycleEncoder(ArmConstants.encoderPort);
 
 
   //the arm uses a PID controller to automatically move to each setpoint
@@ -95,7 +95,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getAbsolutePosition() * 360 - 200.2 + 90;
+    return armEncoder.getAbsolutePosition() * 360 - 201.2 + 90;
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){
@@ -116,6 +116,7 @@ public class ArmSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("PID output", PIDOutput);
     //set the motor speed to the output of the PID controller
+    
     motorR.set(-PIDOutput);
 
     SmartDashboard.putNumber("Arm Position", getArmPosition());

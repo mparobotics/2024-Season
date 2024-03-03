@@ -39,9 +39,9 @@ public class FourNoteAuto extends SequentialCommandGroup {
       new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(1.35,5.49,Rotation2d.fromDegrees(0))))),
       m_arm.setArmSetpointCommand(() -> 25),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
-      m_shooter.spinUpShooterCommand(),
+      //m_shooter.spinUpShooterCommand(),
       //shoot the preload
-      new Shoot(m_shooter, () -> true),
+      //new Shoot(m_shooter, () -> true),
 
       m_arm.setArmSetpointCommand(() -> 19.8),
       //drive to the note that's next to the stage
@@ -50,21 +50,21 @@ public class FourNoteAuto extends SequentialCommandGroup {
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
-      new Shoot(m_shooter, () -> true),
+      //new Shoot(m_shooter, () -> true),
 
       m_arm.setArmSetpointCommand(() -> 19.8),
       new ParallelCommandGroup(m_drive.followPathFromFile("SW2"), new Intake(m_intake, m_arm, m_shooter)),
       m_arm.setArmSetpointCommand(() -> 28),
       //drive back to the speaker
       m_drive.followPathFromFile("W2S"),
-      new Shoot(m_shooter, () -> true),
+      //new Shoot(m_shooter, () -> true),
 
       m_arm.setArmSetpointCommand(() -> 19.8),
       new ParallelCommandGroup(m_drive.followPathFromFile("SW1"), new Intake(m_intake, m_arm, m_shooter)),
       m_arm.setArmSetpointCommand(() -> 28),
       //drive back to the speaker
-      m_drive.followPathFromFile("W1S"),
-      new Shoot(m_shooter, () -> true)
+      m_drive.followPathFromFile("W1S")
+      //new Shoot(m_shooter, () -> true)
 
     );
   }

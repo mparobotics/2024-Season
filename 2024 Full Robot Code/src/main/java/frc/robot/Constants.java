@@ -43,7 +43,7 @@ public final class Constants {
 
     public static final double noteSpeedMetersPerSecond = 20; //the speed that the note leaves the shooter at
     public static final double shooterWheelSpeed = 3500; //RPMs
-    public static final double shootTimeSeconds = 1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
+    public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
 
     //PID constants
     public static final double kP = 0;
@@ -56,13 +56,13 @@ public final class Constants {
   public static final class ArmConstants{
     public static final int LmotorID = 41;
     public static final int RmotorID = 42;
-    public static final int encoderID = 43;
+    public static final int encoderPort = 1;
 
     public static final double minArmPosition = 17;
     public static final double maxArmPosition = 110;
 
-    public static final double handoffPosition = 17;
-    public static final double ampPosition = 110;
+    public static final double handoffPosition = 19;
+    public static final double ampPosition = 98;
 
 
     public static final double ticksToRotations = 1/8192;
@@ -79,11 +79,11 @@ public final class Constants {
     //These values are determined by doing physical testing with the real robot.
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between
     // { DistanceToSpeaker (meters), Arm Angle(degrees) }
-    //! NOT REAL VALUES: WE STILL NEED TO TEST THIS
-      {0.0,0.0},
-      {1.0,90.0},
-      {2.0,120.0},
-      {3.0,150.0},
+    
+      {1.25,25.0},
+      {1.48,32.0},
+      {1.93,37.7},
+      {2.38,42.0},
     
     };
     

@@ -20,7 +20,7 @@ public class AmpScore extends Command {
   
   private BooleanSupplier m_shouldScore;
 
-  private Timer m_timer;
+  private Timer m_timer = new Timer();
   private boolean hasStartedScoring = false;
   
   /** Command to score a note in the AMP*/
@@ -38,6 +38,7 @@ public class AmpScore extends Command {
   @Override
   public void initialize() {
     m_arm.setToAmpAngle();
+    m_shooter.setShooterSpeed(0.3);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -49,14 +50,17 @@ public class AmpScore extends Command {
 
         
         //run the belt and the shooter (at low speed) to eject the note
-        m_shooter.setBeltSpeed(1);
-        m_shooter.setShooterSpeed(0.4);
+        m_shooter.setBeltSpeed(0.75);
+        
         //reset and start the shooter clock
         m_timer.reset();
         m_timer.start();
 
         //we have now started scoring
         hasStartedScoring = true;
+      }
+      else{
+        m_shooter.setBeltSpeed(0);
       }
     }
   }
@@ -71,6 +75,7 @@ public class AmpScore extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return hasStartedScoring && m_timer.get() > ShooterConstants.shootTimeSeconds;
+    //return hasStartedScoring && m_timer.get() > ShooterConstants.shootTimeSeconds;
+    return false;
   }
 }
