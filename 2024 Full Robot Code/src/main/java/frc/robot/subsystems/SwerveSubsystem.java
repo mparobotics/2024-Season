@@ -228,11 +228,11 @@ public class SwerveSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean yawIsOk = pigeon.getYaw().is
+    
     odometry.update(getYaw(), getPositions());
     
     
-    if(Vision.canSeeAprilTag()){
+    if(Vision.canSeeAprilTag() && Vision.getNumberOfVisibleTags() >= 2){
       odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     

@@ -66,6 +66,10 @@ public class Vision {
         double[] poseArray = getBotPoseArray();
         return new Pose2d(poseArray[0],poseArray[1],Rotation2d.fromDegrees(poseArray[5]));
     }
+    public static int getNumberOfVisibleTags(){
+        double[] poseArray = getBotPoseArray();
+        return (int)poseArray[7];
+    }
     public static double getLatency(){
         return Timer.getFPGATimestamp() - getBotPoseArray()[6]/1000.0;
     }
