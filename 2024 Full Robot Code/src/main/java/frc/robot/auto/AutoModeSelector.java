@@ -25,10 +25,7 @@ public class AutoModeSelector {
     private SendableChooser<AutoMode> autoChoices;
     public enum AutoMode{
         NO_AUTO,
-        TEST,
         TWO_NOTE_CENTER,
-        FIVE_NOTE,
-        TWO_NOTE,
         FOUR_NOTE,
     }
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
@@ -53,14 +50,8 @@ public class AutoModeSelector {
         switch(mode){
             case NO_AUTO:
                 return null;
-            case TEST:
-                return m_drive.followPathFromFile("testPath01");
             case TWO_NOTE_CENTER:
                 return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm);
-            case FIVE_NOTE:
-                return new FiveNoteAuto(m_drive, m_intake, m_shooter, m_arm);
-            case TWO_NOTE:
-                return new TwoNoteAuto(m_drive, m_intake, m_shooter, m_arm);
             case FOUR_NOTE:
                 return new FourNoteAuto(m_drive, m_intake, m_shooter, m_arm);
 

@@ -8,15 +8,17 @@ package frc.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 
-import edu.wpi.first.wpilibj2.command.RepeatCommand;
 
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
 import frc.robot.commands.AimAndShoot;
 import frc.robot.commands.AmpScore;
 import frc.robot.commands.Intake;
+import frc.robot.commands.IntakeOveride;
+import frc.robot.commands.MoveToPose;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;
@@ -77,14 +79,15 @@ public class RobotContainer {
     SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
     
 
-    //m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(0.5)));
+    m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(helmsController.getLeftTriggerAxis()), m_shooter));
+
     m_climber.setDefaultCommand(m_climber.climb(() -> buttonBox.getHID().getRawButton(4), () -> buttonBox.getHID().getRawButton(2), () -> buttonBox.getHID().getRawButton(3), () -> buttonBox.getHID().getRawButton(1)));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,
-          () -> -0.7 * driveController.getRawAxis(translationAxis),
-          () -> -0.7 * driveController.getRawAxis(strafeAxis),
-          () -> -0.7 * driveController.getRawAxis(rotationAxis),
+          () -> -getSpeedMultiplier() * driveController.getRawAxis(translationAxis),
+          () -> -getSpeedMultiplier() * driveController.getRawAxis(strafeAxis),
+          () -> -getSpeedMultiplier() * driveController.getRawAxis(rotationAxis),
           () -> robotCentric.getAsBoolean(),
           () -> driveController.getRightTriggerAxis() > 0.1 
           ));
@@ -96,18 +99,27 @@ public class RobotContainer {
   }
 
   
-  private void configureBindings() {
-    driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro()));
+  private void configureBindings() {   //makes the Y button on the controller zero the Gyro
+    driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro(), m_drive));
 
-    
+    driveController.button(Button.kRightBumper.value).whileTrue(new MoveToPose(m_drive, () -> FieldConstants.isRedAlliance()? FieldConstants.RED_AMP_SCORING: FieldConstants.BLUE_AMP_SCORING));
+    //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, () -> helmsController.getLeftTriggerAxis() > 0.1));
-
+    //left joystick sets the arm position up 5 degs.
     helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 5));
+     //joystick position goes down 5 degs.
     helmsController.axisLessThan(Axis.kLeftY.value, -0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 5));
+     //Makes the right trigger on the helms controller auto aim the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
+     //makes the right joystick run the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));
+    // makes the helms right joystick run the intake backwards when the joystick is moved backwards
     helmsController.axisLessThan(Axis.kRightY.value,-0.5).whileTrue(new ReverseIntake(m_intake, m_shooter));
-
+    //The A button on the helms controller overides the intake
+    helmsController.button(Button.kA.value).whileTrue(new IntakeOveride(m_intake, m_arm, m_shooter));
+  }
+  private double getSpeedMultiplier(){
+    return driveController.getLeftTriggerAxis() > 0.1? 1: 0.7;
   }
   public void disabledPeriodic(){
     m_leds.disabledPeriodic();

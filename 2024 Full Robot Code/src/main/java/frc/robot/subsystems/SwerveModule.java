@@ -33,6 +33,8 @@ public class SwerveModule {
     public double m_angleKI;
     public double m_angleKD;
     public double m_angleKFF;
+
+    private double lastPosition;
     private Rotation2d lastAngle;
     private Rotation2d angleOffset;
 
@@ -85,7 +87,12 @@ public class SwerveModule {
     public SwerveModuleState getState(){
         return new SwerveModuleState(driveEncoder.getVelocity(),  getAngle()); 
     }
-
+    public void updatePosition(){
+        lastPosition = driveEncoder.getPosition();
+    }
+    public double getPositionDifference(){
+        return (lastPosition - driveEncoder.getPosition()) / 0.02;
+    }
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
     }
@@ -93,7 +100,7 @@ public class SwerveModule {
 
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 
-        //3512's optimize function. might use more ...optimized... version if it works (needs testing)
+        //might use more ...optimized... version if it works (needs testing)
         desiredState = 
         OnboardModuleState.optimize(desiredState, getState().angle);
         

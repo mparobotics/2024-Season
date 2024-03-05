@@ -14,14 +14,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 
-public class Intake extends Command {
+public class IntakeOveride extends Command {
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
 
   /** Intakes until a note is detected in the shooter*/
-  public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
+  public IntakeOveride(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
     addRequirements(intake);
     addRequirements(arm);
     addRequirements(shooter);
@@ -56,6 +56,6 @@ public class Intake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return m_shooter.isNoteInShooter();
+    return false;
   }
 }

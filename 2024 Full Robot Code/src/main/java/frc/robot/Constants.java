@@ -96,8 +96,9 @@ public final class Constants {
     public static Pose2d flipPoseForAlliance(Pose2d pose){
       return isRedAlliance()? new Pose2d( 16.4846 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
-    public static final Pose2d RED_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
-    public static final Pose2d BLUE_AMP_SCORING = new Pose2d(0,0,Rotation2d.fromDegrees(0));
+    
+    public static final Pose2d BLUE_AMP_SCORING = new Pose2d(1.83,7.57,Rotation2d.fromDegrees(-90));
+    public static final Pose2d RED_AMP_SCORING = new Pose2d( 16.4846 - BLUE_AMP_SCORING.getX(), BLUE_AMP_SCORING.getY(), Rotation2d.fromDegrees(180).minus(BLUE_AMP_SCORING.getRotation()));
 
     //location of the speaker target on the field in meters
     public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(16.4846,5.56);
@@ -127,14 +128,23 @@ public final class Constants {
     );
 
     /*maximum speed and angular velocity while auto-aligning to a target */
-    public static final double maxVelocityAutoAlign = 0; //   m/s
-    public static final double maxAccelerationAutoAlign = 0;//   m/s^2
+    public static final double maxVelocityAutoAlign = 3; //   m/s
+    public static final double maxAccelerationAutoAlign = 3;//   m/s^2
     public static final double maxAngularVelocityAutoAlign = 0;//   rad/s
     public static final double maxAngularAccelerationAutoAlign = 0;// rad/s^2
 
+    public static final double rotation_kP = 0.2;
+    public static final double rotation_kI = 0;
+    public static final double rotation_kD = 0;
+
+    public static final double translation_kP = 1;
+    public static final double translation_kI = 0;
+    public static final double translation_kD = 0;
+    
+
     /*maximum speeds during auto */
-    public static final double maxVelocityAuto = 4; //  m/s
-    public static final double maxAccelerationAuto = 3; //  m/s^2
+    public static final double maxVelocityAuto = 1.5; //  m/s
+    public static final double maxAccelerationAuto = 1.5; //  m/s^2
     public static final double maxAngularVelocityAuto = 2 * Math.PI; //  rad/s
     public static final double maxAngularAccelerationAuto = 4 * Math.PI; //  rad/s^2
 

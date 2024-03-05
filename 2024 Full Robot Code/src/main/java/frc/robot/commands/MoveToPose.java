@@ -8,6 +8,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.OnboardModuleState;
 import frc.robot.Constants.AutoConstants;
@@ -18,9 +19,9 @@ public class MoveToPose extends Command {
   Supplier<Pose2d> m_goalPoseSupplier;
 
 
-  private ProfiledPIDController xController = new ProfiledPIDController(0, 0, 0, AutoConstants.autoAlignXYConstraints);
-  private ProfiledPIDController yController = new ProfiledPIDController(0, 0, 0, AutoConstants.autoAlignXYConstraints);
-  private ProfiledPIDController angleController = new ProfiledPIDController(0, 0, 0, AutoConstants.autoAlignRConstraints);
+  private ProfiledPIDController xController = new ProfiledPIDController(AutoConstants.translation_kP, AutoConstants.translation_kI, AutoConstants.translation_kD, AutoConstants.autoAlignXYConstraints);
+  private ProfiledPIDController yController = new ProfiledPIDController(AutoConstants.translation_kP, AutoConstants.translation_kI, AutoConstants.translation_kD, AutoConstants.autoAlignXYConstraints);
+  private ProfiledPIDController angleController = new ProfiledPIDController(AutoConstants.rotation_kP, AutoConstants.rotation_kI, AutoConstants.rotation_kD, AutoConstants.autoAlignRConstraints);
 
   /** Command to drive to a target pose using a PID contoller*/
   public MoveToPose(SwerveSubsystem drive, Supplier<Pose2d> goalPose) {
@@ -39,7 +40,7 @@ public class MoveToPose extends Command {
   @Override
   public void execute() {
     Pose2d currentPose = m_drive.getPose();
-    double currentDirection = m_drive.getYawAsDouble();
+    double currentDirection = currentPose.getRotation().getDegrees();
     Pose2d targetPose = m_goalPoseSupplier.get();
       
       
@@ -48,6 +49,9 @@ public class MoveToPose extends Command {
     double xSpeed = xController.calculate(currentPose.getX(),targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(),targetPose.getY());
     double rSpeed = angleController.calculate(currentDirection, targetDirection);
+
+    SmartDashboard.putNumber("x output", xSpeed);
+    SmartDashboard.putNumber("y output", ySpeed);
       
     m_drive.drive(xSpeed, ySpeed, rSpeed, true);
   }

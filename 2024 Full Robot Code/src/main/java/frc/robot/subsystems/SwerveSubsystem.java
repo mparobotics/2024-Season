@@ -103,9 +103,6 @@ public class SwerveSubsystem extends SubsystemBase {
       module.setDesiredState(swerveModuleStates[module.moduleNumber], isOpenLoop);
     }
   }
-
-  
-
   
   //reset the pose to a given pose
   public void resetOdometry(Pose2d pose) {
@@ -120,7 +117,6 @@ public class SwerveSubsystem extends SubsystemBase {
     else{
       pigeon.setYaw(0);
     }
-    
   }
   
   //get the robot's estimated location (in meters)
@@ -232,7 +228,7 @@ public class SwerveSubsystem extends SubsystemBase {
     odometry.update(getYaw(), getPositions());
     
     
-    if(Vision.canSeeAprilTag() && Vision.getNumberOfVisibleTags() >= 2){
+    if(Vision.canSeeAprilTag()){
       odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
     }
     
@@ -249,7 +245,10 @@ public class SwerveSubsystem extends SubsystemBase {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
       SmartDashboard.putNumber(
-        "Mod" + module.moduleNumber + " Distance", module.getPosition().distanceMeters);
+        "Mod " + module.moduleNumber + " Distance", module.getPosition().distanceMeters);
+      SmartDashboard.putNumber(
+        "Mod " + module.moduleNumber + " Change in distance", module.getPositionDifference());
+      module.updatePosition();
       
 
     

@@ -93,7 +93,7 @@ public class TeleopSwerve extends Command {
     
   
     if(isSpeakerScoring){
-      
+      //If the driver is pressing the auto align button, then we override the rotation component of the driving with a PID controller which aims us at the speaker
         m_SwerveSubsystem.drive(
        
       xVal * SwerveConstants.maxSpeed, 
