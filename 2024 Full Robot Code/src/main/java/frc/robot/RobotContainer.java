@@ -102,12 +102,13 @@ public class RobotContainer {
   private void configureBindings() {   //makes the Y button on the controller zero the Gyro
     driveController.button(Button.kY.value).onTrue(new InstantCommand(() -> m_drive.zeroGyro(), m_drive));
 
-    driveController.button(Button.kRightBumper.value).whileTrue(new MoveToPose(m_drive, () -> FieldConstants.isRedAlliance()? FieldConstants.RED_AMP_SCORING: FieldConstants.BLUE_AMP_SCORING));
+    //driveController.button(Button.kRightBumper.value).whileTrue(new MoveToPose(m_drive, () -> FieldConstants.isRedAlliance()? FieldConstants.RED_AMP_SCORING: FieldConstants.BLUE_AMP_SCORING));
+    
     //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, () -> helmsController.getLeftTriggerAxis() > 0.1));
-    //left joystick sets the arm position up 5 degs.
+    //left joystick up sets the arm position up 5 degs.
     helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 5));
-     //joystick position goes down 5 degs.
+     //left joystick down moves the arm down 5 degs.
     helmsController.axisLessThan(Axis.kLeftY.value, -0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 5));
      //Makes the right trigger on the helms controller auto aim the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));

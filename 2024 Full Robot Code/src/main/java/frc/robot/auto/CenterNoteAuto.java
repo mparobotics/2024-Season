@@ -23,14 +23,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class OneCenterNote extends SequentialCommandGroup {
+public class CenterNoteAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  /** Creates a new OneCenterNote. */
-  public OneCenterNote(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+  
+  public CenterNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
@@ -39,7 +39,7 @@ public class OneCenterNote extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(0.71,4.43,Rotation2d.fromDegrees(-60))))),
+      m_drive.startAutoAt(0.71, 4.43, -60),
       m_arm.setArmSetpointCommand(() -> 25),
       //spins up shooter and shoots,
       m_shooter.spinUpShooterCommand(),

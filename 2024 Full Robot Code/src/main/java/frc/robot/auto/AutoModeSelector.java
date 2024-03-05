@@ -51,7 +51,7 @@ public class AutoModeSelector {
             case NO_AUTO:
                 return null;
             case TWO_NOTE_CENTER:
-                return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm);
+                return new CenterNoteAuto(m_drive, m_intake, m_shooter, m_arm);
             case FOUR_NOTE:
                 return new FourNoteAuto(m_drive, m_intake, m_shooter, m_arm);
 

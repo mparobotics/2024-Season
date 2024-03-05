@@ -36,7 +36,8 @@ public class FourNoteAuto extends SequentialCommandGroup {
  
 
     addCommands(
-      new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(1.35,5.49,Rotation2d.fromDegrees(0))))),
+      
+      m_drive.startAutoAt(1.35, 5.49, 0),
       m_arm.setArmSetpointCommand(() -> 25),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       m_shooter.spinUpShooterCommand(),
