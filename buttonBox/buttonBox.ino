@@ -15,12 +15,13 @@ void setup() {
   Joystick.begin();
 }
 int lastButtonState[10] = {0,0,0,0,0,0,0,0,0,0};
-const int pinToButtonMap = 4;
+const int pinToButtonMap[10] = {3,4,2,1,0,9,8,7,6,5};
+
 void loop() {
-  for(int i = 0; i < 10; i++){
-    int currentButtonState = !digitalRead(i + pinToButtonMap);
+  for(int i = 4; i < 14; i++){
+    int currentButtonState = !digitalRead(i);
     if(currentButtonState != lastButtonState[i]){
-      Joystick.setButton(i, currentButtonState);
+      Joystick.setButton(pinToButtonMap[i - 5], currentButtonState);
       lastButtonState[i] = currentButtonState;
     }
   }
