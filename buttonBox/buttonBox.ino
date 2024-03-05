@@ -1,6 +1,5 @@
 #include <Joystick.h>
-Joystick_ Joystick(JOYSTICK_DEFAULT_REPORT_ID, JOYSTICK_TYPE_GAMEPAD<
-1,0,false,false,false,false,false,false,false,false,false,false,false);
+Joystick_ Joystick;
 void setup() {
   pinMode(4, INPUT_PULLUP);
   pinMode(5, INPUT_PULLUP);
