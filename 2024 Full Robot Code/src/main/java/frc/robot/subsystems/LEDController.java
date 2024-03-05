@@ -95,11 +95,11 @@ public class LEDController extends SubsystemBase{
         offset += 1;
         if(isAtShootingSpeed){
             
-            int brightness = (int)wave(offset, 128,255,100);
+            int brightness = (int)wave(offset, 50,255,100);
             setAll(0, brightness, 0);
         }
         else if(hasNote){
-            double brightness = wave(offset, 128,255,100);
+            double brightness = wave(offset, 50,255,100);
             setAll((int) brightness, (int) (brightness * 0.1), 0);
         }
         else if (FieldConstants.isRedAlliance()){

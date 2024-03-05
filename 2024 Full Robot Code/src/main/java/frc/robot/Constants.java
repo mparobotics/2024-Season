@@ -90,18 +90,20 @@ public final class Constants {
 
   }
   public static final class FieldConstants{
+    public static final double FIELD_LENGTH = 16.4846;
+    public static final double FIELD_WIDTH = 8.1026;
     public static boolean isRedAlliance(){
       return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
     public static Pose2d flipPoseForAlliance(Pose2d pose){
-      return isRedAlliance()? new Pose2d( 16.4846 - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
+      return isRedAlliance()? new Pose2d( FIELD_LENGTH - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
     
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(1.83,7.57,Rotation2d.fromDegrees(-90));
-    public static final Pose2d RED_AMP_SCORING = new Pose2d( 16.4846 - BLUE_AMP_SCORING.getX(), BLUE_AMP_SCORING.getY(), Rotation2d.fromDegrees(180).minus(BLUE_AMP_SCORING.getRotation()));
+    public static final Pose2d RED_AMP_SCORING = new Pose2d(FIELD_LENGTH - BLUE_AMP_SCORING.getX(), BLUE_AMP_SCORING.getY(), Rotation2d.fromDegrees(180).minus(BLUE_AMP_SCORING.getRotation()));
 
     //location of the speaker target on the field in meters
-    public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(16.4846,5.56);
+    public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(FIELD_LENGTH,5.56);
     public static final Translation2d BLUE_SPEAKER_LOCATION = new Translation2d(0,5.56);
   }
   public static final class VisionConstants{

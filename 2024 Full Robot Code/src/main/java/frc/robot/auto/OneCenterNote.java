@@ -42,17 +42,17 @@ public class OneCenterNote extends SequentialCommandGroup {
       new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(0.71,4.43,Rotation2d.fromDegrees(-60))))),
       //spins up shooter and shoots,
       m_shooter.shooterControlCommand(() -> 1,() -> 0),
-      //new Shoot(m_shooter, () -> true),
+      new Shoot(m_shooter, () -> true),
       
       //moves to the C5 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC5")/*, new Intake(m_intake, m_arm, m_shooter)*/),
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC5"), new Intake(m_intake, m_arm, m_shooter)),
       //goes back to the speaker
       m_drive.followPathFromFile("C5S"),
       //shoots
       new Shoot(m_shooter, () -> true),
 
-      //moves to the C5 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") /*,new Intake(m_intake, m_arm, m_shooter)*/),
+      //moves to the C4 center note and intakes
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") ,new Intake(m_intake, m_arm, m_shooter)),
       //goes back to the speaker
       m_drive.followPathFromFile("C4S"),
       //shoots

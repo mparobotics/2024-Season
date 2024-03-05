@@ -214,7 +214,14 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command followPathFromFile(String filename){
     return AutoBuilder.followPath(PathPlannerPath.fromPathFile(filename));
   }
+  public Command startAutoAt(double x,double y,double direction){
+    return runOnce(() -> {
+      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
+      pigeon.setYaw(startPose.getRotation().getDegrees());
+      resetOdometry(startPose);
 
+    });
+  }
   
  
  
@@ -227,9 +234,14 @@ public class SwerveSubsystem extends SubsystemBase {
     
     odometry.update(getYaw(), getPositions());
     
-    
+     
     if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+      Pose2d visionEstimate = Vision.getBotPose();
+      //ignore limelight measurements that put the robot more than 10 meters from the center of the field
+      if(visionEstimate.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10){
+        odometry.addVisionMeasurement(visionEstimate,Vision.getLatency());
+      }
+      
     }
     
     //display estimated position on the driver station
