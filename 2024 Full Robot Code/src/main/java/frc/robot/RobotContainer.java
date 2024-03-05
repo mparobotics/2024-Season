@@ -87,7 +87,7 @@ public class RobotContainer {
           m_drive,
           () -> -getSpeedMultiplier() * driveController.getRawAxis(translationAxis),
           () -> -getSpeedMultiplier() * driveController.getRawAxis(strafeAxis),
-          () -> -getSpeedMultiplier() * driveController.getRawAxis(rotationAxis),
+          () -> -driveController.getRawAxis(rotationAxis),
           () -> robotCentric.getAsBoolean(),
           () -> driveController.getRightTriggerAxis() > 0.1 
           ));
