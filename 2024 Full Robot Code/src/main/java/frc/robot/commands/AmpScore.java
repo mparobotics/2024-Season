@@ -52,10 +52,7 @@ public class AmpScore extends Command {
         //run the belt and the shooter (at low speed) to eject the note
         m_shooter.setBeltSpeed(0.75);
         
-        //reset and start the shooter clock
-        m_timer.reset();
-        m_timer.start();
-
+        
         //we have now started scoring
         hasStartedScoring = true;
       }

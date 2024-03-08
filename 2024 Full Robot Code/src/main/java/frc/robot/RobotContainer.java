@@ -16,6 +16,7 @@ import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
 import frc.robot.commands.AimAndShoot;
 import frc.robot.commands.AmpScore;
+import frc.robot.commands.AngleAndShoot;
 import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOveride;
 import frc.robot.commands.MoveToPose;
@@ -81,7 +82,11 @@ public class RobotContainer {
 
     m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(helmsController.getLeftTriggerAxis()), m_shooter));
 
-    m_climber.setDefaultCommand(m_climber.climb(() -> buttonBox.getHID().getRawButton(4), () -> buttonBox.getHID().getRawButton(2), () -> buttonBox.getHID().getRawButton(3), () -> buttonBox.getHID().getRawButton(1)));
+    m_climber.setDefaultCommand(m_climber.climb(
+          () -> buttonBox.getHID().getRawButton(4), 
+          () -> buttonBox.getHID().getRawButton(5), 
+          () -> buttonBox.getHID().getRawButton(9), 
+          () -> buttonBox.getHID().getRawButton(10)));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,
@@ -107,11 +112,14 @@ public class RobotContainer {
     //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, () -> helmsController.getLeftTriggerAxis() > 0.1));
     //left joystick up sets the arm position up 5 degs.
-    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 5));
+    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 2).repeatedly());
      //left joystick down moves the arm down 5 degs.
-    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).onTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 5));
+    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 2).repeatedly());
+
      //Makes the right trigger on the helms controller auto aim the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
+
+    helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, () -> helmsController.getLeftTriggerAxis() > 0.1));
      //makes the right joystick run the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));
     // makes the helms right joystick run the intake backwards when the joystick is moved backwards
@@ -129,7 +137,8 @@ public class RobotContainer {
     m_leds.autoPeriodic(m_shooter.isNoteInShooter());
   }
   public void teleopPeriodic(){
-    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(), m_shooter.isAtShootingSpeed());
+    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(), m_shooter.isAtShootingSpeed(), 
+    m_arm.isLinedUp(m_drive.getRelativeSpeakerLocation().getNorm()) && m_drive.isLinedUP());
   }
   public Command getAutonomousCommand() {
     return m_autoModeSelector.getSelectedAuto();

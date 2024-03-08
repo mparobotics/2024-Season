@@ -48,7 +48,7 @@ public class FourNoteAuto extends SequentialCommandGroup {
       //drive to the note that's next to the stage
       new ParallelCommandGroup(m_drive.followPathFromFile("SW3"), new Intake(m_intake, m_arm, m_shooter)),
       //start moving the arm to the shooting angle
-      m_arm.setArmSetpointCommand(() -> 28),
+      m_arm.setArmSetpointCommand(() -> 30),
       //drive back to the speaker
       m_drive.followPathFromFile("W3S"),
       //Shoot the second note
@@ -57,7 +57,7 @@ public class FourNoteAuto extends SequentialCommandGroup {
       //drive to the middle of the 3 close notes
       new ParallelCommandGroup(m_drive.followPathFromFile("SW2"), new Intake(m_intake, m_arm, m_shooter)),
       //start moving the arm to the shooting angle
-      m_arm.setArmSetpointCommand(() -> 28),
+      m_arm.setArmSetpointCommand(() -> 30),
       //drive back to the speaker
       m_drive.followPathFromFile("W2S"),
       //shoot the third note
@@ -66,7 +66,7 @@ public class FourNoteAuto extends SequentialCommandGroup {
       
       new ParallelCommandGroup(m_drive.followPathFromFile("SW1"), new Intake(m_intake, m_arm, m_shooter)),
       //start moving the arm to the shooting angle
-      m_arm.setArmSetpointCommand(() -> 28),
+      m_arm.setArmSetpointCommand(() -> 30),
       //drive back to the speaker
       m_drive.followPathFromFile("W1S"),
       //shoot the final note

@@ -27,7 +27,7 @@ public class ReverseIntake extends Command {
   @Override
   public void execute() {
     m_intake.runIntake(-1);
-    m_shooter.setBeltSpeed(-1);
+    m_shooter.setBeltSpeed(-0.75);
     m_shooter.setShooterSpeed(-0.3);
   }
 

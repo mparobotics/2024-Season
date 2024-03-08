@@ -53,10 +53,10 @@ public class Vision {
         return getAprilTagDetector().getEntry("tid").getDouble(0);
     }
     public static double[] getBotPoseArray(){
-        return getAprilTagDetector().getEntry("botpose_wpiblue").getDoubleArray(new double[6]);
+        return getAprilTagDetector().getEntry("botpose_wpiblue").getDoubleArray(new double[10]);
     }
     public static double[] getCameraPoseArray(){
-        return  getAprilTagDetector().getEntry("camerapose_targetspace").getDoubleArray(new double[6]);
+        return  getAprilTagDetector().getEntry("camerapose_targetspace").getDoubleArray(new double[10]);
     }
     public static Translation2d get2dOffset(){
         double[] transform = getCameraPoseArray();

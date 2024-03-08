@@ -109,6 +109,9 @@ public class ArmSubsystem extends SubsystemBase {
   public Command teleopArmControlCommand(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()  * 0.4));
   }
+  public boolean isLinedUp(double distance){
+    return Math.abs(getArmPosition() - armAngleMap.get(distance)) < 1;
+  }
   @Override
   public void periodic() {
     //The PID controller tries to minimize the difference between the goal position and the actual arm's position

@@ -20,22 +20,22 @@ import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 
 
-public class AimAndShoot extends Command {
+public class AngleAndShoot extends Command {
   
   private ArmSubsystem m_arm;
   private ShooterSubsystem m_shooter;
-  private DoubleSupplier m_distance;
+  private DoubleSupplier m_angle;
 
   private BooleanSupplier m_shouldShoot;
   private boolean hasStartedShooting = false;
 
   private Timer m_timer = new Timer();
-  public AimAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier shootingDistance, BooleanSupplier shouldShoot) {
+  public AngleAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier angle, BooleanSupplier shouldShoot) {
     addRequirements(arm);
     addRequirements(shooter);
     m_arm = arm;
     m_shooter = shooter;
-    m_distance = shootingDistance;
+    m_angle = angle;
     m_shouldShoot = shouldShoot;
     
   }
@@ -55,14 +55,15 @@ public class AimAndShoot extends Command {
   @Override
   public void execute() {
     //move the arm towards the target angle (automatically calculated)
-    m_arm.setAngleForShootingDistance(m_distance.getAsDouble());
+    m_arm.setTarget(m_angle.getAsDouble());
     //check if the shooter is ready to shoot (arm is in position and wheels are spinning fast enough)
     if(m_arm.isAtTarget() && m_shooter.isAtShootingSpeed()){
       //If we want to shoot, shoot. Otherwise, keep the shooter ready but don't shoot. this is useful if you are being defended on and have to move around while preparing to shoot
       if(m_shouldShoot.getAsBoolean()){
+
         //feed the note into the shooter wheels by running the belts
         m_shooter.setBeltSpeed(1);
-
+        
         if(!hasStartedShooting){
           
           //reset and start the shooter clock

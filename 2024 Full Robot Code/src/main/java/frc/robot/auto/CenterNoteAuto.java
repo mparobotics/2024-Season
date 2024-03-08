@@ -55,13 +55,7 @@ public class CenterNoteAuto extends SequentialCommandGroup {
       new Shoot(m_shooter, () -> true),
 
       //moves to the C4 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") ,new Intake(m_intake, m_arm, m_shooter)),
-
-      m_arm.setArmSetpointCommand(() -> 31),
-      //goes back to the speaker
-      m_drive.followPathFromFile("C4S"),
-      //shoots
-      new Shoot(m_shooter, () -> true)
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") ,new Intake(m_intake, m_arm, m_shooter))
     );
   }
 }

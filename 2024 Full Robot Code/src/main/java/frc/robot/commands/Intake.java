@@ -42,7 +42,7 @@ public class Intake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setBeltSpeed(1);
+    m_shooter.setBeltSpeed(0.75);
     m_intake.runIntake(1);
   }
 

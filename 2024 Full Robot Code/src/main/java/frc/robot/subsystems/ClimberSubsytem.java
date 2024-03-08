@@ -20,8 +20,8 @@ public class ClimberSubsytem extends SubsystemBase {
   private final CANSparkMax motorR = new CANSparkMax(ClimberConstants.MotorIDRight, MotorType.kBrushless);
   /** Creates a new ClimberSubsytem. */
   public ClimberSubsytem() {
-    motorL.setInverted(true);
-    motorR.setInverted(false);
+    motorL.setInverted(false);
+    motorR.setInverted(true);
 
     motorL.setIdleMode(IdleMode.kBrake);
     motorR.setIdleMode(IdleMode.kBrake);

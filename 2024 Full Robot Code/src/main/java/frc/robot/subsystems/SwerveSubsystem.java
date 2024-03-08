@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,10 +28,12 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.OnboardModuleState;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveConstants;
+import frc.robot.subsystems.LimelightHelpers.PoseEstimate;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -161,6 +164,18 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
     return targetLocation.minus(getPose().getTranslation());
   }
+  public double getSpeakerDirection(){
+     
+    double currentDirection = getPose().getRotation().getDegrees();
+    //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
+    Translation2d relativeTargetPosition = getRelativeSpeakerLocation(); 
+
+    return OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
+  }
+  public boolean isLinedUP(){
+    return Math.abs (getYawAsDouble() - getSpeakerDirection()) < 1;
+  }
+
  
   public Translation2d getVirtualTarget(){
     /* When trying to shoot while moving, we will often miss if we aim directly at the speaker. This is because the motion of the 
@@ -235,18 +250,25 @@ public class SwerveSubsystem extends SubsystemBase {
     odometry.update(getYaw(), getPositions());
     
      
-    if(Vision.canSeeAprilTag()){
-      Pose2d visionEstimate = Vision.getBotPose();
+   
+      //Pose2d visionEstimate = Vision.getBotPose();
       //ignore limelight measurements that put the robot more than 10 meters from the center of the field
-      if(visionEstimate.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10){
-        odometry.addVisionMeasurement(visionEstimate,Vision.getLatency());
+      //boolean isLimelightGood = Vision.canSeeAprilTag() && visionEstimate.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
+      PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
+      boolean isLimelightGood = visionPoseEstimate.tagCount >= 2 && visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
+
+      if(isLimelightGood){
+        odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100));
+        odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.latency);
       }
-      
-    }
+      SmartDashboard.putNumber("# visible tags", visionPoseEstimate.tagCount);
+      SmartDashboard.putBoolean("Limelight can see apriltag? ", isLimelightGood);
+  
     
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
+    
     
     
     for (SwerveModule module : swerveModules) {
