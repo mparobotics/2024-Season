@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 1.3546950189209097,
-      "y": 5.492778881799182
+      "x": 1.2200899290574585,
+      "y": 3.874698049811336
     },
-    "rotation": -0.9191346497194437
+    "rotation": -49.833918225486656
   },
   "command": {
     "type": "sequential",
@@ -14,49 +14,31 @@
         {
           "type": "path",
           "data": {
-            "pathName": "SW3"
+            "pathName": "SC5"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "W3S"
+            "pathName": "C5S"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SW2"
+            "pathName": "SC4"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "W2S"
+            "pathName": "C4S"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "SW1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "W1S"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "SC2"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "C2S"
+            "pathName": "SC3"
           }
         }
       ]
