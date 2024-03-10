@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
 import frc.robot.commands.AimAndShoot;
@@ -78,8 +79,10 @@ public class RobotContainer {
   public RobotContainer() { 
     SmartDashboard.putData("Run Intake Until Full", new Intake(m_intake, m_arm, m_shooter));
     SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
+    SmartDashboard.putData("set odometry test", m_drive.startOdometry(0.71, 4.43, -60));
+    SmartDashboard.putData("set gyro test", m_drive.startPigeon(0.71, 4.43, -60));
     
-
+    
     m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(helmsController.getLeftTriggerAxis()), m_shooter));
 
     m_climber.setDefaultCommand(m_climber.climb(
@@ -137,8 +140,10 @@ public class RobotContainer {
     m_leds.autoPeriodic(m_shooter.isNoteInShooter());
   }
   public void teleopPeriodic(){
-    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(), m_shooter.isAtShootingSpeed(), 
-    m_arm.isLinedUp(m_drive.getRelativeSpeakerLocation().getNorm()) && m_drive.isLinedUP());
+    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(), m_shooter.isAtShootingSpeed(), m_arm.getArmPosition() > 23);
+  }
+  public void teleopInit(){
+    m_arm.setToHandoffAngle();
   }
   public Command getAutonomousCommand() {
     return m_autoModeSelector.getSelectedAuto();

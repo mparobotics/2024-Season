@@ -95,7 +95,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getAbsolutePosition() * 360 - 201.2 + 90;
+    return armEncoder.getAbsolutePosition() * 360 - 202 + 90;
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){
@@ -112,6 +112,7 @@ public class ArmSubsystem extends SubsystemBase {
   public boolean isLinedUp(double distance){
     return Math.abs(getArmPosition() - armAngleMap.get(distance)) < 1;
   }
+   
   @Override
   public void periodic() {
     //The PID controller tries to minimize the difference between the goal position and the actual arm's position

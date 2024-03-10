@@ -34,7 +34,7 @@ public class IntakeOveride extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    m_arm.setToHandoffAngle();
+    
     
     
   }

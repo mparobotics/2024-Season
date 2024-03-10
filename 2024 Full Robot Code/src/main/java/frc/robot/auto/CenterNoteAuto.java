@@ -11,6 +11,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
@@ -44,18 +45,26 @@ public class CenterNoteAuto extends SequentialCommandGroup {
       //spins up shooter and shoots,
       m_shooter.spinUpShooterCommand(),
       new Shoot(m_shooter, () -> true),
-      
+      new WaitCommand(0.5),
       //moves to the C5 center note and intakes
       new ParallelCommandGroup(m_drive.followPathFromFile("SC5"), new Intake(m_intake, m_arm, m_shooter)),
 
-      m_arm.setArmSetpointCommand(() -> 31),
+      m_arm.setArmSetpointCommand(() -> 33),
       //goes back to the speaker
       m_drive.followPathFromFile("C5S"),
+
+      new WaitCommand(0.5),
       //shoots
       new Shoot(m_shooter, () -> true),
 
       //moves to the C4 center note and intakes
-      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") ,new Intake(m_intake, m_arm, m_shooter))
+      new ParallelCommandGroup(m_drive.followPathFromFile("SC4") ,new Intake(m_intake, m_arm, m_shooter)),
+      //goes back to the speaker
+      m_drive.followPathFromFile("C4S"),
+
+      m_arm.setArmSetpointCommand(() -> 33),
+      //shoots
+      new Shoot(m_shooter, () -> true)
     );
   }
 }

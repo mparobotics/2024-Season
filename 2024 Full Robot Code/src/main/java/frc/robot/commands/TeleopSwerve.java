@@ -75,12 +75,21 @@ public class TeleopSwerve extends Command {
     
     boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
    
-    double currentDirection = m_SwerveSubsystem.getYawAsDouble();
-    double targetDirection = m_SwerveSubsystem.getSpeakerDirection();
     
+
+    double currentDirection = m_SwerveSubsystem.getPose().getRotation().getDegrees();
+    //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
+    Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
+
+     
+    double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
+    SmartDashboard.putNumber("Speaker Direction", targetDirection);
+    SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
+
     
    
     double rSpeed = angleController.calculate(currentDirection, targetDirection);
+
 
     
   

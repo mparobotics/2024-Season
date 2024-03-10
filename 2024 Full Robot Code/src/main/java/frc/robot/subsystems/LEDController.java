@@ -91,17 +91,16 @@ public class LEDController extends SubsystemBase{
         }
         leds.setData(Buffer);
     }
-    public void teleopPeriodic(boolean hasNote, boolean isAtShootingSpeed, boolean isLinedUP){
+    public void teleopPeriodic(boolean hasNote, boolean isAtShootingSpeed, boolean isArmTooHigh){
         offset += 1;
-        if(isLinedUP){
-            if(isAtShootingSpeed){
-                int brightness = (int)wave(offset, 50,255,100);
-                setAll(0, brightness, 0);
-            }
-            else{
-                int brightness = (int)wave(offset, 50,255,100);
-                setAll(0, brightness, brightness);
-            }
+        if(isAtShootingSpeed){
+            
+            int brightness = (int)wave(offset, 50,255,100);
+            setAll(0, brightness, 0);
+        }
+        else if(isArmTooHigh){
+            double brightness = wave(offset, 50,255,50);
+            setAll((int) brightness, (int) (brightness), 0);
         }
         else if(hasNote){
             double brightness = wave(offset, 50,255,100);

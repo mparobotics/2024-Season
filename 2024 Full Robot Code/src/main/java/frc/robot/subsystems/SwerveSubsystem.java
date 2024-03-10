@@ -164,17 +164,8 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
     return targetLocation.minus(getPose().getTranslation());
   }
-  public double getSpeakerDirection(){
-     
-    double currentDirection = getPose().getRotation().getDegrees();
-    //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
-    Translation2d relativeTargetPosition = getRelativeSpeakerLocation(); 
-
-    return OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
-  }
-  public boolean isLinedUP(){
-    return Math.abs (getYawAsDouble() - getSpeakerDirection()) < 1;
-  }
+  
+ 
 
  
   public Translation2d getVirtualTarget(){
@@ -233,12 +224,40 @@ public class SwerveSubsystem extends SubsystemBase {
     return runOnce(() -> {
       Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
       pigeon.setYaw(startPose.getRotation().getDegrees());
+      odometry.resetPosition(startPose.getRotation(), getPositions(), startPose);
+    });
+  }
+  public Command startOdometry(double x,double y,double direction){
+    return runOnce(() -> {
+      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
       resetOdometry(startPose);
-
+      resetOdometry(startPose);
+      
+    });
+  }
+  public Command startPigeon(double x,double y,double direction){
+    return runOnce(() -> {
+      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
+      pigeon.setYaw(startPose.getRotation().getDegrees());
+      pigeon.setYaw(startPose.getRotation().getDegrees());    
     });
   }
   
- 
+  
+  public void addVisionMeasurement(String limelightName){
+    PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
+    double targetArea = LimelightHelpers.getTA(limelightName);
+      SmartDashboard.putNumber(limelightName + " target area",targetArea);
+      boolean isLimelightGood = targetArea > 0.15 && 
+    
+      visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
+
+      if(isLimelightGood){
+        odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.timestampSeconds);
+      }
+      
+  }
  
   
 
@@ -248,21 +267,17 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
-    
-     
-   
+    SmartDashboard.putBoolean("both limelights see tags", LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b"));
+    if(LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b")){
+      addVisionMeasurement("limelight-a");
+      addVisionMeasurement("limelight-b");
+    }
+        
+
       //Pose2d visionEstimate = Vision.getBotPose();
       //ignore limelight measurements that put the robot more than 10 meters from the center of the field
       //boolean isLimelightGood = Vision.canSeeAprilTag() && visionEstimate.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
-      PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
-      boolean isLimelightGood = visionPoseEstimate.tagCount >= 2 && visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
-
-      if(isLimelightGood){
-        odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100));
-        odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.latency);
-      }
-      SmartDashboard.putNumber("# visible tags", visionPoseEstimate.tagCount);
-      SmartDashboard.putBoolean("Limelight can see apriltag? ", isLimelightGood);
+      
   
     
     //display estimated position on the driver station
@@ -270,7 +285,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
     
-    
+    /* 
     for (SwerveModule module : swerveModules) {
       SmartDashboard.putNumber(
           "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
@@ -287,6 +302,7 @@ public class SwerveSubsystem extends SubsystemBase {
 
     
     }
+    */
     
 }
 
