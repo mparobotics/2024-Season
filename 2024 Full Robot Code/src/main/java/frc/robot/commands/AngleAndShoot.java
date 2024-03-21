@@ -30,6 +30,7 @@ public class AngleAndShoot extends Command {
   private boolean hasStartedShooting = false;
 
   private Timer m_timer = new Timer();
+  /*Aim at a specified angle and shoot a note */
   public AngleAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier angle, BooleanSupplier shouldShoot) {
     addRequirements(arm);
     addRequirements(shooter);
@@ -54,7 +55,7 @@ public class AngleAndShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //move the arm towards the target angle (automatically calculated)
+    //move the arm towards the target angle (supplied in the constructor)
     m_arm.setTarget(m_angle.getAsDouble());
     //check if the shooter is ready to shoot (arm is in position and wheels are spinning fast enough)
     if(m_arm.isAtTarget() && m_shooter.isAtShootingSpeed()){
@@ -83,14 +84,15 @@ public class AngleAndShoot extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //put the arm back down when we're done shooting (don't smack the stage!)
     m_arm.setToHandoffAngle();
+    //stop the shooter and indexer
     m_shooter.stopShooting();
   }
 
   // Ends the command when we have shot the note, with extra delay time added to allow the note to leave the shooter before we slow down the wheels
   @Override
   public boolean isFinished() {
-    //return hasStartedShooting && m_timer.get() > ShooterConstants.shootTimeSeconds;
     return false;
   }
 }

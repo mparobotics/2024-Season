@@ -14,7 +14,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 import frc.robot.subsystems.ShooterSubsystem;
@@ -30,6 +29,7 @@ public class AimAndShoot extends Command {
   private boolean hasStartedShooting = false;
 
   private Timer m_timer = new Timer();
+  /** Automatically sets the arm angle for aiming at the speaker and shoot a note */
   public AimAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier shootingDistance, BooleanSupplier shouldShoot) {
     addRequirements(arm);
     addRequirements(shooter);
@@ -54,7 +54,7 @@ public class AimAndShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //move the arm towards the target angle (automatically calculated)
+    //move the arm towards the target angle (automatically calculated using the interpolation table in Constants.ArmConstants
     m_arm.setAngleForShootingDistance(m_distance.getAsDouble());
     //check if the shooter is ready to shoot (arm is in position and wheels are spinning fast enough)
     if(m_arm.isAtTarget() && m_shooter.isAtShootingSpeed()){

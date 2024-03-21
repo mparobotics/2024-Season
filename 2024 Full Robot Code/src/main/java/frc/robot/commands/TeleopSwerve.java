@@ -35,7 +35,7 @@ public class TeleopSwerve extends Command {
   private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
   private SlewRateLimiter yLimiter = new SlewRateLimiter(3.0);
   private SlewRateLimiter rotationLimiter = new SlewRateLimiter(3.0);
-  /** Creates a new TeleopSwerve. */
+  /** Main driving command for controlling the swerve drive, with options to switch between robot- and field- centric driving, as well as enabling auto aiming at the speaker*/
   public TeleopSwerve(SwerveSubsystem SwerveSubsystem,
       DoubleSupplier xSupplier,
       DoubleSupplier ySupplier,
@@ -78,23 +78,23 @@ public class TeleopSwerve extends Command {
     
 
     double currentDirection = m_SwerveSubsystem.getPose().getRotation().getDegrees();
-    //if we are trying to aim at the speaker, override the rotation command and rotate towards the scoring direction, but keep the translation commands to allow movement while aligning
+    //calculate the X and Y offsets from the robot to the speaker in meters
     Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
 
-     
+    //calculate the fastest way to reach that angle (if we're at 355 degrees but we want to be at 5 degrees, its much better to rotate in the positive direction than to go all the way back around) 
     double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
     SmartDashboard.putNumber("Speaker Direction", targetDirection);
     SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
 
     
-   
+    //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain
     double rSpeed = angleController.calculate(currentDirection, targetDirection);
 
 
     
   
     if(isSpeakerScoring){
-      //If the driver is pressing the auto align button, then we override the rotation component of the driving with a PID controller which aims us at the speaker
+      //If the driver is pressing the auto align button, then we override the rotation input from the controller with the PID controller which aims us at the speaker
         m_SwerveSubsystem.drive(
        
       xVal * SwerveConstants.maxSpeed, 
@@ -103,7 +103,7 @@ public class TeleopSwerve extends Command {
       isFieldOriented);
     }
     else{
-      //Just drive normally
+      //If we're not auto aiming, just drive normally
       /* Drive */
       m_SwerveSubsystem.drive(
       //the joystick values (-1 to 1) multiplied by the max speed of the drivetrain

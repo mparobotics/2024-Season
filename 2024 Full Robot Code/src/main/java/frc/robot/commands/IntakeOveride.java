@@ -20,7 +20,7 @@ public class IntakeOveride extends Command {
   private ArmSubsystem m_arm;
 
 
-  /** Intakes until a note is detected in the shooter*/
+  /** Runs the intake but ignores the beam break (for cases when the beam break fails or gets blocked by something)*/
   public IntakeOveride(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
     addRequirements(intake);
     addRequirements(arm);

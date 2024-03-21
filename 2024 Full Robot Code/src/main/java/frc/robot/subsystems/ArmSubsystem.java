@@ -121,7 +121,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PID output", PIDOutput);
     //set the motor speed to the output of the PID controller
     
-    motorR.set(-PIDOutput);
+    //motorR.set(-PIDOutput);
 
     SmartDashboard.putNumber("Arm Position", getArmPosition());
     SmartDashboard.putNumber("Arm Goal Position", setpoint);

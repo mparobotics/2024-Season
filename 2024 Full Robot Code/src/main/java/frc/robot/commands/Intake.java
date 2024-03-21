@@ -20,7 +20,7 @@ public class Intake extends Command {
   private ArmSubsystem m_arm;
 
 
-  /** Intakes until a note is detected in the shooter*/
+  /** runs the intake until a note is detected in the shooter*/
   public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
     addRequirements(intake);
     addRequirements(arm);
@@ -34,6 +34,7 @@ public class Intake extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //bring the arm to the handoff position
     m_arm.setToHandoffAngle();
     
     
@@ -42,6 +43,7 @@ public class Intake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    //run the intake and indexer
     m_shooter.setBeltSpeed(0.75);
     m_intake.runIntake(1);
   }
@@ -49,6 +51,7 @@ public class Intake extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    //when we're done intaking, stop the intake and indexer
     m_intake.runIntake(0);
     m_shooter.setBeltSpeed(0);
   }
@@ -56,6 +59,7 @@ public class Intake extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    //stop intaking when a note is detected
     return m_shooter.isNoteInShooter();
   }
 }

@@ -29,7 +29,8 @@ public class AutoModeSelector {
         FOUR_NOTE,
         JUST_SHOOT,
         SHOOT_AND_LEAVE,
-        JUST_LEAVE
+        JUST_LEAVE,
+        TEST_AUTO
     }
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
         m_arm = arm;
@@ -63,6 +64,9 @@ public class AutoModeSelector {
                 return new ShootLeaveAuto(m_drive, m_intake, m_shooter, m_arm);
             case JUST_LEAVE:
                 return new LeaveAuto(m_drive, m_intake, m_shooter, m_arm);
+            case TEST_AUTO:
+                return new TestAuto(m_drive,m_intake, m_shooter, m_arm);
+                
 
 
         }

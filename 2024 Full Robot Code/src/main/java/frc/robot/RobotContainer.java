@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
+import frc.robot.auto.TestAuto;
 import frc.robot.commands.AimAndShoot;
 import frc.robot.commands.AmpScore;
 import frc.robot.commands.AngleAndShoot;
@@ -79,8 +80,6 @@ public class RobotContainer {
   public RobotContainer() { 
     SmartDashboard.putData("Run Intake Until Full", new Intake(m_intake, m_arm, m_shooter));
     SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
-    SmartDashboard.putData("set odometry test", m_drive.startOdometry(0.71, 4.43, -60));
-    SmartDashboard.putData("set gyro test", m_drive.startPigeon(0.71, 4.43, -60));
     
     
     m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(helmsController.getLeftTriggerAxis()), m_shooter));
@@ -147,6 +146,6 @@ public class RobotContainer {
   }
   public Command getAutonomousCommand() {
     return m_autoModeSelector.getSelectedAuto();
-
+    
   }
 }

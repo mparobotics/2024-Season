@@ -75,13 +75,13 @@ public class ArmSubsystem extends SubsystemBase {
 
   public ArmSubsystem() {
     motorL.setControl(new Follower(RmotorID, true));
-    
+    /* 
     SmartDashboard.putData("Arm: Run Quasistatic Forward",arm_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Arm: Run Quasistatic Reverse",arm_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
     SmartDashboard.putData("Arm: Run Dynamic Forward",arm_sysid.dynamic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Arm: Run Dynamic Reverse",arm_sysid.dynamic(SysIdRoutine.Direction.kReverse));
-    
+    */
     encoder.setDistancePerRotation(2 * Math.PI);
   }
   public double getEncoderRadians(){

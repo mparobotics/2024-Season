@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.lib.OnboardModuleState;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -197,12 +196,6 @@ public class SwerveSubsystem extends SubsystemBase {
     return speakerLocation.minus(velocity.times(timeToSpeaker));
   }
   
-  public Pose2d getIntakePose(){
-    Translation2d relativeNoteLocation = Vision.getRelativeNoteLocation().rotateBy(getYaw().times(-1));
-    Rotation2d targetDirection = relativeNoteLocation.getAngle();
-    Translation2d noteLocation = getPose().getTranslation().plus(relativeNoteLocation);
-    return new Pose2d(noteLocation, targetDirection);
-  }
   
 
   public void configPathPlanner(){
@@ -227,27 +220,13 @@ public class SwerveSubsystem extends SubsystemBase {
       odometry.resetPosition(startPose.getRotation(), getPositions(), startPose);
     });
   }
-  public Command startOdometry(double x,double y,double direction){
-    return runOnce(() -> {
-      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
-      resetOdometry(startPose);
-      resetOdometry(startPose);
-      
-    });
-  }
-  public Command startPigeon(double x,double y,double direction){
-    return runOnce(() -> {
-      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
-      pigeon.setYaw(startPose.getRotation().getDegrees());
-      pigeon.setYaw(startPose.getRotation().getDegrees());    
-    });
-  }
   
   
   public void addVisionMeasurement(String limelightName){
     PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
     double targetArea = LimelightHelpers.getTA(limelightName);
       SmartDashboard.putNumber(limelightName + " target area",targetArea);
+      //ignore apriltags that are too small to get a reliable measurement, or pose estimates that place the robot outside of the field
       boolean isLimelightGood = targetArea > 0.15 && 
     
       visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
@@ -267,42 +246,19 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
+    
     SmartDashboard.putBoolean("both limelights see tags", LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b"));
     if(LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b")){
       addVisionMeasurement("limelight-a");
       addVisionMeasurement("limelight-b");
     }
-        
-
-      //Pose2d visionEstimate = Vision.getBotPose();
-      //ignore limelight measurements that put the robot more than 10 meters from the center of the field
-      //boolean isLimelightGood = Vision.canSeeAprilTag() && visionEstimate.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
-      
-  
     
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
+    SmartDashboard.putNumber("position-X",getPose().getX()); 
+    SmartDashboard.putNumber("position-Y",getPose().getY()); 
     
-    
-    /* 
-    for (SwerveModule module : swerveModules) {
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Integrated", module.getState().angle.getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
-      SmartDashboard.putNumber(
-        "Mod " + module.moduleNumber + " Distance", module.getPosition().distanceMeters);
-      SmartDashboard.putNumber(
-        "Mod " + module.moduleNumber + " Change in distance", module.getPositionDifference());
-      module.updatePosition();
-      
-
-    
-    }
-    */
     
 }
 

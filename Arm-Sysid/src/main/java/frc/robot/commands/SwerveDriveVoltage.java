@@ -4,19 +4,20 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.subsystems.ShooterSubsystem;
+import java.util.function.DoubleSupplier;
 
-public class ReverseIntake extends Command {
-  IntakeSubsystem m_intake;
-  ShooterSubsystem m_shooter;
-  /** Runs the indexer and intake backwards to clear out any stuck notes */
-  public ReverseIntake(IntakeSubsystem intake, ShooterSubsystem shooter) {
+import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.SwerveSubsystem;
+
+public class SwerveDriveVoltage extends Command {
+  SwerveSubsystem m_drive;
+  DoubleSupplier m_speed;
+  /** Creates a new SwerveDriveVoltage. */
+  public SwerveDriveVoltage(SwerveSubsystem drive, DoubleSupplier speed) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake,shooter);
-    m_intake = intake;
-    m_shooter = shooter;
+    addRequirements(drive);
+    m_drive = drive;
+    m_speed = speed;
   }
 
   // Called when the command is initially scheduled.
@@ -26,17 +27,13 @@ public class ReverseIntake extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_intake.runIntake(-1);
-    m_shooter.setBeltSpeed(-0.75);
-    m_shooter.setShooterSpeed(-0.3);
+    //m_drive.driveFromVoltage(m_speed.getAsDouble() * 6);
+    m_drive.driveFromPercent(m_speed.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    m_shooter.stopShooting();
-    m_intake.runIntake(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override

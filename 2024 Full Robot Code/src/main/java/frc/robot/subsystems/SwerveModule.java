@@ -90,9 +90,6 @@ public class SwerveModule {
     public void updatePosition(){
         lastPosition = driveEncoder.getPosition();
     }
-    public double getPositionDifference(){
-        return (lastPosition - driveEncoder.getPosition()) / 0.02;
-    }
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
     }

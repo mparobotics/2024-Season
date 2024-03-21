@@ -33,19 +33,26 @@ is the origin. +X is towards the red alliance wall and +Y is to the left (from t
   */
 public final class Constants {
   public static final class IntakeConstants{
+    //A NEO vortex powers the intake rollers
     public static final int intakeMotorID = 20;
+    //We originally planned to have a second beam break sensor on the intake, but it was never actually added
     public static final int beamSensorPort = 3;
   }
   public static final class ShooterConstants{
+    //two neo motors, one for the indexer belts and one for the shooter wheels
     public static final int beltMotorID = 22;
     public static final int shooterMotorID = 21;
+    //a beam break sensor allows us to detect if a note is in the shooter
     public static final int beamSensorPort = 0;
+    //if we ever add shooting while moving, this will help us calculate the correct angle to aim
+    public static final double noteSpeedMetersPerSecond = 20; //the speed that the note exits the shooter at
 
-    public static final double noteSpeedMetersPerSecond = 20; //the speed that the note leaves the shooter at
+    //how fast does the shooter need to spin before we can shoot the note
     public static final double shooterWheelSpeed = 3500; //RPMs
+
     public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
 
-    //PID constants
+    //PID constants for controlling the shooter speed with closed loop control. we currently just run it at full speed all the time, but this could potentially give us more consistent shots
     public static final double kP = 0;
     public static final double kI = 0;
     public static final double kD = 0;
@@ -54,20 +61,22 @@ public final class Constants {
     
   }
   public static final class ArmConstants{
+    //two falcon 500 motors work in unison to move the arm
     public static final int LmotorID = 41;
     public static final int RmotorID = 42;
+    //a REV throughbore encoder measures the arm angle
     public static final int encoderPort = 1;
-
+    
+    //we limit the arm's position so it doesn't slam into the intake or extend past 12in of the frame perimeter
     public static final double minArmPosition = 19;
     public static final double maxArmPosition = 99;
 
+    //arm angle for handing notes from the intake to the indexer
     public static final double handoffPosition = 19;
+    //arm angle for scoring in the amp
     public static final double ampPosition = 98;
 
-
-    public static final double ticksToRotations = 1/8192;
-    public static final double ticksToRadians = ticksToRotations * 2 * Math.PI;
-    //PID constants for the arm's motion control
+    //PID constants for the arm's motion control (all of our PID controllers only use P since they work fine without worrying about I or D)
     public static final double kP = 0.04; 
     public static final double kI = 0;
     public static final double kD = 0;
@@ -75,9 +84,10 @@ public final class Constants {
     
 
     public static final Double[][] ArmAngleMapData = {
-    // each pair of doubles pairs a shooting distance with the ideal arm angle for that distance. 
-    //These values are determined by doing physical testing with the real robot.
-    //We can then interpolate between these data points to approximate a good shooting angle for any distance in between
+    // each pair of doubles pairs a speaker distance with the ideal arm angle for that distance. 
+    //These values are determined by doing physical testing with the real robot at a practice field.
+    //During matches, we use pose estimation to calculate the distance to the speaker, and look it up in this table
+    //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
     // { DistanceToSpeaker (meters), Arm Angle(degrees) }
     
       {1.25,25.0},
@@ -90,16 +100,19 @@ public final class Constants {
     
 
   }
+  //these constants describe useful aspects of the field
   public static final class FieldConstants{
-    public static final double FIELD_LENGTH = 16.4846;
-    public static final double FIELD_WIDTH = 8.1026;
+    public static final double FIELD_LENGTH = 16.4846; //distance from red side to blue side in meters
+    public static final double FIELD_WIDTH = 8.1026; //distance from the amp side to the source side in meters
+    //while not technically a constant, the alliance color is used so frequently, we put it in constants so it can be easily accessed from anywhere in the code
     public static boolean isRedAlliance(){
       return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
+    //this function allows us to mirror a pose to the correct side of the field to match our alliance color
     public static Pose2d flipPoseForAlliance(Pose2d pose){
       return isRedAlliance()? new Pose2d( FIELD_LENGTH - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
-    
+    //the ideal pose for scoring in the amp
     public static final Pose2d BLUE_AMP_SCORING = new Pose2d(1.83,7.57,Rotation2d.fromDegrees(-90));
     public static final Pose2d RED_AMP_SCORING = new Pose2d(FIELD_LENGTH - BLUE_AMP_SCORING.getX(), BLUE_AMP_SCORING.getY(), Rotation2d.fromDegrees(180).minus(BLUE_AMP_SCORING.getRotation()));
 
@@ -123,8 +136,8 @@ public final class Constants {
   public static final class AutoConstants{
     //Config for PathPlanner. contains trajectory PID constants and other drivebase data
     public static final HolonomicPathFollowerConfig pathConfig = new HolonomicPathFollowerConfig( 
-        new PIDConstants(5.0, 0.00001, 0.0), // Translation PID constants
-        new PIDConstants(5.0, 0.0005, 0.001), // Rotation PID constants
+        new PIDConstants(5.0, 0.00001, 0.0), // Translation PID constants for path following
+        new PIDConstants(5.0, 0.0005, 0.001), // Rotation PID constants for path following
         SwerveConstants.maxSpeed, // Max module speed, in m/s
         SwerveConstants.driveBaseRadius, // Drive base radius in meters. Distance from robot center to furthest module.
         new ReplanningConfig() // Default path replanning config. See the Pathplanner API for the options here
@@ -144,14 +157,6 @@ public final class Constants {
     public static final double translation_kI = 0;
     public static final double translation_kD = 0;
     
-
-    /*maximum speeds during auto */
-    public static final double maxVelocityAuto = 1.5; //  m/s
-    public static final double maxAccelerationAuto = 1.5; //  m/s^2
-    public static final double maxAngularVelocityAuto = 2 * Math.PI; //  rad/s
-    public static final double maxAngularAccelerationAuto = 4 * Math.PI; //  rad/s^2
-
-    public static final PathConstraints autoConstraints = new PathConstraints(maxVelocityAuto, maxAccelerationAuto, maxAngularVelocityAuto, maxAngularAccelerationAuto);
     public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
     public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
     
@@ -178,7 +183,7 @@ public final class Constants {
     
 
     /* Drive Motor Conversion Factors */
-    public static final double driveConversionPositionFactor = (wheelDiameter * Math.PI) / driveGearRatio;
+    public static final double driveConversionPositionFactor = (wheelCircumference) / driveGearRatio;
     public static final double driveConversionVelocityFactor = driveConversionPositionFactor / 60.0;
     public static final double angleConversionFactor = 360.0 / angleGearRatio;
  
@@ -255,7 +260,7 @@ public final class Constants {
           //creates a constant with all info from swerve module
     }
 
-    /* Front Right Module - Module 1 */
+    /* Back Left Module - Module 1 */
     public static final class Mod1 {
       public static final int driveMotorID = 5;
       public static final int angleMotorID = 4;
@@ -268,7 +273,7 @@ public final class Constants {
           //creates a constant with all info from swerve module
     }
 
-    /* Back Left Module - Module 2 */
+    /* Back Right Module - Module 2 */
     public static final class Mod2 {
       public static final int driveMotorID = 7;
       public static final int angleMotorID = 6;
@@ -281,7 +286,7 @@ public final class Constants {
         //creates a constant with all info from swerve module
     }
 
-    /* Back Right Module - Module 3 */
+    /* Front Right Module - Module 3 */
     public static final class Mod3 {
       public static final int driveMotorID = 9;
       public static final int angleMotorID = 8;

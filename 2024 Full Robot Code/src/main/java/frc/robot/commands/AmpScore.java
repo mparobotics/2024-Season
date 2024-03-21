@@ -37,6 +37,7 @@ public class AmpScore extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+    //move the arm up and spin the shooter at low speed
     m_arm.setToAmpAngle();
     m_shooter.setShooterSpeed(0.3);
   }
@@ -45,7 +46,7 @@ public class AmpScore extends Command {
   @Override
   public void execute() {
     if(m_arm.isAtTarget()){
-      //If we want to score, score. Otherwise, keep the robot ready but don't shoot. 
+      //If the drivers are ready to score, score. Otherwise, keep the robot in position but don't shoot. 
       if(m_shouldScore.getAsBoolean()){
 
         
@@ -57,6 +58,7 @@ public class AmpScore extends Command {
         hasStartedScoring = true;
       }
       else{
+        //if the driver lets go of the trigger, stop the belt until they press it again
         m_shooter.setBeltSpeed(0);
       }
     }
