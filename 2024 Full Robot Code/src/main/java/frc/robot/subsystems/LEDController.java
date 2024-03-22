@@ -4,10 +4,12 @@
 
 package frc.robot.subsystems;
 
+
+
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.DriverStation;
-
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.OnboardModuleState;
 import frc.robot.Constants.FieldConstants;
@@ -15,14 +17,25 @@ import frc.robot.Constants.FieldConstants;
 /** Add your docs here. */
 public class LEDController extends SubsystemBase{
     private final int led_count = 120;
+    //define the different segments of the led strip with the LED index of the last led in the segment
+    private final int leftBackBar = 10;
+    private final int leftFrontBar = 20;
+    private final int leftBar = 60;
+
+    private final int rightBar = 100;
+    private final int rightFrontBar = 110;
+    private final int rightBackBar = 120;
+
+    private Timer m_timer = new Timer();
     //Plug LEDs into PWM port #0
-    private AddressableLED leds = new AddressableLED(0);
-    private AddressableLEDBuffer Buffer = new AddressableLEDBuffer(led_count);
+    private AddressableLED m_leds = new AddressableLED(0);
+    private AddressableLEDBuffer m_buffer = new AddressableLEDBuffer(led_count);
 
     private double offset = 0;
     public LEDController(){
-        leds.setLength(led_count);
-        leds.start();
+        m_leds.setLength(led_count);
+        m_leds.start();
+        m_timer.start();
     }
     //             .*´^`*.         .*´^`*.         .*´^`*.
     //     `*._.*´         `*._.*´         `*._.*´         `*._.*´      ~~~~~~~~~~~~~~~
@@ -51,15 +64,49 @@ public class LEDController extends SubsystemBase{
     }
 
 
-    public void setAll(int r, int g, int b){
+    private void setAll(int r, int g, int b){
         for(var i = 0; i < led_count; i++){
-            Buffer.setRGB(i,r,g,b);
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setAllLeft(int r, int g, int b){
+        for(var i = 0; i < leftBar; i++){
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setAllRight(int r, int g, int b){
+        for(var i = leftBar; i < rightBackBar; i++){
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setLeftFront(int r, int g, int b){
+        for(var i = leftBackBar; i < leftFrontBar; i++){
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setRightFront(int r, int g, int b){
+        for(var i = rightBar; i < rightFrontBar; i++){
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setLeftBack(int r, int g, int b){
+        for(var i = 0; i < leftBackBar; i++){
+            m_buffer.setRGB(i,r,g,b);
+        }
+    }
+    private void setRightBack(int r, int g, int b){
+        for(var i = rightFrontBar; i < rightBackBar; i++){
+            m_buffer.setRGB(i,r,g,b);
         }
     }
 
+
+    
+
     public void disabledPeriodic(){
-        offset += 1;
-        int brightness = (int)wave(offset, 0, 255, 100);
+        //offset += 1;
+        offset = m_timer.get();
+        int brightness = (int)wave(offset, 0, 255, 1);
         if(DriverStation.getAlliance().isPresent()){
             if(FieldConstants.isRedAlliance()){
                 setAll(brightness,0,0);
@@ -71,7 +118,7 @@ public class LEDController extends SubsystemBase{
         else{
             setAll(brightness, brightness, brightness);
         }
-        leds.setData(Buffer);
+        m_leds.setData(m_buffer);
     }
     public void autoPeriodic(boolean hasNote){
         offset += 1;
@@ -81,51 +128,60 @@ public class LEDController extends SubsystemBase{
         }
         else if(FieldConstants.isRedAlliance()){
             for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, (int)wave(offset, 0, 255, 100),0,0);
+                m_buffer.setRGB(i, (int)wave(offset, 0, 255, 100),0,0);
             }
         }
         else{
             for(var i = 0; i < led_count; i ++){
-                Buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 100));
+                m_buffer.setRGB(i, 0,0,(int)wave(offset, 0, 255, 100));
             }
         }
-        leds.setData(Buffer);
+        m_leds.setData(m_buffer);
     }
-    public void teleopPeriodic(boolean hasNote, boolean isAtShootingSpeed, boolean isArmTooHigh){
-        offset += 1;
+    public void teleopPeriodic(boolean hasNote, boolean isInRange, boolean isAtShootingSpeed, boolean isArmTooHigh){
+        //offset += 1;
+        offset = m_timer.get();
         if(isAtShootingSpeed){
             
-            int brightness = (int)wave(offset, 50,255,100);
+            int brightness = (int)wave(offset, 50,255,1);
             setAll(0, brightness, 0);
         }
         else if(isArmTooHigh){
-            double brightness = wave(offset, 50,255,50);
+            double brightness = square(offset, 50,255,0.5);
             setAll((int) brightness, (int) (brightness), 0);
         }
         else if(hasNote){
-            double brightness = wave(offset, 50,255,100);
+            double brightness = wave(offset, 50,255,1);
             setAll((int) brightness, (int) (brightness * 0.1), 0);
+            if(isInRange){
+                int B1 = (int)zigzag(offset, 0, 255, 1);
+                int B2 = 255 - B1;
+                setRightFront(0,B1 ,B1);
+                setLeftBack(0,B1 ,B1 );
+                setLeftFront(0, B2,B2);
+                setRightBack(0, B2, B2);
+            }
         }
         else if (FieldConstants.isRedAlliance()){
             for(var i = 0; i < led_count; i ++){
                 if((i + offset * 0.5)% 6 >= 3){
-                    Buffer.setRGB (i, 200,0,0);
+                    m_buffer.setRGB (i, 200,0,0);
                 }
                 else{ 
-                    Buffer.setRGB (i,130,40,130);
+                    m_buffer.setRGB (i,130,40,130);
                 }
             }
         } else {
             for(var i = 0; i < led_count; i ++){
-                if((i + offset * 0.5)% 6 >= 3){
-                    Buffer.setRGB (i, 0,0,200);
+                if((i + offset * 5)% 6 >= 3){
+                    m_buffer.setRGB (i, 0,0,200);
                 }
                 else{ 
-                    Buffer.setRGB (i,150,40,150);
+                    m_buffer.setRGB (i,150,40,150);
                 }
             }
         }
-        leds.setData(Buffer);
+        m_leds.setData(m_buffer);
     }
     @Override
     public void periodic(){

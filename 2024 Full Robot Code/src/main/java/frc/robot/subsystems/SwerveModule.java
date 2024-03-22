@@ -18,10 +18,10 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj.Timer;
-import frc.lib.CANSparkMaxUtil;
+import frc.lib.CANSparkUtil;
 import frc.lib.OnboardModuleState;
 import frc.lib.SwerveModuleConstants;
-import frc.lib.CANSparkMaxUtil.Usage;
+import frc.lib.CANSparkUtil.Usage;
 import frc.robot.Constants;
 import frc.robot.Constants.SwerveConstants;
 
@@ -34,7 +34,6 @@ public class SwerveModule {
     public double m_angleKD;
     public double m_angleKFF;
 
-    private double lastPosition;
     private Rotation2d lastAngle;
     private Rotation2d angleOffset;
 
@@ -54,7 +53,7 @@ public class SwerveModule {
         SwerveConstants.driveKS, SwerveConstants.driveKV, SwerveConstants.driveKA);
     //creates a feedforward for the swerve drive. feedforward does 90% of the work, estimating stuff
     //PID fixes the error
-
+ 
     public SwerveModule(int moduleNumber, SwerveModuleConstants moduleConstants){
         this.moduleNumber = moduleNumber;
         this.m_angleKP = SwerveConstants.angleKP;
@@ -86,9 +85,6 @@ public class SwerveModule {
 
     public SwerveModuleState getState(){
         return new SwerveModuleState(driveEncoder.getVelocity(),  getAngle()); 
-    }
-    public void updatePosition(){
-        lastPosition = driveEncoder.getPosition();
     }
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
@@ -155,7 +151,7 @@ public class SwerveModule {
         //resets angle motor
         angleMotor.restoreFactoryDefaults();
         //limits can bus usage
-        CANSparkMaxUtil.setCANSparkMaxBusUsage(angleMotor, Usage.kPositionOnly);
+        CANSparkUtil.setCANSparkBusUsage(angleMotor, Usage.kPositionOnly);
         //sets current limit
         angleMotor.setSmartCurrentLimit(SwerveConstants.angleContinuousCurrentLimit);
         //sets inversion
@@ -182,7 +178,7 @@ public class SwerveModule {
         //factory resets the spark max    
         driveMotor.restoreFactoryDefaults();
         //full utilisation on the can loop hell yea
-        //CANSparkMaxUtil.setCANSparkMaxBusUsage(driveMotor, Usage.kAll);
+        CANSparkUtil.setCANSparkBusUsage(driveMotor, Usage.kAll);
         //sets current limit
         driveMotor.setSmartCurrentLimit(SwerveConstants.driveContinuousCurrentLimit);
         //sets inverted or not

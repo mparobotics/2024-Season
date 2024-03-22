@@ -4,58 +4,54 @@
 
 package frc.robot.commands;
 
-
-
 import edu.wpi.first.wpilibj2.command.Command;
-
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-
 import frc.robot.subsystems.ShooterSubsystem;
 
-
-public class IntakeOveride extends Command {
-  private IntakeSubsystem m_intake;
-  private ShooterSubsystem m_shooter;
-  private ArmSubsystem m_arm;
-
-
-  /** Runs the intake but ignores the beam break (for cases when the beam break fails or gets blocked by something)*/
-  public IntakeOveride(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
-    addRequirements(intake);
-    addRequirements(arm);
-    addRequirements(shooter);
+public class SweepAutoIntakeControl extends Command {
+  ShooterSubsystem m_shooter;
+  IntakeSubsystem m_intake;
+  int notes_intaked = 0;
+  boolean has_note = true;
+  /** Creates a new SweepAutoIntakeControl. */
+  public SweepAutoIntakeControl(IntakeSubsystem intake, ShooterSubsystem shooter) {
+    // Use addRequirements() here to declare subsystem dependencies.
+    addRequirements(intake, shooter);
     m_intake = intake;
-    m_arm = arm;
     m_shooter = shooter;
-    
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    
-    
-    
+    notes_intaked = 0;
+    has_note = m_shooter.isNoteInShooter();
+    m_intake.runIntake(1);
+    m_shooter.setBeltSpeed(0.75);
+    m_shooter.setShooterSpeed(0.3);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    m_shooter.setBeltSpeed(0.75);
-    m_intake.runIntake(1);
+    
+    //if we have a note now and didn't before, then we just intook a note! -> increase the intake count
+    if(m_shooter.isNoteInShooter() && !has_note){
+      notes_intaked++;
+    }
+    has_note = m_shooter.isNoteInShooter();
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    m_intake.runIntake(0);
     m_shooter.setBeltSpeed(0);
+    m_intake.runIntake(0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return notes_intaked == 5;
   }
 }

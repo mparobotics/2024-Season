@@ -6,9 +6,8 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
-import edu.wpi.first.wpilibj.Timer;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 import frc.robot.subsystems.ShooterSubsystem;
@@ -20,14 +19,11 @@ public class AmpScore extends Command {
   
   private BooleanSupplier m_shouldScore;
 
-  private Timer m_timer = new Timer();
-  private boolean hasStartedScoring = false;
   
   /** Command to score a note in the AMP*/
   public AmpScore(ArmSubsystem arm, ShooterSubsystem shooter, BooleanSupplier shouldScore) {
-    addRequirements(arm);
-    
-    addRequirements(shooter);
+    addRequirements(arm, shooter);
+
     m_arm = arm;
     
     m_shooter = shooter;
@@ -48,14 +44,8 @@ public class AmpScore extends Command {
     if(m_arm.isAtTarget()){
       //If the drivers are ready to score, score. Otherwise, keep the robot in position but don't shoot. 
       if(m_shouldScore.getAsBoolean()){
-
-        
-        //run the belt and the shooter (at low speed) to eject the note
+        //run the belt to eject the note
         m_shooter.setBeltSpeed(0.75);
-        
-        
-        //we have now started scoring
-        hasStartedScoring = true;
       }
       else{
         //if the driver lets go of the trigger, stop the belt until they press it again
@@ -74,7 +64,6 @@ public class AmpScore extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    //return hasStartedScoring && m_timer.get() > ShooterConstants.shootTimeSeconds;
     return false;
   }
 }

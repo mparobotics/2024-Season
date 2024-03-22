@@ -106,6 +106,12 @@ public class ArmSubsystem extends SubsystemBase {
   public Command setArmSetpointCommand(DoubleSupplier setpoint){
   return runOnce(() ->{setTarget(setpoint.getAsDouble());});
   }
+  public Command ArmDownCommand(){
+    return runOnce(() -> setToHandoffAngle());
+  }
+  public Command ArmToAmpCommand(){
+    return runOnce(() -> setToAmpAngle());
+  }
   public Command teleopArmControlCommand(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()  * 0.4));
   }

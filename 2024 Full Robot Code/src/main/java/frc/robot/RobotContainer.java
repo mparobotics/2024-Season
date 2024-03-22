@@ -20,7 +20,7 @@ import frc.robot.commands.AimAndShoot;
 import frc.robot.commands.AmpScore;
 import frc.robot.commands.AngleAndShoot;
 import frc.robot.commands.Intake;
-import frc.robot.commands.IntakeOveride;
+import frc.robot.commands.IntakeOverride;
 import frc.robot.commands.MoveToPose;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.Shoot;
@@ -35,7 +35,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
-
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
@@ -52,6 +52,7 @@ public class RobotContainer {
   private final CommandXboxController driveController = new CommandXboxController(0);
   private final CommandXboxController helmsController = new CommandXboxController(1);
   private final CommandJoystick buttonBox = new CommandJoystick(2);
+  private final Joystick buttonHID = buttonBox.getHID();
   //private final CommandJoystick m_JoystickL = new CommandJoystick(0);
   //private final CommandJoystick m_JoystickR = new CommandJoystick(1);
   /* Drive Controls */
@@ -82,13 +83,17 @@ public class RobotContainer {
     SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
     
     
-    m_shooter.setDefaultCommand(new InstantCommand(() -> m_shooter.setShooterSpeed(helmsController.getLeftTriggerAxis()), m_shooter));
+    m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
+      () -> helmsController.getLeftTriggerAxis() > 0.1,
+      () -> m_drive.isInRange()
+       ));
 
     m_climber.setDefaultCommand(m_climber.climb(
-          () -> buttonBox.getHID().getRawButton(4), 
-          () -> buttonBox.getHID().getRawButton(5), 
-          () -> buttonBox.getHID().getRawButton(9), 
-          () -> buttonBox.getHID().getRawButton(10)));
+      () -> buttonHID.getRawButton(4), 
+      () -> buttonHID.getRawButton(5), 
+      () -> buttonHID.getRawButton(9), 
+      () -> buttonHID.getRawButton(10)
+    ));
     m_drive.setDefaultCommand(
       new TeleopSwerve(
           m_drive,
@@ -113,24 +118,27 @@ public class RobotContainer {
     
     //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, () -> helmsController.getLeftTriggerAxis() > 0.1));
-    //left joystick up sets the arm position up 5 degs.
+    //helms left joystick manually moves the arm up and down
     helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 2).repeatedly());
-     //left joystick down moves the arm down 5 degs.
     helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 2).repeatedly());
 
-     //Makes the right trigger on the helms controller auto aim the arm 
+     //holding the right trigger on the helms controller auto aims the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
-
+    
+    //X sets the arm to subwoofer angle
     helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, () -> helmsController.getLeftTriggerAxis() > 0.1));
-     //makes the right joystick run the intake until a note is intaked
+    //Y sets the arm to the podium angle
+    helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47.5, () -> helmsController.getLeftTriggerAxis() > 0.1));
+
+     //helms right joystick down runs the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));
-    // makes the helms right joystick run the intake backwards when the joystick is moved backwards
+    // helms right joystick up runs the intake backwards
     helmsController.axisLessThan(Axis.kRightY.value,-0.5).whileTrue(new ReverseIntake(m_intake, m_shooter));
-    //The A button on the helms controller overides the intake
-    helmsController.button(Button.kA.value).whileTrue(new IntakeOveride(m_intake, m_arm, m_shooter));
+    //The A button on the helms controller runs the intake without using the beam break to check if its full
+    helmsController.button(Button.kA.value).whileTrue(new IntakeOverride(m_intake, m_arm, m_shooter));
   }
   private double getSpeedMultiplier(){
-    return driveController.getLeftTriggerAxis() > 0.1? 1: 0.7;
+    return driveController.getLeftTriggerAxis() > 0.1? 0.7: 1;
   }
   public void disabledPeriodic(){
     m_leds.disabledPeriodic();
@@ -139,9 +147,11 @@ public class RobotContainer {
     m_leds.autoPeriodic(m_shooter.isNoteInShooter());
   }
   public void teleopPeriodic(){
-    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(), m_shooter.isAtShootingSpeed(), m_arm.getArmPosition() > 23);
+    m_leds.teleopPeriodic(m_shooter.isNoteInShooter(),m_drive.isInRange(), m_shooter.isAtShootingSpeed(), m_arm.getArmPosition() > 23);
   }
   public void teleopInit(){
+    //11'8 prevention measure
+    //puts the arm down at the start of teleop so that we don't smack the stage again
     m_arm.setToHandoffAngle();
   }
   public Command getAutonomousCommand() {

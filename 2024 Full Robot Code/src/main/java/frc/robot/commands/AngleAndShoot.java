@@ -14,7 +14,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
+
 import frc.robot.subsystems.ArmSubsystem;
 
 import frc.robot.subsystems.ShooterSubsystem;
@@ -32,8 +32,8 @@ public class AngleAndShoot extends Command {
   private Timer m_timer = new Timer();
   /*Aim at a specified angle and shoot a note */
   public AngleAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier angle, BooleanSupplier shouldShoot) {
-    addRequirements(arm);
-    addRequirements(shooter);
+    addRequirements(arm, shooter);
+
     m_arm = arm;
     m_shooter = shooter;
     m_angle = angle;

@@ -22,9 +22,8 @@ public class Intake extends Command {
 
   /** runs the intake until a note is detected in the shooter*/
   public Intake(IntakeSubsystem intake, ArmSubsystem arm, ShooterSubsystem shooter) {
-    addRequirements(intake);
-    addRequirements(arm);
-    addRequirements(shooter);
+    addRequirements(intake, arm, shooter);
+
     m_intake = intake;
     m_arm = arm;
     m_shooter = shooter;

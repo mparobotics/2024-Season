@@ -14,7 +14,7 @@ public class ReverseIntake extends Command {
   /** Runs the indexer and intake backwards to clear out any stuck notes */
   public ReverseIntake(IntakeSubsystem intake, ShooterSubsystem shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake,shooter);
+    addRequirements(intake, shooter);
     m_intake = intake;
     m_shooter = shooter;
   }

@@ -31,8 +31,8 @@ public class AimAndShoot extends Command {
   private Timer m_timer = new Timer();
   /** Automatically sets the arm angle for aiming at the speaker and shoot a note */
   public AimAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier shootingDistance, BooleanSupplier shouldShoot) {
-    addRequirements(arm);
-    addRequirements(shooter);
+    addRequirements(arm, shooter);
+
     m_arm = arm;
     m_shooter = shooter;
     m_distance = shootingDistance;

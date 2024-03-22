@@ -88,7 +88,7 @@ public final class Constants {
     //These values are determined by doing physical testing with the real robot at a practice field.
     //During matches, we use pose estimation to calculate the distance to the speaker, and look it up in this table
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
-    // { DistanceToSpeaker (meters), Arm Angle(degrees) }
+    // the data is in the format: { DistanceToSpeaker (meters), Arm Angle(degrees) }
     
       {1.25,25.0},
       {1.48,32.0},
@@ -97,6 +97,7 @@ public final class Constants {
       {3.10,49.0}, 
     
     };
+    public static final double maxShootingDistance = 3.10;
     
 
   }
@@ -188,7 +189,7 @@ public final class Constants {
     public static final double angleConversionFactor = 360.0 / angleGearRatio;
  
     /* Maximum speed and angular velocity of the robot */
-    public static final double maxSpeed = 9; // meters per second
+    public static final double maxSpeed = 5; // meters per second
     public static final double maxAngularVelocity = maxSpeed / driveBaseRadius; //radians per second
 
     //give location of each module to a swerveDriveKinematics relative to robot center in meters

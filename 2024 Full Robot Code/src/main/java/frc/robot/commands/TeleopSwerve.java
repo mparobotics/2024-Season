@@ -11,7 +11,6 @@ import java.util.function.DoubleSupplier;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -82,7 +81,7 @@ public class TeleopSwerve extends Command {
     Translation2d relativeTargetPosition = m_SwerveSubsystem.getRelativeSpeakerLocation(); 
 
     //calculate the fastest way to reach that angle (if we're at 355 degrees but we want to be at 5 degrees, its much better to rotate in the positive direction than to go all the way back around) 
-    double targetDirection = OnboardModuleState.smolOptimize180(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
+    double targetDirection = OnboardModuleState.closestAngle(currentDirection, relativeTargetPosition.getAngle().getDegrees() + 180);
     SmartDashboard.putNumber("Speaker Direction", targetDirection);
     SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
 

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -163,6 +164,9 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
     return targetLocation.minus(getPose().getTranslation());
   }
+  public boolean isInRange(){
+    return getRelativeSpeakerLocation().getNorm() < ArmConstants.maxShootingDistance;
+  }
   
  
 
@@ -246,7 +250,7 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
-    
+
     SmartDashboard.putBoolean("both limelights see tags", LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b"));
     if(LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b")){
       addVisionMeasurement("limelight-a");

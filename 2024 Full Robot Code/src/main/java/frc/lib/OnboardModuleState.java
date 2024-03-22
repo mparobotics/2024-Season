@@ -9,8 +9,8 @@ public class OnboardModuleState {
     double bad = a % b;
     return bad + (bad < 0? b: 0);
   }
-  public static double smolOptimize180(double currentValue, double targetValue){
-    return currentValue + fixedMod(targetValue - currentValue -180, 360) - 180;
+  public static double closestAngle(double currentValue, double targetValue){
+    return currentValue + Math.IEEEremainder(targetValue - currentValue, 360);
   }
   //for a given target angle, find the closest equivalent angle to the module's current direction
   //custom optimize function because built-in doesn't work for some reason
@@ -22,7 +22,7 @@ public class OnboardModuleState {
     double target = desiredState.angle.getDegrees();
 
     //find the direction that points you in the target direction with the least angle change
-    double error = smolOptimize180(current, target) - current;
+    double error = closestAngle(current, target) - current;
     //sometimes we can reverse the drive motor to avoid turning 180 degress.
     //for example, if you were pointing 0 degrees straight ahead, and you suddenly wanted to go 175 degrees counterclockwise(almost backwards)
     //you could just turn 5 degrees clockwise and drive the motor backwards -- and reach your target angle much faster

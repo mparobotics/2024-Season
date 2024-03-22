@@ -16,14 +16,13 @@ import frc.robot.subsystems.SwerveSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ShootLeaveAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
-  private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
   
   /** Creates a new ShootAuto. */
   public ShootLeaveAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
-    m_intake = intake;
+
     m_shooter = shooter;
     m_arm = arm;
 
