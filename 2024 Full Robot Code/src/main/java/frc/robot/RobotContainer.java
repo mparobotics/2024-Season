@@ -12,16 +12,14 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.robot.Constants.ArmConstants;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
-import frc.robot.auto.TestAuto;
+
 import frc.robot.commands.AimAndShoot;
 import frc.robot.commands.AmpScore;
 import frc.robot.commands.AngleAndShoot;
 import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOverride;
-import frc.robot.commands.MoveToPose;
+
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.TeleopSwerve;

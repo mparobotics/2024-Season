@@ -1,0 +1,37 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 1.4076224460995166,
+      "y": 1.5878185718272975
+    },
+    "rotation": 89.41802045012626
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Sweep II"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Recovery"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Finale"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

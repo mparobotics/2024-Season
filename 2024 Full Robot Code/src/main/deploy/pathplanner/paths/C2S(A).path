@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.842994648870457,
-        "y": 6.99737019536009
+        "x": 5.702920489529588,
+        "y": 7.0404578307769246
       },
       "isLocked": false,
       "linkedName": "C2"
     },
     {
       "anchor": {
-        "x": 1.6719214353865632,
-        "y": 5.445330769750797
+        "x": 0.6705544486147813,
+        "y": 6.73598159823505
       },
       "prevControl": {
-        "x": 3.1585241211764967,
-        "y": 6.854412288596639
+        "x": 2.3461157586856074,
+        "y": 7.082290413574035
       },
       "nextControl": null,
       "isLocked": false,
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0,
+    "rotation": 61.206946440046515,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "5 Note",
+  "folder": "Amp",
   "previewStartingState": {
-    "rotation": 0,
+    "rotation": -24.96227194257688,
     "velocity": 0
   },
   "useDefaultConstraints": true

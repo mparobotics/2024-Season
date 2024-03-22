@@ -4,8 +4,10 @@
   "holonomicMode": true,
   "pathFolders": [
     "5 Note",
+    "6 Note",
+    "Amp",
     "Far Side Center",
-    "6 Note"
+    "Sweep"
   ],
   "autoFolders": [],
   "defaultMaxVel": 5.0,

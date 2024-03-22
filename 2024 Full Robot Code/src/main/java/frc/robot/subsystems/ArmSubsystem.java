@@ -109,7 +109,7 @@ public class ArmSubsystem extends SubsystemBase {
   public Command ArmDownCommand(){
     return runOnce(() -> setToHandoffAngle());
   }
-  public Command ArmToAmpCommand(){
+  public Command armToAmpCommand(){
     return runOnce(() -> setToAmpAngle());
   }
   public Command teleopArmControlCommand(DoubleSupplier speed){

@@ -1,0 +1,55 @@
+{
+  "version": 1.0,
+  "startingPose": {
+    "position": {
+      "x": 0.6674216907099905,
+      "y": 6.701330349709311
+    },
+    "rotation": 59.60081635991698
+  },
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "SW1(A)"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "W1A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AC1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C1A"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "AC2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "C2S(A)"
+          }
+        }
+      ]
+    }
+  },
+  "folder": null,
+  "choreoAuto": false
+}

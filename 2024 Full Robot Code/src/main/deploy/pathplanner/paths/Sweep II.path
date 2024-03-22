@@ -32,48 +32,48 @@
     },
     {
       "anchor": {
-        "x": 7.9372512176739685,
-        "y": 7.313878353301606
+        "x": 7.926847816947949,
+        "y": 7.249485738084614
       },
       "prevControl": {
-        "x": 8.298203880386087,
-        "y": 6.885664756266067
+        "x": 8.325648276398551,
+        "y": 6.856278537047977
       },
       "nextControl": {
-        "x": 7.766308646110807,
-        "y": 7.51667484441365
+        "x": 7.894231875196968,
+        "y": 7.281644234548597
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 4.391820128981693,
-        "y": 4.79618949812263
-      },
-      "prevControl": {
-        "x": 3.4630447614871485,
-        "y": 7.428788155426693
-      },
-      "nextControl": {
-        "x": 5.388487630924915,
-        "y": 1.9711516911098053
-      },
-      "isLocked": false,
-      "linkedName": null
-    },
-    {
-      "anchor": {
-        "x": 0.6981526423990351,
+        "x": 6.914956572968702,
         "y": 4.3340217612509875
       },
       "prevControl": {
-        "x": 1.5919984134890148,
-        "y": 1.5759454077501907
+        "x": 7.042098526326683,
+        "y": 7.213595304613932
+      },
+      "nextControl": {
+        "x": 6.722157143985083,
+        "y": -0.03259460898479549
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 0.713702534569947,
+        "y": 4.331909440366944
+      },
+      "prevControl": {
+        "x": 5.301279352084693,
+        "y": 1.520413127306321
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "SweepShot"
     }
   ],
   "rotationTargets": [
@@ -85,7 +85,7 @@
     {
       "waypointRelativePos": 1,
       "rotationDegrees": 0,
-      "rotateFast": true
+      "rotateFast": false
     },
     {
       "waypointRelativePos": 2.1999999999999997,
@@ -119,7 +119,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Sweep",
   "previewStartingState": {
     "rotation": 90.28648122669348,
     "velocity": 0
