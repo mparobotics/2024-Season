@@ -1,6 +1,6 @@
 //LimelightHelpers v1.3.1 (March 4, 2024)
 
-package frc.robot.subsystems;
+package frc.lib;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -26,7 +26,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class LimelightHelpers {
+public class LimelightHelpersOld {
 
     public static class LimelightTarget_Retro {
 
@@ -452,7 +452,7 @@ public class LimelightHelpers {
     }
 
     private static PoseEstimate getBotPoseEstimate(String limelightName, String entryName) {
-        var poseEntry = LimelightHelpers.getLimelightNTTableEntry(limelightName, entryName);
+        var poseEntry = LimelightHelpersOld.getLimelightNTTableEntry(limelightName, entryName);
         var poseArray = poseEntry.getDoubleArray(new double[0]);
         var pose = toPose2D(poseArray);
         double latency = extractBotPoseEntry(poseArray,6);
@@ -843,7 +843,7 @@ public class LimelightHelpers {
     public static LimelightResults getLatestResults(String limelightName) {
 
         long start = System.nanoTime();
-        LimelightHelpers.LimelightResults results = new LimelightHelpers.LimelightResults();
+        LimelightHelpersOld.LimelightResults results = new LimelightHelpersOld.LimelightResults();
         if (mapper == null) {
             mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }

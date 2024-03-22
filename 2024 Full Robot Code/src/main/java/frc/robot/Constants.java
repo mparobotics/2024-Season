@@ -15,6 +15,8 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.math.util.Units;
@@ -46,7 +48,7 @@ public final class Constants {
     public static final int beamSensorPort = 0;
     //if we ever add shooting while moving, this will help us calculate the correct angle to aim
     public static final double noteSpeedMetersPerSecond = 20; //the speed that the note exits the shooter at
-
+    public static final double relativeShooterAngle = 150;
     //how fast does the shooter need to spin before we can shoot the note
     public static final double shooterWheelSpeed = 3500; //RPMs
 
@@ -83,20 +85,22 @@ public final class Constants {
 
     
 
-    public static final Double[][] ArmAngleMapData = {
+  
+    public static final InterpolatingTreeMap<Double, Double> ArmAngleMap = new InterpolatingDoubleTreeMap();
+    static{
     // each pair of doubles pairs a speaker distance with the ideal arm angle for that distance. 
     //These values are determined by doing physical testing with the real robot at a practice field.
     //During matches, we use pose estimation to calculate the distance to the speaker, and look it up in this table
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
-    // the data is in the format: { DistanceToSpeaker (meters), Arm Angle(degrees) }
+    // the data is in the format: ArmAngleMap.put(DistanceToSpeaker (meters), Arm Angle(degrees))
     
-      {1.25,25.0},
-      {1.48,32.0},
-      {1.93,37.7},
-      {2.38,42.0},
-      {3.10,49.0}, 
-    
-    };
+      ArmAngleMap.put(1.25, 25.0);
+      ArmAngleMap.put(1.48, 32.0);
+      ArmAngleMap.put(1.93, 37.7);
+      ArmAngleMap.put(2.38, 42.0);
+      ArmAngleMap.put(3.10, 49.0);
+
+    }
     public static final double maxShootingDistance = 3.10;
     
 

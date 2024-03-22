@@ -13,7 +13,12 @@
       "/FMSInfo": "FMSInfo",
       "/SmartDashboard/Arm to 0": "Command",
       "/SmartDashboard/Arm to 45": "Command",
+      "/SmartDashboard/Arm to amp": "Command",
+      "/SmartDashboard/Arm to handoff": "Command",
+      "/SmartDashboard/Auto Mode Selector": "String Chooser",
       "/SmartDashboard/Field": "Field2d",
+      "/SmartDashboard/Run Intake Until Full": "Command",
+      "/SmartDashboard/Shoot": "Command",
       "/SmartDashboard/Zero Arm Enocder": "Command"
     }
   },
@@ -28,6 +33,12 @@
     }
   },
   "NetworkTables Info": {
+    "Server": {
+      "Publishers": {
+        "open": true
+      },
+      "open": true
+    },
     "visible": true
   }
 }

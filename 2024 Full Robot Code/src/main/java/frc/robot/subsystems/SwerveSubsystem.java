@@ -22,18 +22,20 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.LimelightHelpersOld;
+import frc.lib.LimelightHelpersOld.PoseEstimate;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.SwerveConstants;
-import frc.robot.subsystems.LimelightHelpers.PoseEstimate;
 
 
 public class SwerveSubsystem extends SubsystemBase {
@@ -50,6 +52,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
+    SmartDashboard.putNumber("distance",0); 
     //instantiates new pigeon gyro, wipes it, and zeros it
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -179,7 +182,8 @@ public class SwerveSubsystem extends SubsystemBase {
    */
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
-
+    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
+    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * Math.cos(estimatedShotAngle);
     //get the speed of the robot as a chassisSpeeds
     ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
     //make a translation2d with the x and y components of the velocity of the robot
@@ -187,10 +191,10 @@ public class SwerveSubsystem extends SubsystemBase {
     //Calculate the component of the velocity parallel to the speaker direction, and the component going perpendicular to the speaker direction
     Translation2d rotatedVelocity = velocity.rotateBy(speakerLocation.getAngle().times(-1));
     //The robot's velocity is always moving the note off of the straight path to the speaker, so we want to pick a shooting direction that cancels out the perpendicular velocity
-    double shootDirection = Math.asin(-rotatedVelocity.getY() / ShooterConstants.noteSpeedMetersPerSecond);
+    double shootDirection = Math.asin(-rotatedVelocity.getY() / noteSpeed);
     
     //make a translation2d of the note's velocity as it leaves the shooter
-    Translation2d relativeNoteVelocity = new Translation2d(ShooterConstants.noteSpeedMetersPerSecond, new Rotation2d(shootDirection));
+    Translation2d relativeNoteVelocity = new Translation2d(noteSpeed, new Rotation2d(shootDirection));
 
     //The parallel components of the robot velocity and the shooter velocity are added together together to find how fast the note is approaching the speaker.
     //We calculate how long the note will take to arrive at the speaker by dividing the distance to the speaker by the speed of the note
@@ -227,8 +231,8 @@ public class SwerveSubsystem extends SubsystemBase {
   
   
   public void addVisionMeasurement(String limelightName){
-    PoseEstimate visionPoseEstimate = LimelightHelpers.getBotPoseEstimate_wpiBlue(limelightName);
-    double targetArea = LimelightHelpers.getTA(limelightName);
+    PoseEstimate visionPoseEstimate = LimelightHelpersOld.getBotPoseEstimate_wpiBlue(limelightName);
+    double targetArea = LimelightHelpersOld.getTA(limelightName);
       SmartDashboard.putNumber(limelightName + " target area",targetArea);
       //ignore apriltags that are too small to get a reliable measurement, or pose estimates that place the robot outside of the field
       boolean isLimelightGood = targetArea > 0.15 && 
@@ -251,8 +255,8 @@ public class SwerveSubsystem extends SubsystemBase {
     
     odometry.update(getYaw(), getPositions());
 
-    SmartDashboard.putBoolean("both limelights see tags", LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b"));
-    if(LimelightHelpers.getTV("limelight-a") && LimelightHelpers.getTV("limelight-b")){
+    SmartDashboard.putBoolean("both limelights see tags", LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b"));
+    if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
       addVisionMeasurement("limelight-a");
       addVisionMeasurement("limelight-b");
     }
@@ -262,6 +266,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 
     SmartDashboard.putNumber("position-Y",getPose().getY()); 
+
     
     
 }
