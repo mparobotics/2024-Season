@@ -29,6 +29,7 @@ import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.LimelightHelpers;
 import frc.lib.LimelightHelpersOld;
 import frc.lib.LimelightHelpersOld.PoseEstimate;
 import frc.robot.Constants.ArmConstants;
@@ -170,6 +171,10 @@ public class SwerveSubsystem extends SubsystemBase {
   public boolean isInRange(){
     return getRelativeSpeakerLocation().getNorm() < ArmConstants.maxShootingDistance;
   }
+  //Range to start spinning up the shooter. A little further out than our max shooting distance
+  public boolean isInSpinUpRange(){
+    return getRelativeSpeakerLocation().getNorm() < ArmConstants.maxShootingDistance + 2;
+  }
   
  
 
@@ -240,12 +245,18 @@ public class SwerveSubsystem extends SubsystemBase {
       visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
 
       if(isLimelightGood){
-        odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        
         odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.timestampSeconds);
       }
       
   }
- 
+  public boolean isEstimateValid(LimelightHelpers.PoseEstimate estimate){
+    boolean isInField = estimate.pose.getX() > 0 && estimate.pose.getX() < FieldConstants.FIELD_LENGTH
+                      && estimate.pose.getY() > 0 && estimate.pose.getY() < FieldConstants.FIELD_WIDTH;
+    boolean isCloseEnough = estimate.avgTagDist < 5;
+    boolean canSeeTag = estimate.tagCount > 0;
+    return  canSeeTag && isInField && isCloseEnough;
+  }
   
 
 
@@ -254,13 +265,56 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
+    LimelightHelpers.PoseEstimate estimateA = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
+    LimelightHelpers.PoseEstimate estimateB = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-b");
 
-    SmartDashboard.putBoolean("both limelights see tags", LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b"));
+    boolean AisValid = isEstimateValid(estimateA);
+    boolean BisValid = isEstimateValid(estimateB);
+
+    SmartDashboard.putBoolean("limelight A is valid" , AisValid);
+    SmartDashboard.putBoolean("limelight B is valid" , BisValid);
+    
+
+    //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate
+    if(estimateA.tagCount == 1 && estimateB.tagCount == 1 && AisValid && BisValid){
+      //low standard deviations for translation, really high standard deviation for rotation since we want to just use the pigeon for heading
+      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+
+      odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
+      odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
+    }
+    else{
+      //If either limelight can see 2 tags simultaneously we can trust it enough to use its pose estimate
+      //If just one limelight can see just one tag, then scale the standard deviations based on tag distance
+      if(AisValid){
+        if(estimateA.tagCount >= 2){
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        }
+        else{
+          //scale standard deviations by the distance to the tag. (trust far away tags less)
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(2 / estimateA.avgTagDist,2 / estimateA.avgTagDist,100000));
+        }
+        odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
+      }
+      if(BisValid){
+        if(estimateB.tagCount >= 2){
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        }
+        else{
+          //scale standard deviations by the distance to the tag. (trust far away tags less)
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(2 / estimateB.avgTagDist,2 / estimateB.avgTagDist,100000));
+        }
+        odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
+      }
+    }
+    
+    
+    /* 
     if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
       addVisionMeasurement("limelight-a");
       addVisionMeasurement("limelight-b");
     }
-    
+    */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());

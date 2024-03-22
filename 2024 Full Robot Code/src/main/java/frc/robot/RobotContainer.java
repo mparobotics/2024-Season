@@ -83,7 +83,7 @@ public class RobotContainer {
     
     m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
       () -> helmsController.getLeftTriggerAxis() > 0.1,
-      () -> m_drive.isInRange()
+      () -> m_drive.isInSpinUpRange()
        ));
 
     m_climber.setDefaultCommand(m_climber.climb(
@@ -120,13 +120,16 @@ public class RobotContainer {
     helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 2).repeatedly());
     helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 2).repeatedly());
 
-     //holding the right trigger on the helms controller auto aims the arm 
+    //holding the right trigger on the helms controller auto aims the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
     
     //X sets the arm to subwoofer angle
     helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, () -> helmsController.getLeftTriggerAxis() > 0.1));
     //Y sets the arm to the podium angle
     helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47.5, () -> helmsController.getLeftTriggerAxis() > 0.1));
+
+    //A sets the arm to feeding angle
+    helmsController.button(Button.kA.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 60, () -> helmsController.getLeftTriggerAxis() > 0.1));
 
      //helms right joystick down runs the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));
