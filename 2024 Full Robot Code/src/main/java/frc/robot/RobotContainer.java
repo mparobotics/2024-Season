@@ -22,6 +22,7 @@ import frc.robot.commands.IntakeOverride;
 
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.Shoot;
+import frc.robot.commands.SweepAutoIntakeControl;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsytem;
@@ -62,7 +63,7 @@ public class RobotContainer {
   new Trigger(driveController.leftBumper());
 
 
-  
+  private Trigger shoot = helmsController.axisGreaterThan(Axis.kLeftTrigger.value,0.1);
 
   /* Subsystems */
   private final SwerveSubsystem m_drive = new SwerveSubsystem();
@@ -77,12 +78,10 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
-    SmartDashboard.putData("Run Intake Until Full", new Intake(m_intake, m_arm, m_shooter));
-    SmartDashboard.putData("Shoot", new Shoot(m_shooter, () -> true));
     
     
     m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
-      () -> helmsController.getLeftTriggerAxis() > 0.1,
+      shoot,
       () -> m_drive.isInSpinUpRange()
        ));
 
@@ -99,7 +98,8 @@ public class RobotContainer {
           () -> -getSpeedMultiplier() * driveController.getRawAxis(strafeAxis),
           () -> -driveController.getRawAxis(rotationAxis),
           () -> robotCentric.getAsBoolean(),
-          () -> driveController.getRightTriggerAxis() > 0.1 
+          () -> driveController.getRightTriggerAxis() > 0.1,
+          () -> driveController.getHID().getRawButton(Button.kX.value) 
           ));
 
     // Configure the trigger bindings
@@ -115,7 +115,7 @@ public class RobotContainer {
     //driveController.button(Button.kRightBumper.value).whileTrue(new MoveToPose(m_drive, () -> FieldConstants.isRedAlliance()? FieldConstants.RED_AMP_SCORING: FieldConstants.BLUE_AMP_SCORING));
     
     //helms right bumper button sets the arm in amp position
-    helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, () -> helmsController.getLeftTriggerAxis() > 0.1));
+    helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, shoot));
     //helms left joystick manually moves the arm up and down
     helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 2).repeatedly());
     helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 2).repeatedly());
@@ -124,12 +124,12 @@ public class RobotContainer {
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
     
     //X sets the arm to subwoofer angle
-    helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, () -> helmsController.getLeftTriggerAxis() > 0.1));
+    helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, shoot));
     //Y sets the arm to the podium angle
-    helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47.5, () -> helmsController.getLeftTriggerAxis() > 0.1));
+    helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 50, shoot));
 
-    //A sets the arm to feeding angle
-    helmsController.button(Button.kA.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 60, () -> helmsController.getLeftTriggerAxis() > 0.1));
+    //B sets the arm to feeding angle
+    helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 80, shoot));
 
      //helms right joystick down runs the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));
@@ -139,7 +139,7 @@ public class RobotContainer {
     helmsController.button(Button.kA.value).whileTrue(new IntakeOverride(m_intake, m_arm, m_shooter));
   }
   private double getSpeedMultiplier(){
-    return driveController.getLeftTriggerAxis() > 0.1? 0.7: 1;
+    return driveController.getHID().getRawButton(Button.kLeftStick.value)? 0.7: 1;
   }
   public void disabledPeriodic(){
     m_leds.disabledPeriodic();

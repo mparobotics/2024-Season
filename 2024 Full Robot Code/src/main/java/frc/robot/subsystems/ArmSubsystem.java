@@ -88,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getAbsolutePosition() * 360 - 202 + 90;
+    return armEncoder.getAbsolutePosition() * 360 - 213.9 + 90;
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){
@@ -120,7 +120,7 @@ public class ArmSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("PID output", PIDOutput);
     //set the motor speed to the output of the PID controller
     
-    //motorR.set(-PIDOutput);
+    motorR.set(-PIDOutput);
 
     SmartDashboard.putNumber("Arm Position", getArmPosition());
     SmartDashboard.putNumber("Arm Goal Position", setpoint);

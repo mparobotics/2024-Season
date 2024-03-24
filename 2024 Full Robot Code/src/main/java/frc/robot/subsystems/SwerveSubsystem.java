@@ -290,19 +290,11 @@ public class SwerveSubsystem extends SubsystemBase {
         if(estimateA.tagCount >= 2){
           odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
         }
-        else{
-          //scale standard deviations by the distance to the tag. (trust far away tags less)
-          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(2 / estimateA.avgTagDist,2 / estimateA.avgTagDist,100000));
-        }
         odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
       }
       if(BisValid){
         if(estimateB.tagCount >= 2){
           odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
-        }
-        else{
-          //scale standard deviations by the distance to the tag. (trust far away tags less)
-          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(2 / estimateB.avgTagDist,2 / estimateB.avgTagDist,100000));
         }
         odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
       }

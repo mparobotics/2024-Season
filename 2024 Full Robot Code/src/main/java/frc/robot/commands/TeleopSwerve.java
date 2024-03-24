@@ -25,7 +25,7 @@ import frc.robot.subsystems.SwerveSubsystem;
 public class TeleopSwerve extends Command {
   private SwerveSubsystem m_SwerveSubsystem;
   private DoubleSupplier m_xSupplier, m_ySupplier, m_rotationSupplier;
-  private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier;
+  private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier, m_isAmpScoringSupplier;
 
 
   private ProfiledPIDController angleController = new ProfiledPIDController(0.2, 0, 0, AutoConstants.autoAlignRConstraints);
@@ -40,7 +40,8 @@ public class TeleopSwerve extends Command {
       DoubleSupplier ySupplier,
       DoubleSupplier rotationSupplier,
       BooleanSupplier robotCentricSupplier,
-      BooleanSupplier isSpeakerScoringSupplier
+      BooleanSupplier isSpeakerScoringSupplier,
+      BooleanSupplier isAmpScoringSupplier
       ) {
     // Use addRequirements() here to declare subsystem dependencies.
     this.m_SwerveSubsystem = SwerveSubsystem;
@@ -50,6 +51,7 @@ public class TeleopSwerve extends Command {
     this.m_rotationSupplier = rotationSupplier;
     this.m_robotCentricSupplier = robotCentricSupplier;
     this.m_isSpeakerScoringSupplier = isSpeakerScoringSupplier;
+    this.m_isAmpScoringSupplier = isAmpScoringSupplier;
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -73,7 +75,7 @@ public class TeleopSwerve extends Command {
 
     
     boolean isSpeakerScoring = m_isSpeakerScoringSupplier.getAsBoolean();
-   
+    boolean isAmpScoring = m_isAmpScoringSupplier.getAsBoolean();
     
 
     double currentDirection = m_SwerveSubsystem.getPose().getRotation().getDegrees();
@@ -86,13 +88,25 @@ public class TeleopSwerve extends Command {
     SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
 
     
-    //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain
-    double rSpeed = angleController.calculate(currentDirection, targetDirection);
+    
 
 
     
   
     if(isSpeakerScoring){
+      //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain
+      double rSpeed = angleController.calculate(currentDirection, targetDirection);
+      //If the driver is pressing the auto align button, then we override the rotation input from the controller with the PID controller which aims us at the speaker
+        m_SwerveSubsystem.drive(
+       
+      xVal * SwerveConstants.maxSpeed, 
+      yVal * SwerveConstants.maxSpeed, 
+      rSpeed, 
+      isFieldOriented);
+    }
+    if(isAmpScoring){
+      //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain
+      double rSpeed = angleController.calculate(currentDirection, OnboardModuleState.closestAngle(currentDirection, -90));
       //If the driver is pressing the auto align button, then we override the rotation input from the controller with the PID controller which aims us at the speaker
         m_SwerveSubsystem.drive(
        

@@ -18,12 +18,12 @@ import frc.robot.Constants.FieldConstants;
 public class LEDController extends SubsystemBase{
     private final int led_count = 120;
     //define the different segments of the led strip with the LED index of the last led in the segment
-    private final int leftBackBar = 10;
-    private final int leftFrontBar = 20;
+    private final int leftBackBar = 15;
+    private final int leftFrontBar = 30;
     private final int leftBar = 60;
 
-    private final int rightBar = 100;
-    private final int rightFrontBar = 110;
+    private final int rightBar = 90;
+    private final int rightFrontBar = 105;
     private final int rightBackBar = 120;
 
     private Timer m_timer = new Timer();
@@ -116,6 +116,7 @@ public class LEDController extends SubsystemBase{
             }
         }
         else{
+            brightness *= 0.5;
             setAll(brightness, brightness, brightness);
         }
         m_leds.setData(m_buffer);

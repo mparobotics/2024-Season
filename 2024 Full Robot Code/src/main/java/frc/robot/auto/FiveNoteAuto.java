@@ -36,9 +36,10 @@ public class FiveNoteAuto extends SequentialCommandGroup {
     addCommands(
       
       m_drive.startAutoAt(1.35, 5.49, 0),
+      m_shooter.spinUpShooterCommand(),
       m_arm.setArmSetpointCommand(() -> 25),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
-      m_shooter.spinUpShooterCommand(),
+      
       //shoot the preload
       new Shoot(m_shooter, () -> true),
 
@@ -57,7 +58,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SW2").andThen(m_drive.followPathFromFile("W2S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(() -> 30))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(() -> 33))
       ),
       new Shoot(m_shooter, () -> true),
 
