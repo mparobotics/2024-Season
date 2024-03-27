@@ -11,10 +11,10 @@ import frc.robot.subsystems.ShooterSubsystem;
 public class ReverseIntake extends Command {
   IntakeSubsystem m_intake;
   ShooterSubsystem m_shooter;
-  /** Creates a new ReverseIntake. */
+  /** Runs the indexer and intake backwards to clear out any stuck notes */
   public ReverseIntake(IntakeSubsystem intake, ShooterSubsystem shooter) {
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(intake,shooter);
+    addRequirements(intake, shooter);
     m_intake = intake;
     m_shooter = shooter;
   }
@@ -27,7 +27,7 @@ public class ReverseIntake extends Command {
   @Override
   public void execute() {
     m_intake.runIntake(-1);
-    m_shooter.setBeltSpeed(-1);
+    m_shooter.setBeltSpeed(-0.75);
     m_shooter.setShooterSpeed(-0.3);
   }
 

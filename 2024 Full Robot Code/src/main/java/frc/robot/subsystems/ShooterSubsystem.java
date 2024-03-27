@@ -7,7 +7,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 
-
+import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 
@@ -66,7 +66,12 @@ public class ShooterSubsystem extends SubsystemBase {
     beltMotor.set(0);
     shooterMotor.set(0);
   }
-  
+  public Command defaultShooterCommand(BooleanSupplier runShooter, BooleanSupplier isInRange){
+    return runOnce(() -> {
+      double shootSpeed = runShooter.getAsBoolean()? 1: (isInRange.getAsBoolean() && isNoteInShooter()) ? 0.3 :0;
+      shooterMotor.set(shootSpeed);
+    });
+  }
   
   public Command shooterControlCommand(DoubleSupplier shooterSpeed, DoubleSupplier beltSpeed){
     return runOnce(() ->{

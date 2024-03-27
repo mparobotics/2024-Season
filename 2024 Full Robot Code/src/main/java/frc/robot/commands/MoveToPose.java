@@ -44,7 +44,7 @@ public class MoveToPose extends Command {
     Pose2d targetPose = m_goalPoseSupplier.get();
       
       
-    double targetDirection = OnboardModuleState.smolOptimize180(currentDirection,targetPose.getRotation().getDegrees());
+    double targetDirection = OnboardModuleState.closestAngle(currentDirection,targetPose.getRotation().getDegrees());
 
     double xSpeed = xController.calculate(currentPose.getX(),targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(),targetPose.getY());

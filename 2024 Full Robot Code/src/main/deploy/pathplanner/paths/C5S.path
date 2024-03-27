@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.13700592454715,
-        "y": 0.8364549451899833
+        "x": 5.114880604327181,
+        "y": 1.7928301466411969
       },
       "isLocked": false,
       "linkedName": "C5"
     },
     {
       "anchor": {
-        "x": 1.8684145995317454,
-        "y": 4.549552721899136
+        "x": 1.3417540363003182,
+        "y": 4.0679426324492125
       },
       "prevControl": {
-        "x": 2.2613016445650946,
-        "y": 2.362838522190355
+        "x": 2.8936033047847345,
+        "y": 3.010603317719946
       },
       "nextControl": null,
       "isLocked": false,
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -43,7 +43,7 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": null,
+  "folder": "Far Side Center",
   "previewStartingState": {
     "rotation": -2.610290230424734,
     "velocity": 0

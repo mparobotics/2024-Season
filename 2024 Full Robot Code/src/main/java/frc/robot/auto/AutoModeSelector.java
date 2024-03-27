@@ -27,6 +27,13 @@ public class AutoModeSelector {
         NO_AUTO,
         TWO_NOTE_CENTER,
         FOUR_NOTE,
+        FIVE_NOTE,
+        SWEEP,
+        AMP,
+        JUST_SHOOT,
+        SHOOT_AND_LEAVE,
+        JUST_LEAVE,
+        TEST_AUTO
     }
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
         m_arm = arm;
@@ -39,7 +46,6 @@ public class AutoModeSelector {
         for(AutoMode mode: AutoMode.values()){
             autoChoices.addOption(mode.toString(), mode);
         }
-        autoChoices.setDefaultOption("Do Nothing", AutoMode.NO_AUTO);
         SmartDashboard.putData("Auto Mode Selector", autoChoices);
         
     }
@@ -51,12 +57,24 @@ public class AutoModeSelector {
             case NO_AUTO:
                 return null;
             case TWO_NOTE_CENTER:
-                return new OneCenterNote(m_drive, m_intake, m_shooter, m_arm);
+                return new CenterNoteAuto(m_drive, m_intake, m_shooter, m_arm);
             case FOUR_NOTE:
                 return new FourNoteAuto(m_drive, m_intake, m_shooter, m_arm);
-
-
-
+            case FIVE_NOTE:
+                return new FiveNoteAuto(m_drive, m_intake, m_shooter, m_arm);
+            case AMP:
+                return new SpeakerAmpAuto(m_drive, m_intake, m_shooter, m_arm);
+            case SWEEP:
+                return new SweepAuto(m_drive, m_intake, m_shooter, m_arm);
+            case JUST_SHOOT:
+                return new ShootAuto(m_drive, m_intake, m_shooter, m_arm);
+            case SHOOT_AND_LEAVE:
+                return new ShootLeaveAuto(m_drive, m_intake, m_shooter, m_arm);
+            case JUST_LEAVE:
+                return new LeaveAuto(m_drive, m_intake, m_shooter, m_arm);
+            case TEST_AUTO:
+                return new TestAuto(m_drive,m_intake, m_shooter, m_arm);
+                
 
 
         }

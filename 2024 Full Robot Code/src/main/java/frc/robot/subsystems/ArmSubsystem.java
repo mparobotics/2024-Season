@@ -14,8 +14,6 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
-import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
 
 
 
@@ -45,8 +43,7 @@ public class ArmSubsystem extends SubsystemBase {
 
 
 
-  //An InterpolatingTreeMap interpolates between measured data points to figure out what angle to aim the shooter based on how far away from the speaker we are
-  private InterpolatingTreeMap<Double,Double> armAngleMap = new InterpolatingDoubleTreeMap();
+
   /** Creates a new ArmSubsystem. */
   public ArmSubsystem() {
     
@@ -69,10 +66,6 @@ public class ArmSubsystem extends SubsystemBase {
     //opposite motor directions spin the arm in the same direction, so opposeMasterDirection is set to true
     motorL.setControl(new Follower(ArmConstants.RmotorID, true));
 
-    //populate the InterpolatingTreeMap with our data points
-    for(Double[] dataPoint : ArmConstants.ArmAngleMapData){
-      armAngleMap.put(dataPoint[0],dataPoint[1]);
-    }
 
     SmartDashboard.putNumber("Arm Set Setpoint", setpoint);
   }
@@ -82,7 +75,7 @@ public class ArmSubsystem extends SubsystemBase {
   }
   //set the arm angle to score from a certain distance away
   public void setAngleForShootingDistance(double meters){
-    setTarget(armAngleMap.get(meters));
+    setTarget(ArmConstants.ArmAngleMap.get(meters));
   }
   //set the arm to score in the amp
   public void setToAmpAngle(){
@@ -95,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getAbsolutePosition() * 360 - 201.2 + 90;
+    return armEncoder.getAbsolutePosition() * 360 - 213.9 + 90;
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){
@@ -106,9 +99,19 @@ public class ArmSubsystem extends SubsystemBase {
   public Command setArmSetpointCommand(DoubleSupplier setpoint){
   return runOnce(() ->{setTarget(setpoint.getAsDouble());});
   }
+  public Command ArmDownCommand(){
+    return runOnce(() -> setToHandoffAngle());
+  }
+  public Command armToAmpCommand(){
+    return runOnce(() -> setToAmpAngle());
+  }
   public Command teleopArmControlCommand(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()  * 0.4));
   }
+  public boolean isLinedUp(double distance){
+    return Math.abs(getArmPosition() - ArmConstants.ArmAngleMap.get(distance)) < 1;
+  }
+   
   @Override
   public void periodic() {
     //The PID controller tries to minimize the difference between the goal position and the actual arm's position

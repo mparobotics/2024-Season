@@ -105,13 +105,27 @@ public class SwerveSubsystem extends SubsystemBase {
   public void driveFromVoltage(double volts){
     for(SwerveModule module: swerveModules){
       module.driveVolts(volts);
+      
     }
+    SmartDashboard.putNumber("Input Voltage", volts);
+    SmartDashboard.putNumber("Distance", getPose().getX());
+    SmartDashboard.putNumber("Velocity", getRobotRelativeSpeed().vxMetersPerSecond);
+
+  }
+  public void driveFromPercent(double percent){
+    for(SwerveModule module: swerveModules){
+      module.drivePercent(percent);
+      
+    }
+    SmartDashboard.putNumber("Input Voltage", swerveModules[0].getVoltage());
+    SmartDashboard.putNumber("Distance", getPose().getX());
+    SmartDashboard.putNumber("Velocity", getRobotRelativeSpeed().vxMetersPerSecond);
   }
   public double getVoltage(){
     return swerveModules[0].getVoltage();
   }
   private void logDriveState(SysIdRoutineLog log){
-    log.motor("Arm Motors")
+    log.motor("Swerve Motors")
     .voltage(drive_motor_voltage.mut_replace(Units.Volts.of(getVoltage())))
     .linearPosition(drive_distance.mut_replace(Units.Meters.of(getPose().getX())))
     .linearVelocity(arm_velocity.mut_replace(Units.MetersPerSecond.of(getRobotRelativeSpeed().vxMetersPerSecond)));
@@ -219,14 +233,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     
      
-    for (SwerveModule module : swerveModules) {
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Integrated", module.getState().angle.getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
-    }
+    
     
 }
 

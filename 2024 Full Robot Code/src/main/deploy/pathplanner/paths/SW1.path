@@ -12,7 +12,7 @@
         "y": 6.313374991695007
       },
       "isLocked": false,
-      "linkedName": "S(W2)"
+      "linkedName": null
     },
     {
       "anchor": {
@@ -32,8 +32,8 @@
   "constraintZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 3.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 5.0,
+    "maxAcceleration": 4.0,
     "maxAngularVelocity": 540.0,
     "maxAngularAcceleration": 720.0
   },
@@ -43,7 +43,7 @@
     "rotateFast": true
   },
   "reversed": false,
-  "folder": null,
+  "folder": "5 Note",
   "previewStartingState": {
     "rotation": 0,
     "velocity": 0

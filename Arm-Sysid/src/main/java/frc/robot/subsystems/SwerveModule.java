@@ -95,7 +95,11 @@ public class SwerveModule {
     }
     public void driveVolts(double volts){
         angleController.setReference(0, ControlType.kPosition);
-        driveMotor.setVoltage(volts);
+        driveMotor.set(volts / RobotController.getBatteryVoltage());
+    }
+    public void drivePercent(double percent){
+        angleController.setReference(0, ControlType.kPosition);
+        driveMotor.set(percent);
     }
     public void setDesiredState(SwerveModuleState desiredState, boolean isOpenLoop) {
 

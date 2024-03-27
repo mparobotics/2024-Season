@@ -14,7 +14,6 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.subsystems.ArmSubsystem;
 
 import frc.robot.subsystems.ShooterSubsystem;
@@ -30,9 +29,10 @@ public class AimAndShoot extends Command {
   private boolean hasStartedShooting = false;
 
   private Timer m_timer = new Timer();
+  /** Automatically sets the arm angle for aiming at the speaker and shoot a note */
   public AimAndShoot(ArmSubsystem arm, ShooterSubsystem shooter, DoubleSupplier shootingDistance, BooleanSupplier shouldShoot) {
-    addRequirements(arm);
-    addRequirements(shooter);
+    addRequirements(arm, shooter);
+
     m_arm = arm;
     m_shooter = shooter;
     m_distance = shootingDistance;
@@ -54,17 +54,17 @@ public class AimAndShoot extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    //move the arm towards the target angle (automatically calculated)
+    //move the arm towards the target angle (automatically calculated using the interpolation table in Constants.ArmConstants
     m_arm.setAngleForShootingDistance(m_distance.getAsDouble());
     //check if the shooter is ready to shoot (arm is in position and wheels are spinning fast enough)
     if(m_arm.isAtTarget() && m_shooter.isAtShootingSpeed()){
       //If we want to shoot, shoot. Otherwise, keep the shooter ready but don't shoot. this is useful if you are being defended on and have to move around while preparing to shoot
       if(m_shouldShoot.getAsBoolean()){
-
+        //feed the note into the shooter wheels by running the belts
+        m_shooter.setBeltSpeed(1);
 
         if(!hasStartedShooting){
-          //feed the note into the shooter wheels by running the belts
-          m_shooter.setBeltSpeed(1);
+          
           //reset and start the shooter clock
           m_timer.reset();
           m_timer.start();

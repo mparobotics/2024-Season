@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,12 +22,17 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.lib.LimelightHelpers;
+import frc.lib.LimelightHelpersOld;
+import frc.lib.LimelightHelpersOld.PoseEstimate;
+import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.Constants.ShooterConstants;
@@ -47,6 +53,7 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
+    SmartDashboard.putNumber("distance",0); 
     //instantiates new pigeon gyro, wipes it, and zeros it
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -161,6 +168,16 @@ public class SwerveSubsystem extends SubsystemBase {
     Translation2d targetLocation = FieldConstants.isRedAlliance()? FieldConstants.RED_SPEAKER_LOCATION: FieldConstants.BLUE_SPEAKER_LOCATION;
     return targetLocation.minus(getPose().getTranslation());
   }
+  public boolean isInRange(){
+    return getRelativeSpeakerLocation().getNorm() < ArmConstants.maxShootingDistance;
+  }
+  //Range to start spinning up the shooter. A little further out than our max shooting distance
+  public boolean isInSpinUpRange(){
+    return getRelativeSpeakerLocation().getNorm() < ArmConstants.maxShootingDistance + 2;
+  }
+  
+ 
+
  
   public Translation2d getVirtualTarget(){
     /* When trying to shoot while moving, we will often miss if we aim directly at the speaker. This is because the motion of the 
@@ -170,7 +187,8 @@ public class SwerveSubsystem extends SubsystemBase {
    */
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
-
+    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
+    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * Math.cos(estimatedShotAngle);
     //get the speed of the robot as a chassisSpeeds
     ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
     //make a translation2d with the x and y components of the velocity of the robot
@@ -178,10 +196,10 @@ public class SwerveSubsystem extends SubsystemBase {
     //Calculate the component of the velocity parallel to the speaker direction, and the component going perpendicular to the speaker direction
     Translation2d rotatedVelocity = velocity.rotateBy(speakerLocation.getAngle().times(-1));
     //The robot's velocity is always moving the note off of the straight path to the speaker, so we want to pick a shooting direction that cancels out the perpendicular velocity
-    double shootDirection = Math.asin(-rotatedVelocity.getY() / ShooterConstants.noteSpeedMetersPerSecond);
+    double shootDirection = Math.asin(-rotatedVelocity.getY() / noteSpeed);
     
     //make a translation2d of the note's velocity as it leaves the shooter
-    Translation2d relativeNoteVelocity = new Translation2d(ShooterConstants.noteSpeedMetersPerSecond, new Rotation2d(shootDirection));
+    Translation2d relativeNoteVelocity = new Translation2d(noteSpeed, new Rotation2d(shootDirection));
 
     //The parallel components of the robot velocity and the shooter velocity are added together together to find how fast the note is approaching the speaker.
     //We calculate how long the note will take to arrive at the speaker by dividing the distance to the speaker by the speed of the note
@@ -191,12 +209,6 @@ public class SwerveSubsystem extends SubsystemBase {
     return speakerLocation.minus(velocity.times(timeToSpeaker));
   }
   
-  public Pose2d getIntakePose(){
-    Translation2d relativeNoteLocation = Vision.getRelativeNoteLocation().rotateBy(getYaw().times(-1));
-    Rotation2d targetDirection = relativeNoteLocation.getAngle();
-    Translation2d noteLocation = getPose().getTranslation().plus(relativeNoteLocation);
-    return new Pose2d(noteLocation, targetDirection);
-  }
   
 
   public void configPathPlanner(){
@@ -214,10 +226,37 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command followPathFromFile(String filename){
     return AutoBuilder.followPath(PathPlannerPath.fromPathFile(filename));
   }
-
+  public Command startAutoAt(double x,double y,double direction){
+    return runOnce(() -> {
+      Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
+      pigeon.setYaw(startPose.getRotation().getDegrees());
+      odometry.resetPosition(startPose.getRotation(), getPositions(), startPose);
+    });
+  }
   
- 
- 
+  
+  public void addVisionMeasurement(String limelightName){
+    PoseEstimate visionPoseEstimate = LimelightHelpersOld.getBotPoseEstimate_wpiBlue(limelightName);
+    double targetArea = LimelightHelpersOld.getTA(limelightName);
+      SmartDashboard.putNumber(limelightName + " target area",targetArea);
+      //ignore apriltags that are too small to get a reliable measurement, or pose estimates that place the robot outside of the field
+      boolean isLimelightGood = targetArea > 0.15 && 
+    
+      visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
+
+      if(isLimelightGood){
+        
+        odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.timestampSeconds);
+      }
+      
+  }
+  public boolean isEstimateValid(LimelightHelpers.PoseEstimate estimate){
+    boolean isInField = estimate.pose.getX() > 0 && estimate.pose.getX() < FieldConstants.FIELD_LENGTH
+                      && estimate.pose.getY() > 0 && estimate.pose.getY() < FieldConstants.FIELD_WIDTH;
+    boolean isCloseEnough = estimate.avgTagDist < 5;
+    boolean canSeeTag = estimate.tagCount > 0;
+    return  canSeeTag && isInField && isCloseEnough;
+  }
   
 
 
@@ -226,33 +265,55 @@ public class SwerveSubsystem extends SubsystemBase {
   public void periodic() {
     
     odometry.update(getYaw(), getPositions());
+    LimelightHelpers.PoseEstimate estimateA = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
+    LimelightHelpers.PoseEstimate estimateB = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-b");
+
+    boolean AisValid = isEstimateValid(estimateA);
+    boolean BisValid = isEstimateValid(estimateB);
+
+    SmartDashboard.putBoolean("limelight A is valid" , AisValid);
+    SmartDashboard.putBoolean("limelight B is valid" , BisValid);
     
-    
-    if(Vision.canSeeAprilTag()){
-      odometry.addVisionMeasurement(Vision.getBotPose(),Vision.getLatency());
+
+    //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate
+    if(estimateA.tagCount == 1 && estimateB.tagCount == 1 && AisValid && BisValid){
+      //low standard deviations for translation, really high standard deviation for rotation since we want to just use the pigeon for heading
+      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+
+      odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
+      odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
+    }
+    else{
+      //If either limelight can see 2 tags simultaneously we can trust it enough to use its pose estimate
+      //If just one limelight can see just one tag, then scale the standard deviations based on tag distance
+      if(AisValid){
+        if(estimateA.tagCount >= 2){
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        }
+        odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
+      }
+      if(BisValid){
+        if(estimateB.tagCount >= 2){
+          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+        }
+        odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
+      }
     }
     
+    
+    /* 
+    if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
+      addVisionMeasurement("limelight-a");
+      addVisionMeasurement("limelight-b");
+    }
+    */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
-    
-    
-    for (SwerveModule module : swerveModules) {
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Cancoder", module.getCanCoder().getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Integrated", module.getState().angle.getDegrees());
-      SmartDashboard.putNumber(
-          "Mod " + module.moduleNumber + " Velocity", module.getState().speedMetersPerSecond);
-      SmartDashboard.putNumber(
-        "Mod " + module.moduleNumber + " Distance", module.getPosition().distanceMeters);
-      SmartDashboard.putNumber(
-        "Mod " + module.moduleNumber + " Change in distance", module.getPositionDifference());
-      module.updatePosition();
-      
+    SmartDashboard.putNumber("position-X",getPose().getX()); 
+    SmartDashboard.putNumber("position-Y",getPose().getY()); 
 
     
-    }
     
 }
 

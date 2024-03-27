@@ -74,12 +74,13 @@ public class ShooterSubsystem extends SubsystemBase {
     shooter.setInverted(false);
 
     indexer.setInverted(true);
+    /* 
     SmartDashboard.putData("Shooter: Run Quasistatic Forward",shooter_sysid.quasistatic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Shooter: Run Quasistatic Reverse",shooter_sysid.quasistatic(SysIdRoutine.Direction.kReverse));
 
     SmartDashboard.putData("Shooter: Run Dynamic Forward",shooter_sysid.dynamic(SysIdRoutine.Direction.kForward));
     SmartDashboard.putData("Shooter: Run Dynamic Reverse",shooter_sysid.dynamic(SysIdRoutine.Direction.kReverse));
-    
+    */
   }
   
   public double getMotorVoltage(){
