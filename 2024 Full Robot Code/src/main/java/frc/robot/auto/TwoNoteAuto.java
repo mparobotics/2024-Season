@@ -27,7 +27,7 @@ public class TwoNoteAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  /** A simple Two Note Auto */
+  /** An auto that scores a preload and a close note*/
   public TwoNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
@@ -53,8 +53,5 @@ public class TwoNoteAuto extends SequentialCommandGroup {
       new Shoot(m_shooter, () -> true)
 
     );
-  }
-  public Pose2d getStartingPose(){
-    return new Pose2d();
   }
 }

@@ -8,7 +8,6 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.lib.OnboardModuleState;
 import frc.robot.Constants.AutoConstants;
@@ -49,9 +48,6 @@ public class MoveToPose extends Command {
     double xSpeed = xController.calculate(currentPose.getX(),targetPose.getX());
     double ySpeed = yController.calculate(currentPose.getY(),targetPose.getY());
     double rSpeed = angleController.calculate(currentDirection, targetDirection);
-
-    SmartDashboard.putNumber("x output", xSpeed);
-    SmartDashboard.putNumber("y output", ySpeed);
       
     m_drive.drive(xSpeed, ySpeed, rSpeed, true);
   }

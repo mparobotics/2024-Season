@@ -19,7 +19,7 @@ public class ShootLeaveAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
   
-  /** Creates a new ShootAuto. */
+  /** An auto that shoots a preload and backs up past the auto line */
   public ShootLeaveAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
 

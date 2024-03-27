@@ -6,11 +6,8 @@ package frc.robot.auto;
 
 
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.FieldConstants;
 import frc.robot.commands.AutoAmpScore;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
@@ -28,7 +25,7 @@ public class SpeakerAmpAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  /** A simple Two Note Auto */
+  /** An auto that scores a preload in the speaker, 2 notes in the amp, and a center note in the speaker */
   public SpeakerAmpAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
@@ -37,10 +34,14 @@ public class SpeakerAmpAuto extends SequentialCommandGroup {
  
 
     addCommands(
-      new InstantCommand(() -> m_drive.resetOdometry(FieldConstants.flipPoseForAlliance(new Pose2d(0.67,6.70,Rotation2d.fromDegrees(60))))),
-      m_arm.setArmSetpointCommand(() -> 25),
-      //Spin up the shooter wheels. We keep them running for the entirety of auto
-      m_shooter.spinUpShooterCommand(),
+      new ParallelCommandGroup(
+        m_drive.startAutoAt(0.67, 6.70, 60),
+        
+        m_arm.setArmSetpointCommand(() -> 25),
+        //Spin up the shooter wheels. We keep them running for the entirety of auto
+        m_shooter.spinUpShooterCommand()
+      ),
+      
       //shoot the preload
       new Shoot(m_shooter, () -> true),
       //Stop the shooter

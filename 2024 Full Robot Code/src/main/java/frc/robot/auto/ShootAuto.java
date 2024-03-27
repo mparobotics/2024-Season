@@ -19,7 +19,7 @@ public class ShootAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
   
-  /** Creates a new ShootAuto. */
+  /** An auto that shoots a preload note */
   public ShootAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
 
     m_shooter = shooter;

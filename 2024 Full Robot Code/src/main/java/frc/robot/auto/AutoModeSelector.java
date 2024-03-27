@@ -14,15 +14,16 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-/** Add your docs here. */
+/** A class for selecting an auto mode from a list of options */
 public class AutoModeSelector {
     private ArmSubsystem m_arm;
     private ShooterSubsystem m_shooter;
     private IntakeSubsystem m_intake;
     private SwerveSubsystem m_drive;
 
-
+    //A dropdown menu to select an auto mode
     private SendableChooser<AutoMode> autoChoices;
+    //All possible auto choices
     public enum AutoMode{
         NO_AUTO,
         TWO_NOTE_CENTER,
@@ -35,24 +36,36 @@ public class AutoModeSelector {
         JUST_LEAVE,
         TEST_AUTO
     }
+    //default to a just shoot auto so we still get points if we forget to select an auto
+    private AutoMode defaultAuto = AutoMode.JUST_SHOOT;
+    //An autoModeSelector feeds all the subsytems to each auto command
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
         m_arm = arm;
         m_shooter = shooter;
         m_intake = intake;
         m_drive = drive;
     }
+    //send the menu to networkTables
     public void showOptions(){
         autoChoices = new SendableChooser<AutoMode>();
+        //Add each auto choice to the list
         for(AutoMode mode: AutoMode.values()){
             autoChoices.addOption(mode.toString(), mode);
         }
+        //set a default auto mode
+        autoChoices.setDefaultOption(defaultAuto.toString(), defaultAuto);
         SmartDashboard.putData("Auto Mode Selector", autoChoices);
         
     }
+    //return the selected auto command
     public Command getSelectedAuto(){
         return getAuto(autoChoices.getSelected());
     }
+    //get the corresponding auto command for a given AutoMode type
     public Command getAuto(AutoMode mode){
+        if(mode == null){
+            return null;
+        }
         switch(mode){
             case NO_AUTO:
                 return null;

@@ -99,7 +99,7 @@ public class ArmSubsystem extends SubsystemBase {
   public Command setArmSetpointCommand(DoubleSupplier setpoint){
   return runOnce(() ->{setTarget(setpoint.getAsDouble());});
   }
-  public Command ArmDownCommand(){
+  public Command armDownCommand(){
     return runOnce(() -> setToHandoffAngle());
   }
   public Command armToAmpCommand(){

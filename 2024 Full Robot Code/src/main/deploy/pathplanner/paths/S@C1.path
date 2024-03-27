@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.937855062781007,
-        "y": 2.2389361848215823
+        "x": 1.6243768177278832,
+        "y": 6.768132671645842
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.546535441522851,
-        "y": 0.8439874823904746
+        "x": 2.558962127906895,
+        "y": 6.8940809062173685
       },
       "isLocked": false,
-      "linkedName": "C4"
+      "linkedName": "AmpSideSpeaker"
     },
     {
       "anchor": {
-        "x": 1.3417540363003182,
-        "y": 4.0679426324492125
+        "x": 7.934521927362165,
+        "y": 7.442024380868674
       },
       "prevControl": {
-        "x": 4.758513096019247,
-        "y": 1.7831801852116433
+        "x": 6.888241953784255,
+        "y": 7.318630727340303
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "S(C5)"
+      "linkedName": "C1"
     }
   ],
   "rotationTargets": [],
@@ -39,13 +39,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -48.2176642750424,
+    "rotation": 0,
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Far Side Center",
+  "folder": "Amp side 4 note",
   "previewStartingState": {
-    "rotation": 29.99155176134747,
+    "rotation": 37.63763929809084,
     "velocity": 0
   },
   "useDefaultConstraints": true

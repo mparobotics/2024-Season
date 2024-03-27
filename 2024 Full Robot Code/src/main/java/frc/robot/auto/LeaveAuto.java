@@ -18,7 +18,7 @@ public class LeaveAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
 
   
-  /** Creates a new ShootAuto. */
+  /** An Auto that just backs up past the auto line */
   public LeaveAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
 

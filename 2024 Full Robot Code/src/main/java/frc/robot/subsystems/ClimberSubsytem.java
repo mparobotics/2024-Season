@@ -25,6 +25,7 @@ public class ClimberSubsytem extends SubsystemBase {
     motorL.setIdleMode(IdleMode.kBrake);
     motorR.setIdleMode(IdleMode.kBrake);
   }
+  /** a command to run the two climbers, with boolean inputs to control each arm's up/ down motion independently */
   public Command climb(BooleanSupplier leftUp, BooleanSupplier leftDown, BooleanSupplier rightUp, BooleanSupplier rightDown){
     return runOnce(() -> {
       double leftSpeed = (leftUp.getAsBoolean()? 1: (leftDown.getAsBoolean()? -1:0));

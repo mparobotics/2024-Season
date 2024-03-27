@@ -1,7 +1,12 @@
 {
   "HALProvider": {
+    "Addressable LEDs": {
+      "0": {
+        "columns": 6
+      }
+    },
     "Other Devices": {
-      "SPARK MAX [3]": {
+      "Pigeon 2 (v6)[17]": {
         "header": {
           "open": true
         }
@@ -20,14 +25,44 @@
       "/SmartDashboard/Run Intake Until Full": "Command",
       "/SmartDashboard/Shoot": "Command",
       "/SmartDashboard/Zero Arm Enocder": "Command"
+    },
+    "windows": {
+      "/SmartDashboard/Field": {
+        "bottom": 1476,
+        "height": 8.210550308227539,
+        "left": 150,
+        "right": 2961,
+        "top": 79,
+        "width": 16.541748046875,
+        "window": {
+          "visible": true
+        }
+      }
     }
   },
   "NetworkTables": {
     "transitory": {
+      "LiveWindow": {
+        ".status": {
+          "open": true
+        }
+      },
       "Shuffleboard": {
         "open": true
       },
       "SmartDashboard": {
+        "Auto Mode Selector": {
+          "open": true,
+          "string[]##v_/SmartDashboard/Auto Mode Selector/options": {
+            "open": true
+          }
+        },
+        "Field": {
+          "double[]##v_/SmartDashboard/Field/Robot": {
+            "open": true
+          },
+          "open": true
+        },
         "open": true
       }
     }
@@ -36,8 +71,7 @@
     "Server": {
       "Publishers": {
         "open": true
-      },
-      "open": true
+      }
     },
     "visible": true
   }

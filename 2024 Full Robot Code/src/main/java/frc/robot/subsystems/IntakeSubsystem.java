@@ -10,8 +10,7 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IntakeConstants;
@@ -26,26 +25,17 @@ public class IntakeSubsystem extends SubsystemBase {
   /** Creates a new IntakeSubsystem. */
   public IntakeSubsystem() {
     intakeMotor.setInverted(true);
-
-   
   }
   public void runIntake(double speed){
     intakeMotor.set(speed);
   }
   public Command IntakeControlCommand(DoubleSupplier speed){
     return runOnce(() -> {
-      if(Math.abs(speed.getAsDouble()) < 0.1){
-        runIntake(0);
-      }
-      else{
-        runIntake(speed.getAsDouble());
-      }
+      runIntake(MathUtil.applyDeadband(speed.getAsDouble(), 0.1));
   });
   }
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
-    SmartDashboard.putNumber("intake duty cycle", intakeMotor.get());
-    
+    // This method will be called once per scheduler run 
   }
 }

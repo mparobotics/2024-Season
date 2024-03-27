@@ -26,12 +26,11 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
+import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.LimelightHelpers;
-import frc.lib.LimelightHelpersOld;
-import frc.lib.LimelightHelpersOld.PoseEstimate;
 import frc.robot.Constants.ArmConstants;
 import frc.robot.Constants.AutoConstants;
 import frc.robot.Constants.FieldConstants;
@@ -226,6 +225,9 @@ public class SwerveSubsystem extends SubsystemBase {
   public Command followPathFromFile(String filename){
     return AutoBuilder.followPath(PathPlannerPath.fromPathFile(filename));
   }
+  public Command followChoreoFile(String filename){
+    return AutoBuilder.followPath(PathPlannerPath.fromChoreoTrajectory(filename));
+  }
   public Command startAutoAt(double x,double y,double direction){
     return runOnce(() -> {
       Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
@@ -235,36 +237,39 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   
   
-  public void addVisionMeasurement(String limelightName){
-    PoseEstimate visionPoseEstimate = LimelightHelpersOld.getBotPoseEstimate_wpiBlue(limelightName);
-    double targetArea = LimelightHelpersOld.getTA(limelightName);
-      SmartDashboard.putNumber(limelightName + " target area",targetArea);
-      //ignore apriltags that are too small to get a reliable measurement, or pose estimates that place the robot outside of the field
-      boolean isLimelightGood = targetArea > 0.15 && 
-    
-      visionPoseEstimate.pose.getTranslation().minus(new Translation2d(FieldConstants.FIELD_LENGTH / 2, FieldConstants.FIELD_WIDTH / 2)).getNorm() < 10;
-
-      if(isLimelightGood){
-        
-        odometry.addVisionMeasurement(visionPoseEstimate.pose,visionPoseEstimate.timestampSeconds);
-      }
-      
-  }
+  
   public boolean isEstimateValid(LimelightHelpers.PoseEstimate estimate){
+    if(estimate == null){
+      return false;
+    }
+    //reject poses that aren't inside the field
     boolean isInField = estimate.pose.getX() > 0 && estimate.pose.getX() < FieldConstants.FIELD_LENGTH
                       && estimate.pose.getY() > 0 && estimate.pose.getY() < FieldConstants.FIELD_WIDTH;
+    //reject tags > 5m away
     boolean isCloseEnough = estimate.avgTagDist < 5;
+    //reject pose estimates with no tags in view
     boolean canSeeTag = estimate.tagCount > 0;
     return  canSeeTag && isInField && isCloseEnough;
   }
-  
+
+  private boolean isOdometryValid(){
+    for(SwerveModule module: swerveModules){
+      if(!module.isEncoderDataValid()){
+        return false;
+      }
+    }
+    return true;
+  }
 
 
 
   @Override
   public void periodic() {
-    
-    odometry.update(getYaw(), getPositions());
+    //only update the odometry if there is no error present in any of the motors
+    SmartDashboard.putBoolean("Is Odometry Good", isOdometryValid());
+    if(isOdometryValid()){
+      odometry.update(getYaw(), getPositions());
+    }
     LimelightHelpers.PoseEstimate estimateA = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
     LimelightHelpers.PoseEstimate estimateB = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-b");
 
@@ -273,30 +278,31 @@ public class SwerveSubsystem extends SubsystemBase {
 
     SmartDashboard.putBoolean("limelight A is valid" , AisValid);
     SmartDashboard.putBoolean("limelight B is valid" , BisValid);
-    
 
+    SmartDashboard.putNumber("ll-A tagCount", estimateA.tagCount);
+    SmartDashboard.putNumber("ll-B tagCount", estimateB.tagCount);
+    
+    
     //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate
     if(estimateA.tagCount == 1 && estimateB.tagCount == 1 && AisValid && BisValid){
       //low standard deviations for translation, really high standard deviation for rotation since we want to just use the pigeon for heading
-      odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
 
       odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
       odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
     }
     else{
       //If either limelight can see 2 tags simultaneously we can trust it enough to use its pose estimate
-      //If just one limelight can see just one tag, then scale the standard deviations based on tag distance
       if(AisValid){
         if(estimateA.tagCount >= 2){
-          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+          odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
         }
-        odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
+        
       }
       if(BisValid){
         if(estimateB.tagCount >= 2){
-          odometry.setVisionMeasurementStdDevs(VecBuilder.fill(1,1,100000));
+          odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
         }
-        odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
+        
       }
     }
     
@@ -309,10 +315,13 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
+    field.getObject("Speaker Target").setPose(new Pose2d(getVirtualTarget(), Rotation2d.fromDegrees(0)));
+    
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 
     SmartDashboard.putNumber("position-Y",getPose().getY()); 
 
+    
     
     
 }

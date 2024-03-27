@@ -16,16 +16,14 @@ import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.SwerveSubsystem;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
+
 public class CenterNoteAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  
+  /**Scores preload and Gets the two center notes on the source side of the field  */
   public CenterNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
@@ -35,11 +33,13 @@ public class CenterNoteAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      m_drive.startAutoAt(0.71, 4.43, -60),
-      //set arm to shooting position
-      m_arm.setArmSetpointCommand(() -> 25),
-      //spins up shooter and shoots,
-      m_shooter.spinUpShooterCommand(),
+      new ParallelCommandGroup(
+        m_drive.startAutoAt(0.71, 4.43, -60),
+        //set arm to shooting position
+        m_arm.setArmSetpointCommand(() -> 25),
+        //spins up shooter and shoots,
+        m_shooter.spinUpShooterCommand()
+      ),
       new Shoot(m_shooter, () -> true),
       
       //moves to the C5 center note and intakes
