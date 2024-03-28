@@ -34,7 +34,8 @@ public class AutoModeSelector {
         JUST_SHOOT,
         SHOOT_AND_LEAVE,
         JUST_LEAVE,
-        TEST_AUTO
+        TEST_AUTO,
+        BACKUP_AUTO
     }
     //default to a just shoot auto so we still get points if we forget to select an auto
     private AutoMode defaultAuto = AutoMode.JUST_SHOOT;
@@ -87,6 +88,9 @@ public class AutoModeSelector {
                 return new LeaveAuto(m_drive, m_intake, m_shooter, m_arm);
             case TEST_AUTO:
                 return new TestAuto(m_drive,m_intake, m_shooter, m_arm);
+            case BACKUP_AUTO:
+                return new BackupAuto(m_drive,m_intake, m_shooter, m_arm);
+        
                 
 
 
