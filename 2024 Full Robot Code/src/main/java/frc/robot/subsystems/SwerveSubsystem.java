@@ -52,7 +52,6 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
-    SmartDashboard.putNumber("distance",0); 
     //instantiates new pigeon gyro, wipes it, and zeros it
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -187,11 +186,16 @@ public class SwerveSubsystem extends SubsystemBase {
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
     double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
-    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * Math.cos(estimatedShotAngle);
-    //get the speed of the robot as a chassisSpeeds
-    ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
+    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * -Math.cos(estimatedShotAngle);
+    //get the speed of the robot in field coordinates as a chassisSpeeds
+    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeed(), getYaw());
     //make a translation2d with the x and y components of the velocity of the robot
     Translation2d velocity = new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+
+    
+    
+    SmartDashboard.putNumber("X velocity", velocity.getX());
+    SmartDashboard.putNumber("Y velocity", velocity.getY());
     //Calculate the component of the velocity parallel to the speaker direction, and the component going perpendicular to the speaker direction
     Translation2d rotatedVelocity = velocity.rotateBy(speakerLocation.getAngle().times(-1));
     //The robot's velocity is always moving the note off of the straight path to the speaker, so we want to pick a shooting direction that cancels out the perpendicular velocity
@@ -233,6 +237,12 @@ public class SwerveSubsystem extends SubsystemBase {
       Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
       pigeon.setYaw(startPose.getRotation().getDegrees());
       odometry.resetPosition(startPose.getRotation(), getPositions(), startPose);
+    });
+  }
+  public Command resetOdometryCommand(double x, double y){
+    return runOnce(() -> {
+      Pose2d setPose = new Pose2d (FieldConstants.flipTranslationForAlliance(new Translation2d(x,y)), getYaw());
+      resetOdometry(setPose);
     });
   }
   
@@ -315,7 +325,7 @@ public class SwerveSubsystem extends SubsystemBase {
     */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
-    field.getObject("Speaker Target").setPose(new Pose2d(getVirtualTarget(), Rotation2d.fromDegrees(0)));
+    field.getObject("Speaker Target").setPose(new Pose2d(getPose().getTranslation().plus(getVirtualTarget()), Rotation2d.fromDegrees(0)));
     
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 

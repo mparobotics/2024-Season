@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
 
 import frc.robot.commands.AimAndShoot;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -75,8 +77,8 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
-    
-    
+    SmartDashboard.putData("set to midfield", m_drive.resetOdometryCommand(FieldConstants.FIELD_LENGTH/ 2, FieldConstants.FIELD_WIDTH / 2));
+    SmartDashboard.putData("set to subwoofer", m_drive.resetOdometryCommand(1.34, 5.54));
     m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
       shoot,
       () -> m_drive.isInSpinUpRange()

@@ -113,7 +113,10 @@ public final class Constants {
     public static boolean isRedAlliance(){
       return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
-    //this function allows us to mirror a pose to the correct side of the field to match our alliance color
+    //these functions allow us to mirror a pose2d / translation2d to the correct side of the field to match our alliance color
+    public static Translation2d flipTranslationForAlliance(Translation2d translation){
+      return isRedAlliance()? new Translation2d( FIELD_LENGTH - translation.getX(), translation.getY()): translation;
+    }
     public static Pose2d flipPoseForAlliance(Pose2d pose){
       return isRedAlliance()? new Pose2d( FIELD_LENGTH - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
