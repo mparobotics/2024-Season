@@ -20,7 +20,7 @@ import frc.robot.commands.AmpScore;
 import frc.robot.commands.AngleAndShoot;
 import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOverride;
-
+import frc.robot.commands.MeasureWheelDiameter;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
@@ -79,6 +79,7 @@ public class RobotContainer {
   public RobotContainer() { 
     SmartDashboard.putData("set to midfield", m_drive.resetOdometryCommand(FieldConstants.FIELD_LENGTH/ 2, FieldConstants.FIELD_WIDTH / 2));
     SmartDashboard.putData("set to subwoofer", m_drive.resetOdometryCommand(1.34, 5.54));
+    SmartDashboard.putData("test wheel diameter", new MeasureWheelDiameter(m_drive));
     m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
       shoot,
       () -> m_drive.isInSpinUpRange()

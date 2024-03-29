@@ -13,7 +13,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.VecBuilder;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -26,7 +26,6 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -137,7 +136,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return positions;
   }
-  
   //get the speed and direction of each module as a list of SwerveModuleStates
   private SwerveModuleState[] getStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -145,6 +143,13 @@ public class SwerveSubsystem extends SubsystemBase {
       states[module.moduleNumber] = module.getState();
     }
     return states;
+  }
+  public double[] getEncoderRotations(){
+    double[] distances = new double[4];
+    for(SwerveModule module : swerveModules){
+      distances[module.moduleNumber] = module.getRawDriveEncoder() / SwerveConstants.wheelCircumference;
+    }
+    return distances;
   }
   //get the speed of the robot in m/s and angular velocity in rad/s relative to the robot. Returns a ChassisSpeeds
   public ChassisSpeeds getRobotRelativeSpeed(){

@@ -90,6 +90,12 @@ public class SwerveModule {
     public SwerveModulePosition getPosition(){
         return new SwerveModulePosition(driveEncoder.getPosition(),  getAngle()); 
     }
+    public double getRawDriveEncoder(){
+        return driveEncoder.getPosition();
+    }
+    public double getRawTurnEncoder(){
+        return integratedAngleEncoder.getPosition();
+    }
     //will only return true if neither motor has any errors. 
     public boolean isEncoderDataValid(){
         return driveMotor.getLastError() == REVLibError.kOk && angleMotor.getLastError() == REVLibError.kOk;
