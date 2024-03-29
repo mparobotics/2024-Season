@@ -237,27 +237,20 @@ public class SwerveSubsystem extends SubsystemBase {
     Pose2d currentPose; //creates pose but does not set it to anything
     Pose2d targetPose; //creates pose but not set to target
     if (FieldConstants.isRedAlliance()) {
-       currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
-    Rotation2d.fromDegrees(180)
-    ); 
-    targetPose = new Pose2d(FieldConstants.FIELD_LENGTH - 2.5,currentPose.getY(),Rotation2d.fromDegrees(180)); //sets to target pose -> the pose we want to get to past the auto line
-
-  
-     
+      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
+      Rotation2d.fromDegrees(180)); 
     }
     else{
-    currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
-    Rotation2d.fromDegrees(0)
-    ); 
-  
-   targetPose = new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(360)); //sets to target pose -> the pose we want to get to past the auto line
-
+      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
+      Rotation2d.fromDegrees(0)); 
     }
-
+    targetPose = FieldConstants.flipPoseForAlliance(new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(0)));
+    field.getObject("target pose").setPose(targetPose);
     PathPlannerPath path = new PathPlannerPath(PathPlannerPath.bezierFromPoses(currentPose,targetPose),
     new PathConstraints(3,3,0,0),
     new GoalEndState(0, getYaw())
     );
+    path.preventFlipping = true;
     AutoBuilder.followPath(path).schedule(); //schedules the command to follow the path
     });
   }
