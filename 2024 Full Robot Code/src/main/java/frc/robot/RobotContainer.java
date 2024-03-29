@@ -21,8 +21,6 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOverride;
 
 import frc.robot.commands.ReverseIntake;
-import frc.robot.commands.Shoot;
-import frc.robot.commands.SweepAutoIntakeControl;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsytem;
@@ -38,7 +36,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -129,7 +126,7 @@ public class RobotContainer {
     helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 50, shoot));
 
     //B sets the arm to feeding angle
-    helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 80, shoot));
+    helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 69.3, shoot));
 
      //helms right joystick down runs the intake until a note is intaked
     helmsController.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(new Intake(m_intake,m_arm,m_shooter));

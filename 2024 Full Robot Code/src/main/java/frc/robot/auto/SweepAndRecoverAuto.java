@@ -41,7 +41,7 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
     addCommands(
       m_drive.startAutoAt(1.41, 1.59, 90),
       
-      m_arm.ArmDownCommand(),
+      m_arm.armDownCommand(),
       //simultaneously follows the path and executes the intake and shooter controlling commands
       new ParallelDeadlineGroup(
         //start driving the sweep path as soon as possible. We need to be the first ones out to the center

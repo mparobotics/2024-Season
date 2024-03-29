@@ -7,6 +7,7 @@ package frc.robot.auto;
 
 
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake;
@@ -25,7 +26,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  /** A simple Two Note Auto */
+  /** Score Preload + 3 close notes + 1 center note */
   public FiveNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
@@ -34,10 +35,11 @@ public class FiveNoteAuto extends SequentialCommandGroup {
  
 
     addCommands(
-      
-      m_drive.startAutoAt(1.35, 5.49, 0),
-      m_shooter.spinUpShooterCommand(),
-      m_arm.setArmSetpointCommand(() -> 25),
+      new ParallelCommandGroup(
+        m_drive.startAutoAt(1.35, 5.49, 0),
+        m_shooter.spinUpShooterCommand(),
+        m_arm.setArmSetpointCommand(() -> 25)
+      ),
       //Spin up the shooter wheels. We keep them running for the entirety of auto
       
       //shoot the preload

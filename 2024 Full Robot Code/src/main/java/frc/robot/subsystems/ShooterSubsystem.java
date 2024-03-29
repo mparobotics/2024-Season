@@ -14,7 +14,7 @@ import java.util.function.DoubleSupplier;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
-
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -75,12 +75,7 @@ public class ShooterSubsystem extends SubsystemBase {
   
   public Command shooterControlCommand(DoubleSupplier shooterSpeed, DoubleSupplier beltSpeed){
     return runOnce(() ->{
-      if(Math.abs(beltSpeed.getAsDouble()) > 0.1){
-        setBeltSpeed(beltSpeed.getAsDouble());
-      }
-      else{
-        setBeltSpeed(0);
-      }
+      setBeltSpeed(MathUtil.applyDeadband(beltSpeed.getAsDouble(), 0.1));
       setShooterSpeed(shooterSpeed.getAsDouble());
       
     });

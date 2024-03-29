@@ -37,7 +37,7 @@ public final class Constants {
   public static final class IntakeConstants{
     //A NEO vortex powers the intake rollers
     public static final int intakeMotorID = 20;
-    //We originally planned to have a second beam break sensor on the intake, but it was never actually added
+    //We originally planned to have a second beam break sensor on the intake, but it was never actually added 
     public static final int beamSensorPort = 3;
   }
   public static final class ShooterConstants{
@@ -48,7 +48,7 @@ public final class Constants {
     public static final int beamSensorPort = 0;
     //if we ever add shooting while moving, this will help us calculate the correct angle to aim
     public static final double noteSpeedMetersPerSecond = 20; //the speed that the note exits the shooter at
-    public static final double relativeShooterAngle = 150;
+    public static final double relativeShooterAngle = 112; //Angle between the arm's angle and the direction the notes come out of the shooter
     //how fast does the shooter need to spin before we can shoot the note
     public static final double shooterWheelSpeed = 3500; //RPMs
 
@@ -74,7 +74,7 @@ public final class Constants {
     public static final double maxArmPosition = 99;
 
     //arm angle for handing notes from the intake to the indexer
-    public static final double handoffPosition = 19;
+    public static final double handoffPosition = 21;
     //arm angle for scoring in the amp
     public static final double ampPosition = 98;
 
@@ -124,15 +124,6 @@ public final class Constants {
     //location of the speaker target on the field in meters
     public static final Translation2d RED_SPEAKER_LOCATION = new Translation2d(FIELD_LENGTH,5.56);
     public static final Translation2d BLUE_SPEAKER_LOCATION = new Translation2d(0,5.56);
-  }
-  public static final class VisionConstants{
-    //offset from center of robot to the note-detector limelight (meters)
-    public static final double noteLimelightTx = 0;
-    public static final double noteLimelightTy = 0;
-    public static final double noteLimelightTz = 0;
-
-    public static final double noteLimelightAngle = 0; //degrees above horizontal
-    
   }
   public static final class ClimberConstants{
     public static final int MotorIDLeft = 32;
@@ -303,9 +294,5 @@ public final class Constants {
           new SwerveModuleConstants(driveMotorID, angleMotorID, canCoderID, angleOffset);
           //creates a constant with all info from swerve module
     }
-  
-
-    
-
   }
 }

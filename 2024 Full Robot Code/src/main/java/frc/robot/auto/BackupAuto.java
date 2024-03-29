@@ -4,7 +4,10 @@
 
 package frc.robot.auto;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
@@ -14,24 +17,28 @@ import frc.robot.subsystems.SwerveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ShootAuto extends SequentialCommandGroup {
-
-  private ShooterSubsystem m_shooter;
+public class BackupAuto extends SequentialCommandGroup {
+  private SwerveSubsystem m_drive;
+  private ShooterSubsystem m_shoot;
   private ArmSubsystem m_arm;
   
-  /** An auto that shoots a preload note */
-  public ShootAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
-
-    m_shooter = shooter;
+  /** An Auto that just backs up past the auto line */
+  public BackupAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+    m_drive = drive;
+    m_shoot = shooter; 
     m_arm = arm;
 
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      m_shooter.spinUpShooterCommand(),
-      m_arm.setArmSetpointCommand(() -> 25),
-      new Shoot(m_shooter, () -> true),
-      m_shooter.stopShooterCommand()
+  
+     m_shoot.spinUpShooterCommand(), //spins up shooter
+     m_arm.setArmSetpointCommand(() -> 25), //sets arm to 25deg
+     new Shoot(shooter, () -> true), //makes the robot shoot () -> makes it a boolean supplier, true is a boolean
+     m_shoot.stopShooterCommand(),
+     new WaitCommand(10),
+     m_drive.backupCommand() 
+     
     );
   }
 }

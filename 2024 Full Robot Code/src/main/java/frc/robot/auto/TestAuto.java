@@ -21,7 +21,7 @@ public class TestAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
 
-  /** A simple Two Note Auto */
+  /** Auto mode for testing new features (NOT FOR COMPETITION) */
   public TestAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;

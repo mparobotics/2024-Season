@@ -23,7 +23,7 @@ public class FourNoteAuto extends SequentialCommandGroup {
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
-  /** A simple Two Note Auto */
+  /** Score preload + 3 close notes */
   public FourNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
@@ -32,11 +32,12 @@ public class FourNoteAuto extends SequentialCommandGroup {
  
 
     addCommands(
-      
-      m_drive.startAutoAt(1.35, 5.49, 0),
-      m_arm.setArmSetpointCommand(() -> 25),
-      //Spin up the shooter wheels. We keep them running for the entirety of auto
-      m_shooter.spinUpShooterCommand(),
+      new ParallelCommandGroup(
+        m_drive.startAutoAt(1.35, 5.49, 0),
+        m_arm.setArmSetpointCommand(() -> 25),
+        //Spin up the shooter wheels. We keep them running for the entirety of auto
+        m_shooter.spinUpShooterCommand()
+      ),
       //shoot the preload
       new Shoot(m_shooter, () -> true),
 
