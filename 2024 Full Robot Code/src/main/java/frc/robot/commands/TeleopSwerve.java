@@ -9,6 +9,7 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -28,7 +29,7 @@ public class TeleopSwerve extends Command {
   private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier, m_isAmpScoringSupplier;
 
 
-  private ProfiledPIDController angleController = new ProfiledPIDController(0.2, 0, 0, AutoConstants.autoAlignRConstraints);
+  private PIDController angleController = new PIDController(0.15, 0, 0);
 
 
   private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
@@ -87,7 +88,7 @@ public class TeleopSwerve extends Command {
     SmartDashboard.putNumber("Speaker Direction", targetDirection);
     SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
 
-    
+    SmartDashboard.putBoolean("Is speaker scoring", isSpeakerScoring);
     
 
 

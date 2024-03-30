@@ -88,7 +88,7 @@ public class ArmSubsystem extends SubsystemBase {
 
   //get the arm position in degrees
   public double getArmPosition(){
-    return armEncoder.getAbsolutePosition() * 360 - 213.9 + 90;
+    return armEncoder.getAbsolutePosition() * 360 - 321.2 + 90;
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){

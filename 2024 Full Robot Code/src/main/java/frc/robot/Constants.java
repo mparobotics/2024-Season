@@ -170,7 +170,7 @@ public final class Constants {
     public static final double halfWheelBase = Units.inchesToMeters(21.0 /2.0 ) ; //half of the forward-backward distance between the wheels
     public static final double driveBaseRadius =  Math.hypot(halfTrackWidth,halfWheelBase);
 
-    public static final double wheelDiameter = Units.inchesToMeters(4.0);
+    public static final double wheelDiameter = (.0992);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     
