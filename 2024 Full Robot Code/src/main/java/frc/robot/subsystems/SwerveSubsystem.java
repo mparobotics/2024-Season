@@ -29,7 +29,6 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.LimelightHelpers;
 import frc.robot.Constants.ArmConstants;
@@ -241,26 +240,24 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   public Command backupCommand(){
     return runOnce(() -> {         
-    
-
-    Pose2d currentPose; //creates pose but does not set it to anything
-    Pose2d targetPose; //creates pose but not set to target
-    if (FieldConstants.isRedAlliance()) {
-      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
-      Rotation2d.fromDegrees(180)); 
-    }
-    else{
-      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
-      Rotation2d.fromDegrees(0)); 
-    }
-    targetPose = FieldConstants.flipPoseForAlliance(new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(0)));
-    field.getObject("target pose").setPose(targetPose);
-    PathPlannerPath path = new PathPlannerPath(PathPlannerPath.bezierFromPoses(currentPose,targetPose),
-    new PathConstraints(3,3,0,0),
-    new GoalEndState(0, getYaw())
-    );
-    path.preventFlipping = true;
-    AutoBuilder.followPath(path).schedule(); //schedules the command to follow the path
+      Pose2d currentPose; //creates pose but does not set it to anything
+      Pose2d targetPose; //creates pose but not set to target
+      if (FieldConstants.isRedAlliance()) {
+        currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
+        Rotation2d.fromDegrees(180)); 
+      }
+      else{
+        currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
+        Rotation2d.fromDegrees(0)); 
+      }
+      targetPose = FieldConstants.flipPoseForAlliance(new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(0)));
+      
+      PathPlannerPath path = new PathPlannerPath(PathPlannerPath.bezierFromPoses(currentPose,targetPose),
+      new PathConstraints(3,3,0,0),
+      new GoalEndState(0, getYaw())
+      );
+      path.preventFlipping = true;
+      AutoBuilder.followPath(path).schedule(); //schedules the command to follow the path
     });
   }
   public Command startAutoAt(double x,double y,double direction){

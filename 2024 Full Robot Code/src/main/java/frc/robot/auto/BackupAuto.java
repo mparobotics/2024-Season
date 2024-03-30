@@ -4,7 +4,7 @@
 
 package frc.robot.auto;
 
-import com.pathplanner.lib.auto.AutoBuilder;
+
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
@@ -33,8 +33,8 @@ public class BackupAuto extends SequentialCommandGroup {
     addCommands(
   
      m_shoot.spinUpShooterCommand(), //spins up shooter
-     m_arm.setArmSetpointCommand(() -> 25), //sets arm to 25deg
-     new Shoot(shooter, () -> true), //makes the robot shoot () -> makes it a boolean supplier, true is a boolean
+     m_arm.setArmSetpointCommand(25), //sets arm to 25deg
+     new Shoot(shooter, () -> true), //makes the robot shoot () -> makes it a boolean supplier
      m_shoot.stopShooterCommand(),
      new WaitCommand(10),
      m_drive.backupCommand() 

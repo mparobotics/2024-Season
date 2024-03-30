@@ -30,15 +30,16 @@ public class AutoModeSelector {
         FOUR_NOTE,
         FIVE_NOTE,
         SWEEP,
+        SWEEP_AND_RECOVER,
         AMP,
         JUST_SHOOT,
         SHOOT_AND_LEAVE,
-        JUST_LEAVE,
+        AMP_SIDE_FOUR_NOTE,
         TEST_AUTO,
         BACKUP_AUTO
     }
-    //default to a just shoot auto so we still get points if we forget to select an auto
-    private AutoMode defaultAuto = AutoMode.JUST_SHOOT;
+    //default to a shoot + back up auto so we still get points if we forget to select an auto
+    private AutoMode defaultAuto = AutoMode.BACKUP_AUTO;
     //An autoModeSelector feeds all the subsytems to each auto command
     public AutoModeSelector(ArmSubsystem arm, ShooterSubsystem shooter, IntakeSubsystem intake, SwerveSubsystem drive){
         m_arm = arm;
@@ -80,20 +81,18 @@ public class AutoModeSelector {
                 return new SpeakerAmpAuto(m_drive, m_intake, m_shooter, m_arm);
             case SWEEP:
                 return new SweepAuto(m_drive, m_intake, m_shooter, m_arm);
+            case SWEEP_AND_RECOVER:
+                return new SweepAndRecoverAuto(m_drive, m_intake, m_shooter, m_arm);
             case JUST_SHOOT:
                 return new ShootAuto(m_drive, m_intake, m_shooter, m_arm);
             case SHOOT_AND_LEAVE:
                 return new ShootLeaveAuto(m_drive, m_intake, m_shooter, m_arm);
-            case JUST_LEAVE:
-                return new LeaveAuto(m_drive, m_intake, m_shooter, m_arm);
+            case AMP_SIDE_FOUR_NOTE:
+                return new AmpSideFourAuto(m_drive, m_intake, m_shooter, m_arm);
             case TEST_AUTO:
                 return new TestAuto(m_drive,m_intake, m_shooter, m_arm);
             case BACKUP_AUTO:
                 return new BackupAuto(m_drive,m_intake, m_shooter, m_arm);
-        
-                
-
-
         }
         return null;
     }
