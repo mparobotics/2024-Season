@@ -41,7 +41,7 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
     addCommands(
       m_drive.startAutoAt(1.41, 1.59, 90),
       
-      m_arm.armDownCommand(),
+      m_arm.armToHandoffCommand(),
       //simultaneously follows the path and executes the intake and shooter controlling commands
       new ParallelDeadlineGroup(
         //start driving the sweep path as soon as possible. We need to be the first ones out to the center
@@ -56,13 +56,13 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
         )
       ),
       //move the arm to the correct shooting angle
-      m_arm.setArmSetpointCommand(() -> 25),
+      m_arm.setArmSetpointCommand(25),
       //shoot the 5th center note
       new Shoot(shooter, () -> true),
 
       new ParallelCommandGroup(m_drive.followPathFromFile("Recovery"), new Intake(m_intake, m_arm, m_shooter)),
 
-      m_arm.setArmSetpointCommand(() -> 25),
+      m_arm.setArmSetpointCommand(25),
 
       m_drive.followPathFromFile("Finale"),
 
@@ -72,7 +72,5 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
     
         
     );
-
-     
   }
 }

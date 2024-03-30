@@ -36,7 +36,7 @@ public class CenterNoteAuto extends SequentialCommandGroup {
       new ParallelCommandGroup(
         m_drive.startAutoAt(0.71, 4.43, -60),
         //set arm to shooting position
-        m_arm.setArmSetpointCommand(() -> 25),
+        m_arm.setArmSetpointCommand(25),
         //spins up shooter and shoots,
         m_shooter.spinUpShooterCommand()
       ),
@@ -45,7 +45,7 @@ public class CenterNoteAuto extends SequentialCommandGroup {
       //moves to the C5 center note and intakes
       new ParallelCommandGroup(m_drive.followPathFromFile("SC5"), new Intake(m_intake, m_arm, m_shooter)),
       //set arm to shooting position
-      m_arm.setArmSetpointCommand(() -> 33),
+      m_arm.setArmSetpointCommand(33),
       //goes back to the speaker
       m_drive.followPathFromFile("C5S"),
 
@@ -58,7 +58,7 @@ public class CenterNoteAuto extends SequentialCommandGroup {
       //goes back to the speaker
       m_drive.followPathFromFile("C4S"),
       //set arm to shooting angle
-      m_arm.setArmSetpointCommand(() -> 33),
+      m_arm.setArmSetpointCommand(33),
       //shoots the C4 center note
       new Shoot(m_shooter, () -> true)
     );

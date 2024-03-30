@@ -39,7 +39,7 @@ public class ArmSubsystem extends SubsystemBase {
   private PIDController armPID = new PIDController(ArmConstants.kP,ArmConstants.kI, ArmConstants.kD);
   
   //the angle we want the arm to move to 
-  private double setpoint = 20;
+  private double m_setpoint = 20;
 
 
 
@@ -58,8 +58,8 @@ public class ArmSubsystem extends SubsystemBase {
     
     
     
-    SmartDashboard.putData("Arm to handoff", setArmSetpointCommand(() -> ArmConstants.handoffPosition));
-    SmartDashboard.putData("Arm to amp", setArmSetpointCommand(() -> ArmConstants.ampPosition));
+    SmartDashboard.putData("Arm to handoff", setArmSetpointCommand(ArmConstants.handoffPosition));
+    SmartDashboard.putData("Arm to amp", setArmSetpointCommand(ArmConstants.ampPosition));
 
 
     //The left motor follows the right motor. The right motor runs the control loop, and the left motor copies the output of the right motor
@@ -67,11 +67,11 @@ public class ArmSubsystem extends SubsystemBase {
     motorL.setControl(new Follower(ArmConstants.RmotorID, true));
 
 
-    SmartDashboard.putNumber("Arm Set Setpoint", setpoint);
+    SmartDashboard.putNumber("Arm Set Setpoint", m_setpoint);
   }
   //set the goal position to a specified angle. limit the setpoint to be between the max and min positions
   public void setTarget(double degrees){
-    setpoint = Math.max(Math.min(degrees, ArmConstants.maxArmPosition), ArmConstants.minArmPosition);
+    m_setpoint = Math.max(Math.min(degrees, ArmConstants.maxArmPosition), ArmConstants.minArmPosition);
   }
   //set the arm angle to score from a certain distance away
   public void setAngleForShootingDistance(double meters){
@@ -92,14 +92,17 @@ public class ArmSubsystem extends SubsystemBase {
   }
   //returns true if the arm is within 1 degree of the target postion
   public boolean isAtTarget(){
-    return Math.abs(setpoint - getArmPosition()) < 1;
+    return Math.abs(m_setpoint - getArmPosition()) < 1;
   }
 
 
-  public Command setArmSetpointCommand(DoubleSupplier setpoint){
-  return runOnce(() ->{setTarget(setpoint.getAsDouble());});
+  public Command setArmSetpointCommand(double setpoint){
+  return runOnce(() ->{ setTarget(setpoint);});
   }
-  public Command armDownCommand(){
+  public Command changeArmSetpointCommand(double change){
+    return runOnce(() -> { setTarget(m_setpoint + change); });
+  }
+  public Command armToHandoffCommand(){
     return runOnce(() -> setToHandoffAngle());
   }
   public Command armToAmpCommand(){
@@ -115,7 +118,7 @@ public class ArmSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     //The PID controller tries to minimize the difference between the goal position and the actual arm's position
-    double PIDOutput = armPID.calculate(getArmPosition(),setpoint);
+    double PIDOutput = armPID.calculate(getArmPosition(),m_setpoint);
 
     SmartDashboard.putNumber("PID output", PIDOutput);
     //set the motor speed to the output of the PID controller
@@ -123,9 +126,9 @@ public class ArmSubsystem extends SubsystemBase {
     motorR.set(-PIDOutput);
 
     SmartDashboard.putNumber("Arm Position", getArmPosition());
-    SmartDashboard.putNumber("Arm Goal Position", setpoint);
+    SmartDashboard.putNumber("Arm Goal Position", m_setpoint);
     SmartDashboard.putBoolean("Is at setpoint", isAtTarget());
-    double error = setpoint - getArmPosition();
+    double error = m_setpoint - getArmPosition();
     
    
     SmartDashboard.putNumber("Arm Error", error);

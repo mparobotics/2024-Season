@@ -313,7 +313,7 @@ public class SwerveSubsystem extends SubsystemBase {
         }
         
       }
-      if(BisValid){
+      else if(BisValid){
         if(estimateB.tagCount >= 2){
           odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
         }
