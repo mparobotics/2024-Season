@@ -332,7 +332,6 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Is Odometry Good", isOdometryValid());
     if(isOdometryValid()){
       odometry.update(getYaw(), getPositions());
-      keepOdometryOnField();
     }
     LimelightHelpers.PoseEstimate estimateA = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
     LimelightHelpers.PoseEstimate estimateB = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-b");
@@ -369,14 +368,9 @@ public class SwerveSubsystem extends SubsystemBase {
         
       }
     }
+    //If the odometry thinks the robot has left the field, snap it back to the field to make realigning with apriltags faster
+    keepOdometryOnField();
     
-    
-    /* 
-    if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
-      addVisionMeasurement("limelight-a");
-      addVisionMeasurement("limelight-b");
-    }
-    */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     field.getObject("Speaker Target").setPose(new Pose2d(getPose().getTranslation().plus(getVirtualTarget()), Rotation2d.fromDegrees(0)));
