@@ -349,7 +349,7 @@ public class SwerveSubsystem extends SubsystemBase {
     
     
     //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate
-    /*if(estimateA.tagCount == 1 && estimateB.tagCount == 1 && AisValid && BisValid){
+    if(estimateA.tagCount == 1 && estimateB.tagCount == 1 && AisValid && BisValid){
       //low standard deviations for translation, really high standard deviation for rotation since we want to just use the pigeon for heading
 
       odometry.addVisionMeasurement(estimateA.pose,estimateA.timestampSeconds);
