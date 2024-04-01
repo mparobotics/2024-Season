@@ -512,7 +512,8 @@ public class LimelightHelpers {
 
         return new PoseEstimate(pose, timestamp,latency,tagCount,tagSpan,tagDist,tagArea,rawFiducials);
     }
-
+    /* //this function is unused, so we commented it out to get rid of the warning
+    
     private static void printPoseEstimate(PoseEstimate pose) {
         if (pose == null) {
             System.out.println("No PoseEstimate available.");
@@ -547,7 +548,7 @@ public class LimelightHelpers {
             System.out.println();
         }
     }
-
+    */
     public static NetworkTable getLimelightNTTable(String tableName) {
         return NetworkTableInstance.getDefault().getTable(sanitizeName(tableName));
     }
