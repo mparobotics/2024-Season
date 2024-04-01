@@ -52,7 +52,7 @@ public final class Constants {
     //how fast does the shooter need to spin before we can shoot the note
     public static final double shooterWheelSpeed = 3500; //RPMs
 
-    public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
+    public static final double shootTimeSeconds = 0; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
 
     //PID constants for controlling the shooter speed with closed loop control. we currently just run it at full speed all the time, but this could potentially give us more consistent shots
     public static final double kP = 0;
@@ -74,7 +74,7 @@ public final class Constants {
     public static final double maxArmPosition = 99;
 
     //arm angle for handing notes from the intake to the indexer
-    public static final double handoffPosition = 21;
+    public static final double handoffPosition = 20;
     //arm angle for scoring in the amp
     public static final double ampPosition = 98;
 
@@ -158,6 +158,8 @@ public final class Constants {
     
     public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
     public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
+
+    public static final double ShootingAngle = 35;
     
   }
   public static final class SwerveConstants{
@@ -217,7 +219,7 @@ public final class Constants {
     /* Drive Motor Feedforward Values */
     public static final double driveKS = 0.667;
     public static final double driveKV = 2.44; 
-    public static final double driveKA = 0.27; 
+    public static final double driveKA = 0.5; //previously 0.27
 
     /* Angle Motor PID Values */
     public static final double angleKP = 0.01; 

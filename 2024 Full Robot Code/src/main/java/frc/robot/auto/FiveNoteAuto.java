@@ -10,6 +10,7 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
@@ -51,7 +52,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SW3").andThen(m_drive.followPathFromFile("W3S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(30))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
       ),
       new Shoot(m_shooter, () -> true),
 
@@ -60,7 +61,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SW2").andThen(m_drive.followPathFromFile("W2S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
       ),
       new Shoot(m_shooter, () -> true),
 
@@ -69,7 +70,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SW1").andThen(m_drive.followPathFromFile("W1S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(30))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
       ),
       new Shoot(m_shooter, () -> true),
 
@@ -78,7 +79,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SC2").andThen(m_drive.followPathFromFile("C2S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(30))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
       ),
       new Shoot(m_shooter, () -> true)
     );
