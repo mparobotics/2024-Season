@@ -9,7 +9,6 @@ import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.math.MathUtil;
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -22,14 +21,13 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
-
 public class TeleopSwerve extends Command {
   private SwerveSubsystem m_SwerveSubsystem;
   private DoubleSupplier m_xSupplier, m_ySupplier, m_rotationSupplier;
   private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier, m_isAmpScoringSupplier;
 
 
-  private PIDController angleController = new PIDController(0.15, 0, 0);
+  private ProfiledPIDController angleController = new ProfiledPIDController(0.2, 0, 0, AutoConstants.autoAlignRConstraints);
 
 
   private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
@@ -88,7 +86,7 @@ public class TeleopSwerve extends Command {
     SmartDashboard.putNumber("Speaker Direction", targetDirection);
     SmartDashboard.putNumber("Speaker Distance", relativeTargetPosition.getNorm());
 
-    SmartDashboard.putBoolean("Is speaker scoring", isSpeakerScoring);
+    
     
 
 
@@ -104,6 +102,7 @@ public class TeleopSwerve extends Command {
       yVal * SwerveConstants.maxSpeed, 
       rSpeed, 
       isFieldOriented);
+      SmartDashboard.putNumber("Speaker PID output", rSpeed);
     }
     if(isAmpScoring){
       //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain

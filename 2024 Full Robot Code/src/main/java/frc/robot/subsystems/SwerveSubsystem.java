@@ -298,7 +298,32 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return true;
   }
-
+  private void keepOdometryOnField(){
+    Pose2d pose = getPose();
+    double x = getPose().getX();
+    double y = getPose().getY();
+    Rotation2d heading = getPose().getRotation();
+    boolean isInField = true;
+    if(x < 0){
+      x = 0;
+      isInField = false;
+    }
+    if(y < 0){
+      y = 0;
+      isInField = false;
+    }
+    if(x > FieldConstants.FIELD_LENGTH){
+      x = FieldConstants.FIELD_LENGTH;
+      isInField = false;
+    }
+    if(y > FieldConstants.FIELD_WIDTH){
+      y = FieldConstants.FIELD_WIDTH;
+      isInField = false;
+    }
+    if(!isInField){
+      odometry.resetPosition(getYaw(), getPositions(), new Pose2d(x,y,heading));
+    }
+  }
 
 
   @Override
@@ -307,6 +332,7 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putBoolean("Is Odometry Good", isOdometryValid());
     if(isOdometryValid()){
       odometry.update(getYaw(), getPositions());
+      keepOdometryOnField();
     }
     LimelightHelpers.PoseEstimate estimateA = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
     LimelightHelpers.PoseEstimate estimateB = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-b");
