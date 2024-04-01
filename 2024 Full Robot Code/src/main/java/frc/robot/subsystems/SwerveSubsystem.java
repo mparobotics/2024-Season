@@ -298,12 +298,14 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return true;
   }
+  //check if the robot thinks it's outside the field, and move it back if it is
   private void keepOdometryOnField(){
     Pose2d pose = getPose();
-    double x = getPose().getX();
-    double y = getPose().getY();
-    Rotation2d heading = getPose().getRotation();
+    double x = pose.getX();
+    double y = pose.getY();
+    Rotation2d heading = pose.getRotation();
     boolean isInField = true;
+    
     if(x < 0){
       x = 0;
       isInField = false;
