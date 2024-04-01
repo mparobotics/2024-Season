@@ -298,7 +298,34 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return true;
   }
-
+  //check if the robot thinks it's outside the field, and move it back if it is
+  private void keepOdometryOnField(){
+    Pose2d pose = getPose();
+    double x = pose.getX();
+    double y = pose.getY();
+    Rotation2d heading = pose.getRotation();
+    boolean isInField = true;
+    
+    if(x < 0){
+      x = 0;
+      isInField = false;
+    }
+    if(y < 0){
+      y = 0;
+      isInField = false;
+    }
+    if(x > FieldConstants.FIELD_LENGTH){
+      x = FieldConstants.FIELD_LENGTH;
+      isInField = false;
+    }
+    if(y > FieldConstants.FIELD_WIDTH){
+      y = FieldConstants.FIELD_WIDTH;
+      isInField = false;
+    }
+    if(!isInField){
+      odometry.resetPosition(getYaw(), getPositions(), new Pose2d(x,y,heading));
+    }
+  }
 
 
   @Override
@@ -343,14 +370,9 @@ public class SwerveSubsystem extends SubsystemBase {
         
       }
     }
+    //If the odometry thinks the robot has left the field, snap it back to the field to make realigning with apriltags faster
+    keepOdometryOnField();
     
-    
-    /* 
-    if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
-      addVisionMeasurement("limelight-a");
-      addVisionMeasurement("limelight-b");
-    }
-    */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
     field.getObject("Speaker Target").setPose(new Pose2d(getPose().getTranslation().plus(getVirtualTarget()), Rotation2d.fromDegrees(0)));
