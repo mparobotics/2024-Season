@@ -52,7 +52,7 @@ public final class Constants {
     //how fast does the shooter need to spin before we can shoot the note
     public static final double shooterWheelSpeed = 3500; //RPMs
 
-    public static final double shootTimeSeconds = 0.1; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
+    public static final double shootTimeSeconds = 0; //time to run the shooter for after the note is no longer detected. this is to prevent the wheels slowing down while still in contact with the note.
 
     //PID constants for controlling the shooter speed with closed loop control. we currently just run it at full speed all the time, but this could potentially give us more consistent shots
     public static final double kP = 0;
@@ -74,7 +74,7 @@ public final class Constants {
     public static final double maxArmPosition = 99;
 
     //arm angle for handing notes from the intake to the indexer
-    public static final double handoffPosition = 21;
+    public static final double handoffPosition = 20;
     //arm angle for scoring in the amp
     public static final double ampPosition = 98;
 
@@ -113,7 +113,10 @@ public final class Constants {
     public static boolean isRedAlliance(){
       return DriverStation.getAlliance().isPresent() && DriverStation.getAlliance().get() == Alliance.Red;
     }
-    //this function allows us to mirror a pose to the correct side of the field to match our alliance color
+    //these functions allow us to mirror a pose2d / translation2d to the correct side of the field to match our alliance color
+    public static Translation2d flipTranslationForAlliance(Translation2d translation){
+      return isRedAlliance()? new Translation2d( FIELD_LENGTH - translation.getX(), translation.getY()): translation;
+    }
     public static Pose2d flipPoseForAlliance(Pose2d pose){
       return isRedAlliance()? new Pose2d( FIELD_LENGTH - pose.getX(), pose.getY(), Rotation2d.fromDegrees(180).minus(pose.getRotation())): pose;
     }
@@ -155,6 +158,8 @@ public final class Constants {
     
     public static final TrapezoidProfile.Constraints autoAlignXYConstraints = new TrapezoidProfile.Constraints(maxVelocityAutoAlign,maxAccelerationAutoAlign);
     public static final TrapezoidProfile.Constraints autoAlignRConstraints = new TrapezoidProfile.Constraints(maxAngularVelocityAutoAlign,maxAngularAccelerationAutoAlign);
+
+    public static final double ShootingAngle = 35;
     
   }
   public static final class SwerveConstants{
@@ -167,7 +172,7 @@ public final class Constants {
     public static final double halfWheelBase = Units.inchesToMeters(21.0 /2.0 ) ; //half of the forward-backward distance between the wheels
     public static final double driveBaseRadius =  Math.hypot(halfTrackWidth,halfWheelBase);
 
-    public static final double wheelDiameter = Units.inchesToMeters(4.0);
+    public static final double wheelDiameter = (.0992);
     public static final double wheelCircumference = wheelDiameter * Math.PI;
 
     
@@ -214,7 +219,7 @@ public final class Constants {
     /* Drive Motor Feedforward Values */
     public static final double driveKS = 0.667;
     public static final double driveKV = 2.44; 
-    public static final double driveKA = 0.27; 
+    public static final double driveKA = 0.5; //previously 0.27
 
     /* Angle Motor PID Values */
     public static final double angleKP = 0.01; 

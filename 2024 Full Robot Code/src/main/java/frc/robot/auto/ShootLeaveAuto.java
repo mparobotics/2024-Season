@@ -31,7 +31,7 @@ public class ShootLeaveAuto extends SequentialCommandGroup {
     addCommands(
       m_drive.startAutoAt(0.71, 4.43, -60),
       m_shooter.spinUpShooterCommand(),
-      m_arm.setArmSetpointCommand(() -> 25),
+      m_arm.setArmSetpointCommand(25),
       new Shoot(m_shooter, () -> true),
 
       m_drive.followPathFromFile("Leave"),

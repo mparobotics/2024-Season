@@ -29,7 +29,7 @@ public class ShootAuto extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       m_shooter.spinUpShooterCommand(),
-      m_arm.setArmSetpointCommand(() -> 25),
+      m_arm.setArmSetpointCommand(25),
       new Shoot(m_shooter, () -> true),
       m_shooter.stopShooterCommand()
     );

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.Constants.FieldConstants;
 import frc.robot.auto.AutoModeSelector;
 
 import frc.robot.commands.AimAndShoot;
@@ -19,7 +20,7 @@ import frc.robot.commands.AmpScore;
 import frc.robot.commands.AngleAndShoot;
 import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOverride;
-
+import frc.robot.commands.MeasureWheelDiameter;
 import frc.robot.commands.ReverseIntake;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
@@ -36,6 +37,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Axis;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 
@@ -75,8 +77,9 @@ public class RobotContainer {
   
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() { 
-    
-    
+    SmartDashboard.putData("set to midfield", m_drive.resetOdometryCommand(FieldConstants.FIELD_LENGTH/ 2, FieldConstants.FIELD_WIDTH / 2));
+    SmartDashboard.putData("set to subwoofer", m_drive.resetOdometryCommand(1.34, 5.54));
+    SmartDashboard.putData("test wheel diameter", new MeasureWheelDiameter(m_drive));
     m_shooter.setDefaultCommand(m_shooter.defaultShooterCommand(
       shoot,
       () -> m_drive.isInSpinUpRange()
@@ -114,8 +117,8 @@ public class RobotContainer {
     //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, shoot));
     //helms left joystick manually moves the arm up and down
-    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() - 2).repeatedly());
-    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.setArmSetpointCommand(() -> m_arm.getArmPosition() + 2).repeatedly());
+    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.changeArmSetpointCommand(-2).repeatedly());
+    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.changeArmSetpointCommand(2).repeatedly());
 
     //holding the right trigger on the helms controller auto aims the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));
@@ -123,7 +126,7 @@ public class RobotContainer {
     //X sets the arm to subwoofer angle
     helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, shoot));
     //Y sets the arm to the podium angle
-    helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 50, shoot));
+    helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47, shoot));
 
     //B sets the arm to feeding angle
     helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 69.3, shoot));
@@ -148,6 +151,7 @@ public class RobotContainer {
     m_leds.teleopPeriodic(m_shooter.isNoteInShooter(),m_drive.isInRange(), m_shooter.isAtShootingSpeed(), m_arm.getArmPosition() > 23);
   }
   public void teleopInit(){
+    m_shooter.stopShooting(); 
     //11'8 prevention measure
     //puts the arm down at the start of teleop so that we don't smack the stage again
     m_arm.setToHandoffAngle();

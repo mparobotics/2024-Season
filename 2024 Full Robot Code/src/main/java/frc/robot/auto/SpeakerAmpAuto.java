@@ -5,7 +5,7 @@
 package frc.robot.auto;
 
 
-import edu.wpi.first.math.geometry.Pose2d;
+
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoAmpScore;
@@ -37,7 +37,7 @@ public class SpeakerAmpAuto extends SequentialCommandGroup {
       new ParallelCommandGroup(
         m_drive.startAutoAt(0.67, 6.70, 60),
         
-        m_arm.setArmSetpointCommand(() -> 25),
+        m_arm.setArmSetpointCommand(25),
         //Spin up the shooter wheels. We keep them running for the entirety of auto
         m_shooter.spinUpShooterCommand()
       ),
@@ -71,7 +71,7 @@ public class SpeakerAmpAuto extends SequentialCommandGroup {
       new ParallelCommandGroup(m_drive.followPathFromFile("AC2"), new Intake(m_intake, m_arm, m_shooter)),
 
       m_shooter.spinUpShooterCommand(),
-      m_arm.setArmSetpointCommand(() -> 25),
+      m_arm.setArmSetpointCommand(25),
       m_drive.followPathFromFile("C2S(A)"),
 
       new Shoot(m_shooter, () -> true)
@@ -86,8 +86,5 @@ public class SpeakerAmpAuto extends SequentialCommandGroup {
 
 
     );
-  }
-  public Pose2d getStartingPose(){
-    return new Pose2d();
   }
 }

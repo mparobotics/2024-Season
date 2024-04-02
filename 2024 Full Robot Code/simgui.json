@@ -10,6 +10,11 @@
         "header": {
           "open": true
         }
+      },
+      "SPARK MAX [31]": {
+        "header": {
+          "open": true
+        }
       }
     }
   },
@@ -24,7 +29,11 @@
       "/SmartDashboard/Field": "Field2d",
       "/SmartDashboard/Run Intake Until Full": "Command",
       "/SmartDashboard/Shoot": "Command",
-      "/SmartDashboard/Zero Arm Enocder": "Command"
+      "/SmartDashboard/Zero Arm Enocder": "Command",
+      "/SmartDashboard/set pose": "Command",
+      "/SmartDashboard/set to midfield": "Command",
+      "/SmartDashboard/set to subwoofer": "Command",
+      "/SmartDashboard/test wheel diameter": "Command"
     },
     "windows": {
       "/SmartDashboard/Field": {
@@ -52,7 +61,6 @@
       },
       "SmartDashboard": {
         "Auto Mode Selector": {
-          "open": true,
           "string[]##v_/SmartDashboard/Auto Mode Selector/options": {
             "open": true
           }

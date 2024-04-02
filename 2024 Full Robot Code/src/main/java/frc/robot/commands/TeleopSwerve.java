@@ -21,14 +21,13 @@ import frc.robot.Constants.SwerveConstants;
 import frc.robot.subsystems.SwerveSubsystem;
 
 
-
 public class TeleopSwerve extends Command {
   private SwerveSubsystem m_SwerveSubsystem;
   private DoubleSupplier m_xSupplier, m_ySupplier, m_rotationSupplier;
   private BooleanSupplier m_robotCentricSupplier, m_isSpeakerScoringSupplier, m_isAmpScoringSupplier;
 
 
-  private ProfiledPIDController angleController = new ProfiledPIDController(0.2, 0, 0, AutoConstants.autoAlignRConstraints);
+  private ProfiledPIDController angleController = new ProfiledPIDController(0.1, 0, 0, AutoConstants.autoAlignRConstraints);
 
 
   private SlewRateLimiter xLimiter = new SlewRateLimiter(3.0); 
@@ -103,8 +102,9 @@ public class TeleopSwerve extends Command {
       yVal * SwerveConstants.maxSpeed, 
       rSpeed, 
       isFieldOriented);
+      SmartDashboard.putNumber("Speaker PID output", rSpeed);
     }
-    if(isAmpScoring){
+    else if(isAmpScoring){
       //plug the target angle into a PID controller, which will output a speed that can be supplied to the drivetrain
       double rSpeed = angleController.calculate(currentDirection, OnboardModuleState.closestAngle(currentDirection, -90));
       //If the driver is pressing the auto align button, then we override the rotation input from the controller with the PID controller which aims us at the speaker

@@ -165,7 +165,7 @@ public class LEDController extends SubsystemBase{
         }
         else if (FieldConstants.isRedAlliance()){
             for(var i = 0; i < led_count; i ++){
-                if((i + offset * 0.5)% 6 >= 3){
+                if((i + offset * 10)% 6 >= 3){
                     m_buffer.setRGB (i, 200,0,0);
                 }
                 else{ 
@@ -174,7 +174,7 @@ public class LEDController extends SubsystemBase{
             }
         } else {
             for(var i = 0; i < led_count; i ++){
-                if((i + offset * 5)% 6 >= 3){
+                if((i + offset * 10)% 6 >= 3){
                     m_buffer.setRGB (i, 0,0,200);
                 }
                 else{ 

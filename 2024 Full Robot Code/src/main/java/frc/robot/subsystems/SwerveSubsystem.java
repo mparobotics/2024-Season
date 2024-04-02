@@ -14,7 +14,7 @@ import com.pathplanner.lib.path.GoalEndState;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
-import edu.wpi.first.math.VecBuilder;
+
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -27,10 +27,8 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
-import edu.wpi.first.wpilibj.smartdashboard.FieldObject2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.lib.LimelightHelpers;
 import frc.robot.Constants.ArmConstants;
@@ -54,7 +52,6 @@ public class SwerveSubsystem extends SubsystemBase {
   
   /** Creates a new SwerveSubsystem. */
   public SwerveSubsystem() {
-    SmartDashboard.putNumber("distance",0); 
     //instantiates new pigeon gyro, wipes it, and zeros it
     pigeon = new Pigeon2(SwerveConstants.PIGEON_ID);
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
@@ -140,7 +137,6 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return positions;
   }
-  
   //get the speed and direction of each module as a list of SwerveModuleStates
   private SwerveModuleState[] getStates() {
     SwerveModuleState[] states = new SwerveModuleState[4];
@@ -148,6 +144,13 @@ public class SwerveSubsystem extends SubsystemBase {
       states[module.moduleNumber] = module.getState();
     }
     return states;
+  }
+  public double[] getEncoderRotations(){
+    double[] distances = new double[4];
+    for(SwerveModule module : swerveModules){
+      distances[module.moduleNumber] = module.getRawDriveEncoder() / SwerveConstants.wheelCircumference;
+    }
+    return distances;
   }
   //get the speed of the robot in m/s and angular velocity in rad/s relative to the robot. Returns a ChassisSpeeds
   public ChassisSpeeds getRobotRelativeSpeed(){
@@ -189,11 +192,16 @@ public class SwerveSubsystem extends SubsystemBase {
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
     double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
-    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * Math.cos(estimatedShotAngle);
-    //get the speed of the robot as a chassisSpeeds
-    ChassisSpeeds chassisSpeeds = getRobotRelativeSpeed();
+    double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * -Math.cos(estimatedShotAngle);
+    //get the speed of the robot in field coordinates as a chassisSpeeds
+    ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeed(), getYaw());
     //make a translation2d with the x and y components of the velocity of the robot
     Translation2d velocity = new Translation2d(chassisSpeeds.vxMetersPerSecond, chassisSpeeds.vyMetersPerSecond);
+
+    
+    
+    SmartDashboard.putNumber("X velocity", velocity.getX());
+    SmartDashboard.putNumber("Y velocity", velocity.getY());
     //Calculate the component of the velocity parallel to the speaker direction, and the component going perpendicular to the speaker direction
     Translation2d rotatedVelocity = velocity.rotateBy(speakerLocation.getAngle().times(-1));
     //The robot's velocity is always moving the note off of the straight path to the speaker, so we want to pick a shooting direction that cancels out the perpendicular velocity
@@ -232,26 +240,24 @@ public class SwerveSubsystem extends SubsystemBase {
   }
   public Command backupCommand(){
     return runOnce(() -> {         
-    
-
-    Pose2d currentPose; //creates pose but does not set it to anything
-    Pose2d targetPose; //creates pose but not set to target
-    if (FieldConstants.isRedAlliance()) {
-      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
-      Rotation2d.fromDegrees(180)); 
-    }
-    else{
-      currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
-      Rotation2d.fromDegrees(0)); 
-    }
-    targetPose = FieldConstants.flipPoseForAlliance(new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(0)));
-    field.getObject("target pose").setPose(targetPose);
-    PathPlannerPath path = new PathPlannerPath(PathPlannerPath.bezierFromPoses(currentPose,targetPose),
-    new PathConstraints(3,3,0,0),
-    new GoalEndState(0, getYaw())
-    );
-    path.preventFlipping = true;
-    AutoBuilder.followPath(path).schedule(); //schedules the command to follow the path
+      Pose2d currentPose; //creates pose but does not set it to anything
+      Pose2d targetPose; //creates pose but not set to target
+      if (FieldConstants.isRedAlliance()) {
+        currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2D for the red alliance 
+        Rotation2d.fromDegrees(180)); 
+      }
+      else{
+        currentPose = new Pose2d(getPose().getTranslation(), //sets pose 2d for the blue alliance 
+        Rotation2d.fromDegrees(0)); 
+      }
+      targetPose = FieldConstants.flipPoseForAlliance(new Pose2d(2.5,currentPose.getY(),Rotation2d.fromDegrees(0)));
+      
+      PathPlannerPath path = new PathPlannerPath(PathPlannerPath.bezierFromPoses(currentPose,targetPose),
+      new PathConstraints(3,3,0,0),
+      new GoalEndState(0, getYaw())
+      );
+      path.preventFlipping = true;
+      AutoBuilder.followPath(path).schedule(); //schedules the command to follow the path
     });
   }
   public Command startAutoAt(double x,double y,double direction){
@@ -259,6 +265,12 @@ public class SwerveSubsystem extends SubsystemBase {
       Pose2d startPose = FieldConstants.flipPoseForAlliance(new Pose2d(x,y,Rotation2d.fromDegrees(direction)));
       pigeon.setYaw(startPose.getRotation().getDegrees());
       odometry.resetPosition(startPose.getRotation(), getPositions(), startPose);
+    });
+  }
+  public Command resetOdometryCommand(double x, double y){
+    return runOnce(() -> {
+      Pose2d setPose = new Pose2d (FieldConstants.flipTranslationForAlliance(new Translation2d(x,y)), getYaw());
+      resetOdometry(setPose);
     });
   }
   
@@ -286,7 +298,34 @@ public class SwerveSubsystem extends SubsystemBase {
     }
     return true;
   }
-
+  //check if the robot thinks it's outside the field, and move it back if it is
+  private void keepOdometryOnField(){
+    Pose2d pose = getPose();
+    double x = pose.getX();
+    double y = pose.getY();
+    Rotation2d heading = pose.getRotation();
+    boolean isInField = true;
+    
+    if(x < 0){
+      x = 0;
+      isInField = false;
+    }
+    if(y < 0){
+      y = 0;
+      isInField = false;
+    }
+    if(x > FieldConstants.FIELD_LENGTH){
+      x = FieldConstants.FIELD_LENGTH;
+      isInField = false;
+    }
+    if(y > FieldConstants.FIELD_WIDTH){
+      y = FieldConstants.FIELD_WIDTH;
+      isInField = false;
+    }
+    if(!isInField){
+      odometry.resetPosition(getYaw(), getPositions(), new Pose2d(x,y,heading));
+    }
+  }
 
 
   @Override
@@ -324,24 +363,19 @@ public class SwerveSubsystem extends SubsystemBase {
         }
         
       }
-      if(BisValid){
+      else if(BisValid){
         if(estimateB.tagCount >= 2){
           odometry.addVisionMeasurement(estimateB.pose,estimateB.timestampSeconds);
         }
         
       }
     }
+    //If the odometry thinks the robot has left the field, snap it back to the field to make realigning with apriltags faster
+    keepOdometryOnField();
     
-    
-    /* 
-    if(LimelightHelpersOld.getTV("limelight-a") && LimelightHelpersOld.getTV("limelight-b")){
-      addVisionMeasurement("limelight-a");
-      addVisionMeasurement("limelight-b");
-    }
-    */
     //display estimated position on the driver station
     field.setRobotPose(getPose());
-    field.getObject("Speaker Target").setPose(new Pose2d(getVirtualTarget(), Rotation2d.fromDegrees(0)));
+    field.getObject("Speaker Target").setPose(new Pose2d(getPose().getTranslation().plus(getVirtualTarget()), Rotation2d.fromDegrees(0)));
     
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 

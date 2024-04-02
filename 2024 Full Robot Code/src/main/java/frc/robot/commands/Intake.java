@@ -43,7 +43,7 @@ public class Intake extends Command {
   @Override
   public void execute() {
     //run the intake and indexer
-    m_shooter.setBeltSpeed(0.75);
+    m_shooter.setBeltSpeed(0.71);
     m_intake.runIntake(1);
   }
 

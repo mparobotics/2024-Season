@@ -10,7 +10,6 @@ package frc.robot.auto;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.Constants.AutoConstants;
 import frc.robot.commands.Intake;
 import frc.robot.commands.Shoot;
 import frc.robot.subsystems.ArmSubsystem;
@@ -21,14 +20,14 @@ import frc.robot.subsystems.SwerveSubsystem;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class FiveNoteAuto extends SequentialCommandGroup {
+public class AmpSideFourAuto extends SequentialCommandGroup {
   private SwerveSubsystem m_drive;
   private IntakeSubsystem m_intake;
   private ShooterSubsystem m_shooter;
   private ArmSubsystem m_arm;
 
   /** Score Preload + 3 close notes + 1 center note */
-  public FiveNoteAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
+  public AmpSideFourAuto(SwerveSubsystem drive, IntakeSubsystem intake, ShooterSubsystem shooter, ArmSubsystem arm) {
     m_drive = drive;
     m_intake = intake;
     m_shooter = shooter;
@@ -37,7 +36,7 @@ public class FiveNoteAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelCommandGroup(
-        m_drive.startAutoAt(1.35, 5.49, 0),
+        m_drive.startAutoAt(0.67, 6.70, 60),
         m_shooter.spinUpShooterCommand(),
         m_arm.setArmSetpointCommand(25)
       ),
@@ -47,43 +46,32 @@ public class FiveNoteAuto extends SequentialCommandGroup {
       new Shoot(m_shooter, () -> true),
 
       
-      //score the W3 wing note
-      new ParallelDeadlineGroup(
-        //drive out to the note and back to the speaker
-        m_drive.followPathFromFile("SW3").andThen(m_drive.followPathFromFile("W3S")),
-        //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
-      ),
-      new Shoot(m_shooter, () -> true),
-
-      //score the W2 wing note
-      new ParallelDeadlineGroup(
-        //drive out to the note and back to the speaker
-        m_drive.followPathFromFile("SW2").andThen(m_drive.followPathFromFile("W2S")),
-        //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
-      ),
-      new Shoot(m_shooter, () -> true),
-
       //score the W1 wing note
       new ParallelDeadlineGroup(
         //drive out to the note and back to the speaker
-        m_drive.followPathFromFile("SW1").andThen(m_drive.followPathFromFile("W1S")),
+        m_drive.followPathFromFile("SW1(A)").andThen(m_drive.followPathFromFile("W1S@")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
+      ),
+      new Shoot(m_shooter, () -> true),
+
+      //score the C1 center note
+      new ParallelDeadlineGroup(
+        //drive out to the note and back to the speaker
+        m_drive.followPathFromFile("S@C1").andThen(m_drive.followPathFromFile("C1S@")),
+        //run the intake until we have the note, then set the arm to the shooting position
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
       ),
       new Shoot(m_shooter, () -> true),
 
       //score the C2 center note
       new ParallelDeadlineGroup(
         //drive out to the note and back to the speaker
-        m_drive.followPathFromFile("SC2").andThen(m_drive.followPathFromFile("C2S")),
+        m_drive.followPathFromFile("S@C2").andThen(m_drive.followPathFromFile("C2S@")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(AutoConstants.ShootingAngle))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
       ),
       new Shoot(m_shooter, () -> true)
     );
-
-      
   }
 }
