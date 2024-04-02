@@ -151,6 +151,7 @@ public class RobotContainer {
     m_leds.teleopPeriodic(m_shooter.isNoteInShooter(),m_drive.isInRange(), m_shooter.isAtShootingSpeed(), m_arm.getArmPosition() > 23);
   }
   public void teleopInit(){
+    m_shooter.stopShooting(); 
     //11'8 prevention measure
     //puts the arm down at the start of teleop so that we don't smack the stage again
     m_arm.setToHandoffAngle();
