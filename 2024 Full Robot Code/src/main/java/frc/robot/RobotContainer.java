@@ -117,8 +117,8 @@ public class RobotContainer {
     //helms right bumper button sets the arm in amp position
     helmsController.button(Button.kRightBumper.value).whileTrue(new AmpScore(m_arm, m_shooter, shoot));
     //helms left joystick manually moves the arm up and down
-    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.changeArmSetpointCommand(-2).repeatedly());
-    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.changeArmSetpointCommand(2).repeatedly());
+    helmsController.axisGreaterThan(Axis.kLeftY.value, 0.5).whileTrue(m_arm.changeArmSetpointCommand(-0.5).repeatedly());
+    helmsController.axisLessThan(Axis.kLeftY.value, -0.5).whileTrue(m_arm.changeArmSetpointCommand(0.5).repeatedly());
 
     //holding the right trigger on the helms controller auto aims the arm 
     helmsController.axisGreaterThan(Axis.kRightTrigger.value, 0.1).whileTrue(new AimAndShoot(m_arm, m_shooter, () -> m_drive.getRelativeSpeakerLocation().getNorm(), () -> helmsController.getLeftTriggerAxis() > 0.1));

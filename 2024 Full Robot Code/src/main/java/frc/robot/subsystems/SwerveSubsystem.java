@@ -274,7 +274,14 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
   
-  
+  private double getAmbiguity(LimelightHelpers.PoseEstimate estimate){
+    if(estimate.tagCount == 0){
+      return 0;
+    }
+    else{
+      return estimate.rawFiducials[0].ambiguity;
+    }
+  }
   
   public boolean isEstimateValid(LimelightHelpers.PoseEstimate estimate){
     if(estimate == null){
@@ -287,7 +294,9 @@ public class SwerveSubsystem extends SubsystemBase {
     boolean isCloseEnough = estimate.avgTagDist < 5;
     //reject pose estimates with no tags in view
     boolean canSeeTag = estimate.tagCount > 0;
-    return  canSeeTag && isInField && isCloseEnough;
+    boolean isUnAmbiguous = getAmbiguity(estimate) < 0.5;
+    
+    return  canSeeTag && isInField && isCloseEnough && isUnAmbiguous;
   }
 
   private boolean isOdometryValid(){
@@ -346,6 +355,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("ll-A tagCount", estimateA.tagCount);
     SmartDashboard.putNumber("ll-B tagCount", estimateB.tagCount);
+
+    SmartDashboard.putNumber("ll-A ambiguity", getAmbiguity(estimateA));
+    SmartDashboard.putNumber("ll-B ambiguity", getAmbiguity(estimateB));
+
     
     
     //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate

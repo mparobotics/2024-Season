@@ -57,7 +57,7 @@ public class CenterNoteAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SC4").andThen(m_drive.followPathFromFile("C4S")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(30))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(35))
       ),
       new Shoot(m_shooter, () -> true)
     );

@@ -60,11 +60,18 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
       //shoot the 5th center note
       new Shoot(shooter, () -> true),
 
-      new ParallelCommandGroup(m_drive.followPathFromFile("Recovery"), new Intake(m_intake, m_arm, m_shooter)),
+      new ParallelDeadlineGroup(
+        new SequentialCommandGroup(
+          m_drive.followPathFromFile("Recovery"), 
+          m_drive.followPathFromFile("Finale")),
 
-      m_arm.setArmSetpointCommand(25),
+        new SequentialCommandGroup(
+          new Intake(m_intake, m_arm, m_shooter),
 
-      m_drive.followPathFromFile("Finale"),
+          m_arm.setArmSetpointCommand(25)
+        )
+      ),
+      
 
       new Shoot(shooter, () -> true),
       //stop the shooter
