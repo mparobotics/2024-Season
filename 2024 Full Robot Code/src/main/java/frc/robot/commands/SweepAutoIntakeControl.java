@@ -28,7 +28,7 @@ public class SweepAutoIntakeControl extends Command {
     has_note = m_shooter.isNoteInShooter();
     m_intake.runIntake(1);
     m_shooter.setBeltSpeed(0.75);
-    m_shooter.setShooterSpeed(0.3);
+    m_shooter.setShooterSpeed(0.35);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

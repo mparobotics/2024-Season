@@ -7,7 +7,7 @@ package frc.robot.auto;
 
 
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.Intake;
@@ -42,13 +42,14 @@ public class SweepAndRecoverAuto extends SequentialCommandGroup {
       m_drive.startAutoAt(1.41, 1.59, 90),
       
       m_arm.armToHandoffCommand(),
+      //spit the preload out in our wing, but do it while already moving so we don't waste time
+      new ReverseIntake(m_intake, m_shooter).withTimeout(0.75),
       //simultaneously follows the path and executes the intake and shooter controlling commands
       new ParallelDeadlineGroup(
         //start driving the sweep path as soon as possible. We need to be the first ones out to the center
         m_drive.followPathFromFile("Sweep II"),
         new SequentialCommandGroup(
-          //spit the preload out in our wing, but do it while already moving so we don't waste time
-          new ReverseIntake(m_intake, m_shooter).withTimeout(2),
+          
           //count out 5 notes fed through the system and hold onto the 5th one
           new SweepAutoIntakeControl(m_intake, m_shooter),
           //spin up the shooter so we're ready to shoot when we get to the speaker
