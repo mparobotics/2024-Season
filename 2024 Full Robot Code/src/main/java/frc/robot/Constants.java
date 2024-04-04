@@ -86,7 +86,7 @@ public final class Constants {
     
 
   
-    public static final InterpolatingTreeMap<Double, Double> ArmAngleMap = new InterpolatingDoubleTreeMap();
+    public static final InterpolatingTreeMap<Double, Double> RedArmAngleMap = new InterpolatingDoubleTreeMap();
     static{
     // each pair of doubles pairs a speaker distance with the ideal arm angle for that distance. 
     //These values are determined by doing physical testing with the real robot at a practice field.
@@ -94,16 +94,36 @@ public final class Constants {
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
     // the data is in the format: ArmAngleMap.put(DistanceToSpeaker (meters), Arm Angle(degrees))
     
-      ArmAngleMap.put(1.315, 28.7);
-      ArmAngleMap.put(1.705, 32.1);
-      ArmAngleMap.put(1.965, 37.0);
-      ArmAngleMap.put(2.2, 39.9);
-      ArmAngleMap.put(2.58, 42.9);
-      ArmAngleMap.put(2.87, 45.1);
-      ArmAngleMap.put(3.195, 47.8);
-      ArmAngleMap.put(3.425, 49.0);
-      ArmAngleMap.put(3.79, 50.7);
-      ArmAngleMap.put(4.09, 50.0);
+      RedArmAngleMap.put(1.315, 28.7);
+      RedArmAngleMap.put(1.705, 32.1);
+      RedArmAngleMap.put(1.965, 37.0);
+      RedArmAngleMap.put(2.2, 39.9);
+      RedArmAngleMap.put(2.58, 42.9);
+      RedArmAngleMap.put(2.87, 45.1);
+      RedArmAngleMap.put(3.195, 47.8);
+      RedArmAngleMap.put(3.425, 49.0);
+      RedArmAngleMap.put(3.79, 50.7);
+      RedArmAngleMap.put(4.09, 50.0);
+
+    }
+    public static final InterpolatingTreeMap<Double, Double> BlueArmAngleMap = new InterpolatingDoubleTreeMap();
+    static{
+    // each pair of doubles pairs a speaker distance with the ideal arm angle for that distance. 
+    //These values are determined by doing physical testing with the real robot at a practice field.
+    //During matches, we use pose estimation to calculate the distance to the speaker, and look it up in this table
+    //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
+    // the data is in the format: ArmAngleMap.put(DistanceToSpeaker (meters), Arm Angle(degrees))
+    
+      BlueArmAngleMap.put(1.3, 28.7);
+      BlueArmAngleMap.put(1.77, 32.1);
+      BlueArmAngleMap.put(2.0, 37.0);
+      BlueArmAngleMap.put(2.19, 39.9);
+      BlueArmAngleMap.put(2.62, 42.9);
+      BlueArmAngleMap.put(2.93, 45.1);
+      BlueArmAngleMap.put(3.22, 47.8);
+      BlueArmAngleMap.put(3.4, 49.0);
+      BlueArmAngleMap.put(3.85, 50.7);
+      BlueArmAngleMap.put(4.18, 50.0);
 
     }
     public static final double maxShootingDistance = 4;
