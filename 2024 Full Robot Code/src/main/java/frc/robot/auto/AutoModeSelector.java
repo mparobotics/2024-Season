@@ -26,7 +26,7 @@ public class AutoModeSelector {
     //All possible auto choices
     public enum AutoMode{
         NO_AUTO,
-        TWO_NOTE_CENTER,
+        THREE_NOTE_CENTER,
         FOUR_NOTE,
         FIVE_NOTE,
         SWEEP,
@@ -71,7 +71,7 @@ public class AutoModeSelector {
         switch(mode){
             case NO_AUTO:
                 return null;
-            case TWO_NOTE_CENTER:
+            case THREE_NOTE_CENTER:
                 return new CenterNoteAuto(m_drive, m_intake, m_shooter, m_arm);
             case FOUR_NOTE:
                 return new FourNoteAuto(m_drive, m_intake, m_shooter, m_arm);
