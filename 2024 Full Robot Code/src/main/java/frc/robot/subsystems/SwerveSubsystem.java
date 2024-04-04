@@ -191,7 +191,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
-    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
+    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.RedArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
     double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * -Math.cos(estimatedShotAngle);
     //get the speed of the robot in field coordinates as a chassisSpeeds
     ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeed(), getYaw());
