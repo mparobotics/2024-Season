@@ -393,9 +393,12 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 
     SmartDashboard.putNumber("position-Y",getPose().getY()); 
-
-    
-    
+    /* 
+  for(SwerveModule module: swerveModules){
+    SmartDashboard.putNumber("Module " + module.moduleNumber + " cancoder", module.getCanCoder().getDegrees());
+    SmartDashboard.putNumber("Module " + module.moduleNumber + " integrated", module.getState().angle.getDegrees());
+  }
+  */
     
 }
 
