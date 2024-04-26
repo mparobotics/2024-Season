@@ -22,6 +22,7 @@ import frc.robot.commands.Intake;
 import frc.robot.commands.IntakeOverride;
 import frc.robot.commands.MeasureWheelDiameter;
 import frc.robot.commands.ReverseIntake;
+import frc.robot.commands.SlowShoot;
 import frc.robot.commands.TeleopSwerve;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.ClimberSubsytem;
@@ -127,6 +128,7 @@ public class RobotContainer {
     helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, shoot));
     //Y sets the arm to the podium angle
     helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47, shoot));
+    buttonBox.button(3).whileTrue(new SlowShoot(m_arm,m_shooter, () -> 25, shoot)); 
 
     //B sets the arm to feeding angle
     helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 69.3, shoot));
