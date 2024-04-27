@@ -97,7 +97,7 @@ public class RobotContainer {
           m_drive,
           () -> -getSpeedMultiplier() * driveController.getRawAxis(translationAxis),
           () -> -getSpeedMultiplier() * driveController.getRawAxis(strafeAxis),
-          () -> -driveController.getRawAxis(rotationAxis),
+          () -> -driveController.getRawAxis(rotationAxis) * getTurnMultiplier(),
           () -> robotCentric.getAsBoolean(),
           () -> driveController.getRightTriggerAxis() > 0.1,
           () -> driveController.getHID().getRawButton(Button.kX.value) 
@@ -141,7 +141,10 @@ public class RobotContainer {
     helmsController.button(Button.kA.value).whileTrue(new IntakeOverride(m_intake, m_arm, m_shooter));
   }
   private double getSpeedMultiplier(){
-    return driveController.getHID().getRawButton(Button.kLeftStick.value)? 0.7: 1;
+    return 0.25;
+  }
+  private double getTurnMultiplier(){
+    return 0.25;
   }
   public void disabledPeriodic(){
     m_leds.disabledPeriodic();
