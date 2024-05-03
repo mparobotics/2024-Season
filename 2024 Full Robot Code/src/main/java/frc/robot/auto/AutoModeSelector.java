@@ -22,11 +22,11 @@ public class AutoModeSelector {
     private SwerveSubsystem m_drive;
 
     //A dropdown menu to select an auto mode
-    private SendableChooser<AutoMode> autoChoices;
+    private SendableChooser<Command> autoChoices;
     //All possible auto choices
     public enum AutoMode{
         NO_AUTO,
-        TWO_NOTE_CENTER,
+        THREE_NOTE_CENTER,
         FOUR_NOTE,
         FIVE_NOTE,
         SWEEP,
@@ -49,19 +49,19 @@ public class AutoModeSelector {
     }
     //send the menu to networkTables
     public void showOptions(){
-        autoChoices = new SendableChooser<AutoMode>();
+        autoChoices = new SendableChooser<Command>();
         //Add each auto choice to the list
         for(AutoMode mode: AutoMode.values()){
-            autoChoices.addOption(mode.toString(), mode);
+            autoChoices.addOption(mode.toString(), getAuto(mode));
         }
         //set a default auto mode
-        autoChoices.setDefaultOption(defaultAuto.toString(), defaultAuto);
+        autoChoices.setDefaultOption(defaultAuto.toString(), getAuto(defaultAuto));
         SmartDashboard.putData("Auto Mode Selector", autoChoices);
-        
+       
     }
     //return the selected auto command
     public Command getSelectedAuto(){
-        return getAuto(autoChoices.getSelected());
+        return autoChoices.getSelected();
     }
     //get the corresponding auto command for a given AutoMode type
     public Command getAuto(AutoMode mode){
@@ -71,7 +71,7 @@ public class AutoModeSelector {
         switch(mode){
             case NO_AUTO:
                 return null;
-            case TWO_NOTE_CENTER:
+            case THREE_NOTE_CENTER:
                 return new CenterNoteAuto(m_drive, m_intake, m_shooter, m_arm);
             case FOUR_NOTE:
                 return new FourNoteAuto(m_drive, m_intake, m_shooter, m_arm);

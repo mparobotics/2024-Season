@@ -191,7 +191,7 @@ public class SwerveSubsystem extends SubsystemBase {
    */
     //get the speaker location relative to the robot (blue side always coordinates)
     Translation2d speakerLocation = getRelativeSpeakerLocation();
-    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.ArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
+    double estimatedShotAngle = Units.degreesToRadians(ArmConstants.RedArmAngleMap.get(speakerLocation.getNorm()) + ShooterConstants.relativeShooterAngle);
     double noteSpeed = ShooterConstants.noteSpeedMetersPerSecond * -Math.cos(estimatedShotAngle);
     //get the speed of the robot in field coordinates as a chassisSpeeds
     ChassisSpeeds chassisSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(getRobotRelativeSpeed(), getYaw());
@@ -274,7 +274,14 @@ public class SwerveSubsystem extends SubsystemBase {
     });
   }
   
-  
+  private double getAmbiguity(LimelightHelpers.PoseEstimate estimate){
+    if(estimate.tagCount == 0){
+      return 0;
+    }
+    else{
+      return estimate.rawFiducials[0].ambiguity;
+    }
+  }
   
   public boolean isEstimateValid(LimelightHelpers.PoseEstimate estimate){
     if(estimate == null){
@@ -287,7 +294,9 @@ public class SwerveSubsystem extends SubsystemBase {
     boolean isCloseEnough = estimate.avgTagDist < 5;
     //reject pose estimates with no tags in view
     boolean canSeeTag = estimate.tagCount > 0;
-    return  canSeeTag && isInField && isCloseEnough;
+    boolean isUnAmbiguous = getAmbiguity(estimate) < 0.5;
+    
+    return  canSeeTag && isInField && isCloseEnough && isUnAmbiguous;
   }
 
   private boolean isOdometryValid(){
@@ -346,6 +355,10 @@ public class SwerveSubsystem extends SubsystemBase {
 
     SmartDashboard.putNumber("ll-A tagCount", estimateA.tagCount);
     SmartDashboard.putNumber("ll-B tagCount", estimateB.tagCount);
+
+    SmartDashboard.putNumber("ll-A ambiguity", getAmbiguity(estimateA));
+    SmartDashboard.putNumber("ll-B ambiguity", getAmbiguity(estimateB));
+
     
     
     //if each limelight can see one tag, then between the two of them we'll get a decent pose estimate
@@ -380,9 +393,12 @@ public class SwerveSubsystem extends SubsystemBase {
     SmartDashboard.putNumber("Pigeon Direction",  getYawAsDouble());
     SmartDashboard.putNumber("position-X",getPose().getX()); 
     SmartDashboard.putNumber("position-Y",getPose().getY()); 
-
-    
-    
+    /* 
+  for(SwerveModule module: swerveModules){
+    SmartDashboard.putNumber("Module " + module.moduleNumber + " cancoder", module.getCanCoder().getDegrees());
+    SmartDashboard.putNumber("Module " + module.moduleNumber + " integrated", module.getState().angle.getDegrees());
+  }
+  */
     
 }
 

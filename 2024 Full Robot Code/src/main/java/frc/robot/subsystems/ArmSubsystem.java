@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.ArmConstants;
+import frc.robot.Constants.FieldConstants;
 
 public class ArmSubsystem extends SubsystemBase {
   //two motors run in sync to drive the arm
@@ -75,7 +76,12 @@ public class ArmSubsystem extends SubsystemBase {
   }
   //set the arm angle to score from a certain distance away
   public void setAngleForShootingDistance(double meters){
-    setTarget(ArmConstants.ArmAngleMap.get(meters));
+    if (FieldConstants.isRedAlliance()){
+      setTarget(ArmConstants.RedArmAngleMap.get(meters));
+    } else {
+      setTarget(ArmConstants.BlueArmAngleMap.get(meters));
+    }
+    
   }
   //set the arm to score in the amp
   public void setToAmpAngle(){
@@ -111,9 +117,9 @@ public class ArmSubsystem extends SubsystemBase {
   public Command teleopArmControlCommand(DoubleSupplier speed){
     return runOnce(() -> motorR.set(speed.getAsDouble()  * 0.4));
   }
-  public boolean isLinedUp(double distance){
+  /*public boolean isLinedUp(double distance){
     return Math.abs(getArmPosition() - ArmConstants.ArmAngleMap.get(distance)) < 1;
-  }
+  }*/
    
   @Override
   public void periodic() {

@@ -51,7 +51,7 @@ public class AmpSideFourAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("SW1(A)").andThen(m_drive.followPathFromFile("W1S@")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(32))
       ),
       new Shoot(m_shooter, () -> true),
 
@@ -60,7 +60,7 @@ public class AmpSideFourAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("S@C1").andThen(m_drive.followPathFromFile("C1S@")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(32))
       ),
       new Shoot(m_shooter, () -> true),
 
@@ -69,7 +69,7 @@ public class AmpSideFourAuto extends SequentialCommandGroup {
         //drive out to the note and back to the speaker
         m_drive.followPathFromFile("S@C2").andThen(m_drive.followPathFromFile("C2S@")),
         //run the intake until we have the note, then set the arm to the shooting position
-        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(33))
+        new Intake(m_intake, m_arm, m_shooter).andThen(m_arm.setArmSetpointCommand(32))
       ),
       new Shoot(m_shooter, () -> true)
     );
