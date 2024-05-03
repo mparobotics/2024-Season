@@ -74,7 +74,7 @@ public final class Constants {
     public static final double maxArmPosition = 99;
 
     //arm angle for handing notes from the intake to the indexer
-    public static final double handoffPosition = 20;
+    public static final double handoffPosition = 23;
     //arm angle for scoring in the amp
     public static final double ampPosition = 98;
 
