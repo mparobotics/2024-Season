@@ -127,6 +127,8 @@ public class RobotContainer {
     helmsController.button(Button.kX.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 25, shoot));
     //Y sets the arm to the podium angle
     helmsController.button(Button.kY.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 47, shoot));
+    buttonBox.button(3).whileTrue(new SlowShoot(m_arm,m_shooter, () -> 25, shoot)); 
+  
 
     //B sets the arm to feeding angle
     helmsController.button(Button.kB.value).whileTrue(new AngleAndShoot(m_arm, m_shooter, () -> 69.3, shoot));
@@ -139,7 +141,19 @@ public class RobotContainer {
     helmsController.button(Button.kA.value).whileTrue(new IntakeOverride(m_intake, m_arm, m_shooter));
   }
   private double getSpeedMultiplier(){
-    return driveController.getHID().getRawButton(Button.kLeftStick.value)? 0.7: 1;
+ 
+    if (buttonHID.getRawButton(1)) {
+      return 1;
+      
+    }
+    return 0.25;
+  
+  }
+  private double getTurnMultiplier(){
+    if (buttonHID.getRawButton(1)){
+      return 1;
+    }
+    return 0.25;
   }
   public void disabledPeriodic(){
     m_leds.disabledPeriodic();

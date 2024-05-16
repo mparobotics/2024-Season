@@ -94,11 +94,16 @@ public final class Constants {
     //We can then interpolate between these data points to approximate a good shooting angle for any distance in between the data points
     // the data is in the format: ArmAngleMap.put(DistanceToSpeaker (meters), Arm Angle(degrees))
     
-      ArmAngleMap.put(1.23, 27.5);
-      ArmAngleMap.put(1.27, 31.0);
-      ArmAngleMap.put(2.03, 41.5);
-      ArmAngleMap.put(2.26, 47.1);
-      ArmAngleMap.put(3.00, 49.5);
+      RedArmAngleMap.put(1.42, 28.7);
+      RedArmAngleMap.put(1.77, 32.1);
+      RedArmAngleMap.put(2.1, 37.0);
+      RedArmAngleMap.put(2.46, 39.9);
+      RedArmAngleMap.put(2.77, 42.9);
+      RedArmAngleMap.put(3.12, 45.1);
+      RedArmAngleMap.put(3.43, 47.8);
+      RedArmAngleMap.put(3.72, 49.0);
+      RedArmAngleMap.put(4.03, 50.7);
+      RedArmAngleMap.put(4.32, 50.0);
 
     }
     public static final double maxShootingDistance = 2.7;
