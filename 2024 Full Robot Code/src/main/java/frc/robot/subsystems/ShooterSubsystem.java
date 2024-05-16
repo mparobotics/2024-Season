@@ -68,7 +68,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   public Command defaultShooterCommand(BooleanSupplier runShooter, BooleanSupplier isInRange){
     return runOnce(() -> {
-      double shootSpeed = runShooter.getAsBoolean()? 1: (isNoteInShooter()) ? 0.5 :0;
+      double shootSpeed = runShooter.getAsBoolean()? 1: (isNoteInShooter()) ? 0 :0;
       shooterMotor.set(shootSpeed);
     });
   }
