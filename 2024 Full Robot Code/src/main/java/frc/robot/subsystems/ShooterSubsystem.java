@@ -59,8 +59,9 @@ public class ShooterSubsystem extends SubsystemBase {
   public void setShooterSpeed(double speed){
     shooterMotor.set(speed);
   }
+  //sets the speed of the shooter
   public void spinUpShooter(){
-    setShooterSpeed(1);
+    setShooterSpeed(0.5);
   }
   public void stopShooting(){
     beltMotor.set(0);
