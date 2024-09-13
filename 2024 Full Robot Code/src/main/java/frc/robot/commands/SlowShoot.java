@@ -46,7 +46,7 @@ public class SlowShoot extends Command {
   public void initialize(){
     
     //spin the wheels to the correct speed
-    m_shooter.setShooterSpeed(0.5);
+    m_shooter.setShooterSpeed(1);
     
     //we have not started shooting yet
     hasStartedShooting = false;
