@@ -214,7 +214,7 @@ public final class Constants {
     public static final double angleConversionFactor = 360.0 / angleGearRatio;
  
     /* Maximum speed and angular velocity of the robot */
-    public static final double maxSpeed = 10; // meters per second
+    public static final double maxSpeed = 5; // meters per second
     public static final double maxAngularVelocity = maxSpeed / driveBaseRadius; //radians per second
 
     //give location of each module to a swerveDriveKinematics relative to robot center in meters

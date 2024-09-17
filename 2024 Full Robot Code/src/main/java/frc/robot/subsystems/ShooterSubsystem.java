@@ -61,7 +61,7 @@ public class ShooterSubsystem extends SubsystemBase {
   }
   //sets the speed of the shooter
   public void spinUpShooter(){
-    setShooterSpeed(0.5);
+    setShooterSpeed(1); //set at 0.5 for outreach
   }
   public void stopShooting(){
     beltMotor.set(0);

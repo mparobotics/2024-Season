@@ -147,7 +147,7 @@ public class RobotContainer {
       return 1;
       
     }
-    return 0.25;
+    return 1;
   
   }
   private double getTurnMultiplier(){
