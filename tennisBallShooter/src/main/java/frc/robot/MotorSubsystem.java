@@ -16,14 +16,22 @@ import frc.robot.Constants.OperatorConstants.DriveConstants;
 
 public class MotorSubsystem extends SubsystemBase {
  private final CANSparkMax motor1 = new CANSparkMax(DriveConstants.MOTOR_1_ID, MotorType.kBrushless);
- 
+ private final CANSparkMax motor2 = new CANSparkMax(DriveConstants.MOTOR_2_ID, MotorType.kBrushless);
+
   /** Creates a new MotorSubsystem. */
+  
   public RelativeEncoder encoder = motor1.getEncoder();
-}
+  public RelativeEncoder encoder2 = motor2.getEncoder(); 
+  
 
 public Command Run1(DoubleSupplier speed){
   return runOnce(() -> motor1.set(speed.getAsDouble() * Constants.motorSpeedMultiplier));
 }
+  public MotorSubsystem(){
+      motor1.setInverted(false);
+      motor2.setInverted(true); 
+      motor2.follow(motor1); 
+  }
 
   public Command RunMotors()
   {
@@ -58,4 +66,5 @@ public Command Run1(DoubleSupplier speed){
   public void periodic() {
     // This method will be called once per scheduler run
   }
+}
 

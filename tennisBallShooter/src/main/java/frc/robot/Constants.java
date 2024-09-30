@@ -11,6 +11,7 @@ public class Constants {
     public final class DriveConstants{
   
     public static final int MOTOR_1_ID = 0;
+    public static final int MOTOR_2_ID = 0; 
 }
 }
 

@@ -21,6 +21,7 @@ public class RobotContainer {
   private void configureBindings() {
     controller.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(m_MotorSubsystem.RunMotors());
     controller.axisLessThan(Axis.kRightY.value,-0.5).whileTrue(m_MotorSubsystem.RunMotors());
+    m_MotorSubsystem.setDefaultCommand(m_MotorSubsystem.StopMotors());
   }
 
   public Command getAutonomousCommand() {
