@@ -11,9 +11,12 @@ public class Constants {
     public final class DriveConstants{
   
     public static final int MOTOR_1_ID = 0;
-    public static final int MOTOR_2_ID = 0; 
+    public static final int MOTOR_2_ID = 0; //int: whole numbers
 }
 }
 
 static final double motorSpeedMultiplier = 1; 
+//Control speed, double: can be decimals, 0-1. Static: this code stands alone
 }
+
+//Define things in motorsubsystem, start with motorsubsystem

@@ -16,27 +16,28 @@ import frc.robot.Constants.OperatorConstants.DriveConstants;
 
 public class MotorSubsystem extends SubsystemBase {
  private final CANSparkMax motor1 = new CANSparkMax(DriveConstants.MOTOR_1_ID, MotorType.kBrushless);
- private final CANSparkMax motor2 = new CANSparkMax(DriveConstants.MOTOR_2_ID, MotorType.kBrushless);
+ private final CANSparkMax motor2 = new CANSparkMax(DriveConstants.MOTOR_2_ID, MotorType.kBrushless); 
+ //CANSparkMax: the motor, defines the motors. Brushless: the motor we use.
 
   /** Creates a new MotorSubsystem. */
   
-  public RelativeEncoder encoder = motor1.getEncoder();
+  public RelativeEncoder encoder = motor1.getEncoder(); 
   public RelativeEncoder encoder2 = motor2.getEncoder(); 
   
 
-public Command Run1(DoubleSupplier speed){
-  return runOnce(() -> motor1.set(speed.getAsDouble() * Constants.motorSpeedMultiplier));
+public Command Run1(DoubleSupplier speed){ //DoubleSupplier: speed here is going to gradually increase/decrease.
+  return runOnce(() -> motor1.set(speed.getAsDouble() * Constants.motorSpeedMultiplier)); // return command
 }
   public MotorSubsystem(){
-      motor1.setInverted(false);
-      motor2.setInverted(true); 
-      motor2.follow(motor1); 
+      motor1.setInverted(false); 
+      motor2.setInverted(true); //Invert the code for motor 1 to have motor 2
+      motor2.follow(motor1); //Same code
   }
 
   public Command RunMotors()
   {
     return runOnce(
-      () -> {
+      () -> { //have to do
         motor1.set(1);
       }
     );

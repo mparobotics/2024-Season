@@ -11,17 +11,22 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 public class RobotContainer {
   
-  private final MotorSubsystem m_MotorSubsystem = new MotorSubsystem();
+  private final MotorSubsystem m_MotorSubsystem = new MotorSubsystem(); 
+  //m: naming notation, not original code, it's a copy.
   private final CommandXboxController controller = new CommandXboxController(0);
+  //We are using a Xbox controller.
   
   public RobotContainer() {
     configureBindings();
   }
 
-  private void configureBindings() {
+  private void configureBindings() { //void: don't have set value, not returning any value.
     controller.axisGreaterThan(Axis.kRightY.value,0.5).whileTrue(m_MotorSubsystem.RunMotors());
+    //y-axis, pass 0.5 the motor will spin up.
     controller.axisLessThan(Axis.kRightY.value,-0.5).whileTrue(m_MotorSubsystem.RunMotors());
+    //y-axis, pass -0.5 the motor will spin up the other way.
     m_MotorSubsystem.setDefaultCommand(m_MotorSubsystem.StopMotors());
+    //Defalut for the motor, to stop the motor.
   }
 
   public Command getAutonomousCommand() {
