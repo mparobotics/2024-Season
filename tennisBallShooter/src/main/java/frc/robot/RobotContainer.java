@@ -13,7 +13,7 @@ public class RobotContainer {
   
   private final MotorSubsystem m_MotorSubsystem = new MotorSubsystem(); 
   //m: naming notation, not original code, it's a copy.
-  private final CommandXboxController controller = new CommandXboxController(0);
+  private final CommandXboxController controller = new CommandXboxController(1);
   //We are using a Xbox controller.
   
   public RobotContainer() {
