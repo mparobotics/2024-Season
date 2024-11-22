@@ -7,13 +7,13 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants.OperatorConstants.DriveConstants;
+import frc.robot.Constants.ShooterConstants;
+
 
 public class MotorSubsystem extends SubsystemBase {
- private final CANSparkMax motor1 = new CANSparkMax(DriveConstants.MOTOR_1_ID, MotorType.kBrushless);
+ private final CANSparkMax motor1 = new CANSparkMax(ShooterConstants.MOTOR_1_ID, MotorType.kBrushless);
 // private final CANSparkMax motor2 = new CANSparkMax(DriveConstants.MOTOR_2_ID, MotorType.kBrushless); 
  //CANSparkMax: the motor, defines the motors. Brushless: the motor we use.
 

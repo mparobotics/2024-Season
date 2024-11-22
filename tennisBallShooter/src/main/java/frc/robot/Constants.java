@@ -6,16 +6,14 @@ package frc.robot;
 
 /** Add your docs here. */
 public class Constants {
-    public static class OperatorConstants{
-    public static final int kDriverControllerPort = 0;
-    public final class DriveConstants{
+    public final class ShooterConstants{
   
     public static final int MOTOR_1_ID = 11;
     //public static final int MOTOR_2_ID = 0; //int: whole numbers
 }
-}
 
-static final double motorSpeedMultiplier = 1; 
+
+//static final double motorSpeedMultiplier = 1;  // we don't use this anymore
 //Control speed, double: can be decimals, 0-1. Static: this code stands alone
 }
 
