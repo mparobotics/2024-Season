@@ -4,8 +4,6 @@
 
 package frc.robot;
 
-import java.util.function.DoubleSupplier;
-
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
@@ -25,10 +23,10 @@ public class MotorSubsystem extends SubsystemBase {
   //public RelativeEncoder encoder2 = motor2.getEncoder(); 
   
 
-public Command Run1(DoubleSupplier speed){ //DoubleSupplier: speed here is going to gradually increase/decrease.
-  return runOnce(() -> motor1.set(speed.getAsDouble() * Constants.motorSpeedMultiplier)); // return command
-}
-  public MotorSubsystem(){
+//public Command Run1(DoubleSupplier speed){ //DoubleSupplier: speed here is going to gradually increase/decrease.
+  //return runOnce(() -> motor1.set(speed.getAsDouble() * Constants.motorSpeedMultiplier)); // return command
+//}
+   public MotorSubsystem(){
       motor1.setInverted(false); 
      // motor2.setInverted(true); //Invert the code for motor 1 to have motor 2
       //motor2.follow(motor1); //Same code
@@ -57,8 +55,9 @@ public Command Run1(DoubleSupplier speed){ //DoubleSupplier: speed here is going
         motor1.set(-1);
 
       }
-    ); 
-  }
+    );
+  } 
+  
 
   
 

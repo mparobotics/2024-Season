@@ -7,7 +7,7 @@ package frc.robot;
 /** Add your docs here. */
 public class Constants {
     public static class OperatorConstants{
-    public static final int kDriverControllerPort = 1;
+    public static final int kDriverControllerPort = 0;
     public final class DriveConstants{
   
     public static final int MOTOR_1_ID = 11;
