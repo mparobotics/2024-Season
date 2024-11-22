@@ -7,8 +7,8 @@ package frc.robot;
 /** Add your docs here. */
 public class Constants {
     public final class ShooterConstants{
-  
-    public static final int MOTOR_1_ID = 11;
+    //public static final int kDriverControllerPort = 0;
+    public static final int MOTOR_1_ID = 7;
     //public static final int MOTOR_2_ID = 0; //int: whole numbers
 }
 
